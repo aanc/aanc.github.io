@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/" title="Ubuntu 14.04: How to open ssh:// links in a terminal">Ubuntu 14.04: How to open ssh:// links in a terminal</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/14.04"><span class="label label-success">14.04</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+          <a href="tags/ssh"><span class="label label-success">ssh</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-08-120">Aug 08, 2014</time></p>
+      <div class="article-content">
+        <p><p>If you&rsquo;re using a web based tool to manage your servers, chances are that this tool is providing <code>ssh://</code> links to connect directly to those server with one click from your web browser. Let&rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link.</p>
+
+<p>First we need a script which is able to process a string like &ldquo;ssh://user@host:port&rdquo;. Create a file named <code>ssh-handler.sh</code> somewhere in your home directory (ie. <code>~/.local/bin/ssh-handler.sh</code> - I tend to put my custom executables in <code>~/.local/bin</code>, and I added that to my <code>PATH</code>)</p>
+
+<pre><code>#!/bin/sh
+d=${1#ssh://}
+gnome-terminal -e &quot;ssh $d&quot; &amp;
+</code></pre>
+
+<p>Make it executable with a <code>chmod a+x ~/.local/bin/ssh-handler.sh</code>.
+If you want to test it, open an <code>xterm</code> (so we can make sure the script will open gnome-terminal by itself), and execute <code>~/.local/bin/ssh-handler.sh ssh://localhost</code>. This should open a gnome-terminal window, prompting you for your local password (provided that you have an sshd running on your local machine).</p>
+
+<p>Now we need to create a <code>.desktop</code> file which will use the handler we just created. Create a file in <code>~/.local/share/applications/</code> named <code>ssh-handler.desktop</code>, with the following content:</p>
+
+<pre><code>[Desktop Entry]
+Type=Application
+Name=SSH Handler
+Exec=ssh-handler.sh %u
+Icon=utilities-terminal
+StartupNotify=false
+MimeType=x-scheme-handler/ssh;
+</code></pre>
+
+<blockquote>
+<p><strong>Important</strong>: if your <code>~/.local/bin</code> folder is not in your PATH variable, you will have to specify the full path of the <code>ssh-handler.sh</code> script in the <code>Exec=</code> line, ie. <code>Exec=/home/adrien/.local/bin/ssh-handler.sh</code></p>
+</blockquote>
+
+<p>Once this file is created, the last step is to tell the system that the SSH links should be handled by default by this desktop entry. Before we do that, it can be a good idea to check that nothing is currently handling the SSH protocol, or if something is handling it make sure that we can replace it safely. To check that, run the following command:</p>
+
+<pre><code>xdg-mime query default x-scheme-handler/ssh
+</code></pre>
+
+<p>If the output is blank, we&rsquo;re good ! It not, use your best judgement to decide if you want to replace it or not.</p>
+
+<p>Now we can run the following command to define our <code>ssh-handler.desktop</code> file as the default handler for ssh protocol:</p>
+
+<pre><code>xdg-mime default ssh-handler.desktop x-scheme-handler/ssh
+</code></pre>
+
+<p>And that&rsquo;s it ! Clicking on <code>ssh://...</code> links in your browser should now directly open a terminal window and connect to the specified host.</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

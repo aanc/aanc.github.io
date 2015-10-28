@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/" title="Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux">Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/tmux"><span class="label label-success">tmux</span></a>
+        
+          <a href="tags/ssh"><span class="label label-success">ssh</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-08-30">Aug 08, 2014</time></p>
+      <div class="article-content">
+        <p><p>When SSH&rsquo;ing to old boxes within tmux, I sometimes get the following error:
+<code>'screen-256color': unknown terminal type</code>, and a very ugly prompt.</p>
+
+<p>An easy way to fix this is to set a different value for the <code>default-terminal</code> setting in your <code>tmux.conf</code>. You only have to open your <code>~/.tmux.conf</code> and add the following line:</p>
+
+<pre><code>set -g default-terminal &quot;xterm&quot;
+</code></pre>
+
+<p>However, note that this will affect all your sessions.</p>
+
+<p>If you don&rsquo;t want to redefine your <code>default-terminal</code> value, you can fix this only when needed by setting a different value for the <code>TERM</code> variable when you ssh to those boxes. So, instead of ssh&rsquo;ing like this:</p>
+
+<pre><code>ssh adrien@my-box
+</code></pre>
+
+<p>you do that:</p>
+
+<pre><code>TERM=xterm ssh adrien@my-box
+</code></pre>
+
+<p>And you should not see the <code>'screen-256color': unknown terminal type</code> message anymore.</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

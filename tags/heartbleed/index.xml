@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Heartbleed on nknu.net</title>
+    <link>http://nknu.net/tags/heartbleed/</link>
+    <description>Recent content in Heartbleed on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 17 Apr 2014 14:22:39 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/heartbleed/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Best Heartbleed explanation ever</title>
+      <link>http://nknu.net/best-heartbleed-explanation-ever/</link>
+      <pubDate>Thu, 17 Apr 2014 14:22:39 +0000</pubDate>
+      
+      <guid>http://nknu.net/best-heartbleed-explanation-ever/</guid>
+      <description>&lt;p&gt;xkcd posted a drawing explaining perfectly how the &lt;a href=&#34;http://heartbleed.com/&#34;&gt;Heartbleed bug&lt;/a&gt; works:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/heartbleed_explanation.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Source: &lt;a href=&#34;http://xkcd.com/1354/&#34;&gt;http://xkcd.com/1354/&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,1 +1,282 @@
-Hello World
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      
+      <h1 class="article-title"><a href="http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/">How to configure Docker on Ubuntu 15.04 (workaround)</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/docker"><span class="label label-success">docker</span></a>
+        
+          <a href="tags/workaround"><span class="label label-success">workaround</span></a>
+        
+          <a href="tags/15.04"><span class="label label-success">15.04</span></a>
+        
+          <a href="tags/vivid"><span class="label label-success">vivid</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2015-05-40">May 05, 2015</time></p>
+      <div class="article-content">
+        <p>Article updated the 17th of August 2015, with the remarks of Giacomo Orlandi in the comments, who provided a cleaner way to update the systemd config, based on a discussion in this Docker&rsquo;s Github issue. If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in /etc/default/docker anymore. That is due to the fact that Ubuntu is now using systemd instead of Upstart/SysV.</p>
+        <p class="small"><a href="http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/">How to easily deploy your ghost blog using docker-machine and docker-compose</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ghost"><span class="label label-success">ghost</span></a>
+        
+          <a href="tags/docker"><span class="label label-success">docker</span></a>
+        
+          <a href="tags/compose"><span class="label label-success">compose</span></a>
+        
+          <a href="tags/machine"><span class="label label-success">machine</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2015-05-100">May 05, 2015</time></p>
+      <div class="article-content">
+        <p>Prepare your docker host (with docker-machine) First step is to have a docker-ready server. We have several ways of doing that: we can install docker on our server by hand (from packages, from source, using docker.io neat curl|sh, &hellip;), we can use boot2docker, or we can user docker machine to directly provision a server for us. We&rsquo;ll do the later as it&rsquo;s reeeaallly easy, with Virtualbox as provider. You&rsquo;ll need to have Virtualbox installed on your machine.</p>
+        <p class="small"><a href="http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/proxy-configuration-for-docker-on-centos-7/">Proxy configuration for Docker on CentOS 7</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/proxy"><span class="label label-success">proxy</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+          <a href="tags/docker"><span class="label label-success">docker</span></a>
+        
+          <a href="tags/centos7"><span class="label label-success">centos7</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-09-100">Sep 09, 2014</time></p>
+      <div class="article-content">
+        <p>We saw earlier how to configure the proxy for docker on Ubuntu 14.04, let&rsquo;s now see how to do that on CentOS 7. Edit /etc/sysconfig/docker and add the following lines: HTTP_PROXY='http://user:password@proxy-host:proxy-port' HTTPS_PROXY='http://user:password@proxy-host:proxy-port' For those settings to be taken into account, you&rsquo;ll need to restart your docker daemon: # systemctl restart docker You may still need to declare the proxy in the Dockerfile too, as seen in the Ubuntu article.</p>
+        <p class="small"><a href="http://nknu.net/proxy-configuration-for-docker-on-centos-7/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/">Running docker behind a proxy on Ubuntu 14.04</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/14.04"><span class="label label-success">14.04</span></a>
+        
+          <a href="tags/docker"><span class="label label-success">docker</span></a>
+        
+          <a href="tags/proxy"><span class="label label-success">proxy</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-09-100">Sep 09, 2014</time></p>
+      <div class="article-content">
+        <p>If you&rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&rsquo;s see how to fix that. Edit /etc/defaults/docker.io and add the following lines: export http_proxy='http://user:password@proxy-host:proxy-port' For those settings to be taken into account, you&rsquo;ll have to restart your docker daemon: $ sudo service docker.io restart This should allow docker daemon to pull images from the central registry.</p>
+        <p class="small"><a href="http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/">Ubuntu 14.04: How to open ssh:// links in a terminal</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/14.04"><span class="label label-success">14.04</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+          <a href="tags/ssh"><span class="label label-success">ssh</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-08-120">Aug 08, 2014</time></p>
+      <div class="article-content">
+        <p>If you&rsquo;re using a web based tool to manage your servers, chances are that this tool is providing ssh:// links to connect directly to those server with one click from your web browser. Let&rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link. First we need a script which is able to process a string like &ldquo;ssh://user@host:port&rdquo;. Create a file named ssh-handler.sh somewhere in your home directory (ie.</p>
+        <p class="small"><a href="http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/">Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/tmux"><span class="label label-success">tmux</span></a>
+        
+          <a href="tags/ssh"><span class="label label-success">ssh</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-08-30">Aug 08, 2014</time></p>
+      <div class="article-content">
+        <p>When SSH&rsquo;ing to old boxes within tmux, I sometimes get the following error: 'screen-256color': unknown terminal type, and a very ugly prompt. An easy way to fix this is to set a different value for the default-terminal setting in your tmux.conf. You only have to open your ~/.tmux.conf and add the following line: set -g default-terminal &quot;xterm&quot; However, note that this will affect all your sessions. If you don&rsquo;t want to redefine your default-terminal value, you can fix this only when needed by setting a different value for the TERM variable when you ssh to those boxes.</p>
+        <p class="small"><a href="http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/">Git: setup a remote repo from a local repo</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/git"><span class="label label-success">git</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-07-50">Jul 07, 2014</time></p>
+      <div class="article-content">
+        <p>Let&rsquo;s assume you started a new project. You&rsquo;re using Git for versionning, because it&rsquo;s easy to set it up locally, and for a few hours/days/weeks you&rsquo;re just happy with your local repository. However, now you need to go bigger and start sharing the code with your coworkers, or maybe want to setup a continuous integration system, or whatever else, and for that your need to create a remote repository which will act as reference for all the actors of your project.</p>
+        <p class="small"><a href="http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/git-through-proxy/">Git behind a proxy</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/git"><span class="label label-success">git</span></a>
+        
+          <a href="tags/proxy"><span class="label label-success">proxy</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-05-120">May 05, 2014</time></p>
+      <div class="article-content">
+        <p>If you need to access a git repository somewhere on the internet (let&rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&rsquo;ll need to go through an HTTP proxy. Let&rsquo;s see how we can configure that. Option 1 : Environment variables Git honor the environment variables http_proxy and https_proxy, so one way of solving our problem is setting those variables as follow: http_proxy='http://proxy_host:proxy_port' https_proxy=$http_proxy If your proxy requires authentication, you need to specify your user/password in the URL: http_proxy='http://username:password@proxy_host:proxy_port' If you need more info about setting proxy info in your environment, check that article I wrote about that a few month back.</p>
+        <p class="small"><a href="http://nknu.net/git-through-proxy/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/sync-your-subtitles-with-mpc-hc/">How to sync your subtitles with media player classic</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+          <a href="tags/media"><span class="label label-success">media</span></a>
+        
+          <a href="tags/mpc"><span class="label label-success">mpc</span></a>
+        
+          <a href="tags/subtitles"><span class="label label-success">subtitles</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-05-70">May 05, 2014</time></p>
+      <div class="article-content">
+        <p>Sometimes when you download a video on the internet, you get subtitles on a separate file (ie. from Open Subtitles, Subscene, addic7ed, etc&hellip;), and they are not always perfectly sync&rsquo;ed. If you&rsquo;re using Media Player Classic, you can fix that pretty easily with its &ldquo;Sub resync&rdquo; feature. Open your video with Media Player Classic and load your subtitles, then hit ctrl + 6 (or View -&gt; Subresync) to open the sub-resync console.</p>
+        <p class="small"><a href="http://nknu.net/sync-your-subtitles-with-mpc-hc/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+      <h1 class="article-title"><a href="http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/">apt-get install error at run-parts zz-update-grub</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/debian"><span class="label label-success">debian</span></a>
+        
+          <a href="tags/fix"><span class="label label-success">fix</span></a>
+        
+          <a href="tags/grub"><span class="label label-success">grub</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-05-110">May 05, 2014</time></p>
+      <div class="article-content">
+        <p>When you install programs using apt-get, post-install tasks are executed to keep the system consistent. However, sometimes, those tasks does not go well, as in the example below (on a Debian Squeeze - yeah, I know, this system is not really up to date &hellip;). $ apt-get install whatever ... Running depmod. Running update-initramfs. update-initramfs: Generating /boot/initrd.img-2.6.32-5-amd64 Examining /etc/kernel/postinst.d. run-parts: executing /etc/kernel/postinst.d/initramfs-tools 2.6.32-5-amd64 /boot/vmlinuz-2.6.32-5-amd64 run-parts: executing /etc/kernel/postinst.d/zz-update-grub 2.6.32-5-amd64 /boot/vmlinuz-2.6.32-5-amd64 Generating grub.cfg ...</p>
+        <p class="small"><a href="http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/">Read More »</a></p>
+      </div>
+      <hr/>
+      
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="custom-pagination">
+      
+    
+    <ul class="pagination">
+        
+        <li>
+            <a href="http://nknu.net/" aria-label="First"><span aria-hidden="true">&laquo;&laquo;</span></a>
+        </li>
+        
+        <li
+        class="disabled">
+        <a href="" aria-label="Previous"><span aria-hidden="true">&laquo;</span></a>
+        </li>
+        
+        <li
+        class="active"><a href="http://nknu.net/">1</a></li>
+        
+        <li
+        ><a href="http://nknu.net/page/2/">2</a></li>
+        
+        <li
+        >
+        <a href="http://nknu.net/page/2/" aria-label="Next"><span aria-hidden="true">&raquo;</span></a>
+        </li>
+        
+        <li>
+            <a href="http://nknu.net/page/2/" aria-label="Last"><span aria-hidden="true">&raquo;&raquo;</span></a>
+        </li>
+        
+    </ul>
+    
+    <div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

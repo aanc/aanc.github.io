@@ -1,0 +1,962 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>nknu.net</title>
+    <link>http://nknu.net/</link>
+    <description>Recent content on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 26 May 2015 16:13:55 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to configure Docker on Ubuntu 15.04 (workaround)</title>
+      <link>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</link>
+      <pubDate>Tue, 26 May 2015 16:13:55 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Article updated the 17th of August 2015,&lt;/strong&gt; with the remarks of &lt;em&gt;Giacomo Orlandi&lt;/em&gt; in the comments, who provided a cleaner way to update the systemd config, based on a discussion in &lt;a href=&#34;https://github.com/docker/docker/issues/9889#issuecomment-109819996&#34;&gt;this Docker&amp;rsquo;s Github issue&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in &lt;code&gt;/etc/default/docker&lt;/code&gt; anymore. That is due to the fact that Ubuntu is now using &lt;code&gt;systemd&lt;/code&gt; instead of Upstart/SysV. Unfortunately, Docker&amp;rsquo;s default systemd configuration is not ready for Ubuntu, and the config file is ignored.&lt;/p&gt;
+
+&lt;p&gt;There is some &lt;a href=&#34;https://github.com/docker/docker/pull/13439&#34;&gt;work&lt;/a&gt; &lt;a href=&#34;https://github.com/docker/docker/issues/12926&#34;&gt;in&lt;/a&gt; &lt;a href=&#34;https://github.com/docker/docker/issues/13384&#34;&gt;progress&lt;/a&gt; on Docker&amp;rsquo;s side to fix that, but you may want to have a workaround in order to have it working until the official fix is released (hopefully with Docker 1.7).&lt;/p&gt;
+
+&lt;p&gt;First thing to do is to confirm that systemd is in charge of your Docker service. We can do that by simply asking systemd to give us Docker&amp;rsquo;s status, with the &lt;code&gt;systemctl status docker&lt;/code&gt; command :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; $ systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since mar. 2015-05-26 14:52:45 CEST; 58min ago
+     Docs: http://docs.docker.com
+ Main PID: 20075 (docker)
+   Memory: 198.2M
+   CGroup: /system.slice/docker.service
+           ├─20075 /usr/bin/docker -d -H fd://
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Two things are interresting in this output. The first one is that we can see that the docker daemon is launched with parameter &lt;code&gt;-H fd://&lt;/code&gt;, and nothing else (in my case, it should have some DNS declared, and an insecure registry - see the &lt;code&gt;DOCKER_OPTS&lt;/code&gt; line of your &lt;code&gt;/etc/default/docker&lt;/code&gt; file). The second one is that the systemd configuration file which is used is &lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see what it looks like :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat /lib/systemd/system/docker.service
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+ExecStart=/usr/bin/docker -d -H fd://
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ahah ! Here is our issue: the execution command defined in the &lt;code&gt;ExecStart&lt;/code&gt; line is static: it does not use the variables defined in the &lt;code&gt;/etc/default/docker&lt;/code&gt; file. In order to have the file loaded, we need to declare &lt;code&gt;/etc/default/docker&lt;/code&gt; as an &lt;a href=&#34;http://fedoraproject.org/wiki/Packaging%3aSystemd#EnvironmentFiles_and_support_for_.2Fetc.2Fsysconfig_files&#34;&gt;EnvironmentFile&lt;/a&gt;, and use the &lt;code&gt;DOCKER_OPTS&lt;/code&gt; variable in the &lt;code&gt;ExecStart&lt;/code&gt; line.&lt;/p&gt;
+
+&lt;p&gt;Systemd allow the user to override the default value in the config file by creating &lt;code&gt;*.conf&lt;/code&gt; files in a specific folder. We will need to create that folder, if it does not exist:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mkdir -p /etc/systemd/system/docker.service.d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, we can create our config override file in that folder :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ vi /etc/systemd/system/docker.service.d/ubuntu.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;containing the follwing lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ [Service]
+# workaround to include default options
+EnvironmentFile=/etc/default/docker
+ExecStart=
+ExecStart=/usr/bin/docker -d -H fd:// $DOCKER_OPTS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, reload systemd&amp;rsquo;s config with &lt;code&gt;systemctl daemon-reload&lt;/code&gt; , and restart the Docker daemon in order to load the config file, with &lt;code&gt;systemctl restart docker&lt;/code&gt;, and run a &lt;code&gt;systemctl status docker&lt;/code&gt; to confirm that the config file has been loaded:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ● docker.service - Docker Application Container Engine
+ Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+Drop-In: /etc/systemd/system/docker.service.d
+         └─ubuntu.conf
+ Active: active (running) since lun. 2015-08-17 15:29:39 CEST; 13min ago
+   Docs: http://docs.docker.com
+ Memory: 3.9M
+ CGroup: /system.slice/docker.service
+         ├─16089 /usr/bin/docker -d -H fd:// --dns 10.200.1.11 --dns 8.8.8.8 --insecure-registry insecure-registry:5000
+         └─17194 docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 43128 -container-ip 172.17.0.1 -container-port 3128
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can see the correct parameters in the Docker daemon command line, so it seems that &lt;code&gt;DOCKER_OPTS&lt;/code&gt; has been taken into account.&lt;/p&gt;
+
+&lt;p&gt;You will have one more thing to do if you declared variables other than &lt;code&gt;DOCKER_OPTS&lt;/code&gt; in the &lt;code&gt;/etc/default/docker&lt;/code&gt; file (ie. proxy configuration) : remove the exports. Systemd does not source the configuration file, it only loads declared variables into the process&amp;rsquo; environment, so the lines that begin with &lt;code&gt;export&lt;/code&gt; will be ignored. If you have some of those lines in your configuration file, you will have to remove the word &lt;code&gt;export&lt;/code&gt;, and restart Docker&amp;rsquo;s daemon. The following &lt;code&gt;sed&lt;/code&gt; command will do that for you: &lt;code&gt;sed -i -e &amp;quot;s/^export //&amp;quot; -e &amp;quot;s/#export /#/&amp;quot; /etc/default/docker&lt;/code&gt;. Try to pull an image from Docker Hub in order to confirm that everything is OK.&lt;/p&gt;
+
+&lt;p&gt;With this workaround, you should be able to use Docker as usual on your Ubuntu 15.04 Vivid. However, don&amp;rsquo;t forget that &lt;em&gt;it&amp;rsquo;s only a workaround&lt;/em&gt;, and not a very pretty one ! So be sure to update your Docker package as soon as Ubuntu Vivid&amp;rsquo;s compatibility is officialy fixed !&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading, hope it helped.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to easily deploy your ghost blog using docker-machine and docker-compose</title>
+      <link>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</link>
+      <pubDate>Fri, 01 May 2015 22:56:06 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
+      <description>
+
+&lt;h2 id=&#34;prepare-your-docker-host-with-docker-machine:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Prepare your docker host (with docker-machine)&lt;/h2&gt;
+
+&lt;p&gt;First step is to have a docker-ready server. We have several ways of doing that: we can install docker on our server by hand (from packages, from source, using docker.io neat curl|sh, &amp;hellip;), we can use boot2docker, or we can user docker machine to directly provision a server for us. We&amp;rsquo;ll do the later as it&amp;rsquo;s reeeaallly easy, with Virtualbox as provider. You&amp;rsquo;ll need to have Virtualbox installed on your machine. Feel free to use any other provider, if you don&amp;rsquo;t want to use Virtualbox : it should not have any impact on the rest of the guide (you can deploy on DigitalOcean, &lt;a href=&#34;https://community.runabove.com/kb/en/instances/docker-in-5-minutes-on-runabove-with-docker-machine.html&#34;&gt;Runabove&lt;/a&gt;, &amp;hellip;).&lt;/p&gt;
+
+&lt;p&gt;Installing docker-machine on our workstation is as easy as copying the executable corresponding to our OS somewhere in your path. Check &lt;a href=&#34;https://docs.docker.com/machine/#installation&#34;&gt;this page&lt;/a&gt; to have the latest instructions about docker-machine&amp;rsquo;s installation. In my case I&amp;rsquo;m running on Ubuntu, so I&amp;rsquo;ll take the &lt;code&gt;docker-machine_linux64&lt;/code&gt; executable and copy it to &lt;code&gt;/usr/local/bin/docker-machine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now that we have installed docker-machine, creating a docker host is really straightfoward :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker-machine create -d virtualbox ghost
+INFO[0000] Creating client certificate: /home/adrien/.docker/machine/certs/cert.pem
+INFO[0000] Creating SSH key...                          
+INFO[0000] Image cache does not exist, creating it at /home/adrien/.docker/machine/cache...
+INFO[0000] No default boot2docker iso found locally, downloading the latest release...
+INFO[0001] Downloading latest boot2docker release to /home/adrien/.docker/machine/cache/boot2docker.iso...
+INFO[0050] Creating VirtualBox VM...                    
+INFO[0058] Starting VirtualBox VM...                    
+INFO[0059] Waiting for VM to start...                   
+INFO[0104] &amp;quot;ghost&amp;quot; has been created and is now the active machine.
+INFO[0104] To point your Docker client at it, run this in your shell: eval &amp;quot;$(docker-machine env ghost)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that output, we can be pretty confident that our machine was successfuly created, but if you need an extra confirmation you can check that the machine is indeed running in your Virtualbox Manager.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/GhostDockerMachine.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As suggested by the output of docker-machine, we can now run &lt;code&gt;eval &amp;quot;$(docker-machine env ghost)&amp;quot;&lt;/code&gt; in order to point our docker client to this newly created docker daemon, so every &lt;code&gt;docker&lt;/code&gt; command we&amp;rsquo;ll run from now will be sent to the docker daemon in the machine we just created.&lt;/p&gt;
+
+&lt;h2 id=&#34;starting-ghost-in-a-container:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Starting Ghost in a container&lt;/h2&gt;
+
+&lt;p&gt;At this point we have a docker machine ready to run our containers. Let&amp;rsquo;s run standard Ghost container on it, in order to check that everything is OK.
+Docker Hub provides &lt;a href=&#34;https://registry.hub.docker.com/u/library/ghost/&#34;&gt;an official Ghost image&lt;/a&gt; which we will use (you can see how it&amp;rsquo;s built &lt;a href=&#34;https://github.com/docker-library/ghost&#34;&gt;here&lt;/a&gt;. Let&amp;rsquo;s run it and see how it goes :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm ghost
+
+&amp;gt; ghost@0.6.0 start /usr/src/ghost
+&amp;gt; node index
+
+Migrations: Database initialisation required for version 003
+Migrations: Creating tables...
+Migrations: Creating table: posts
+Migrations: Creating table: users
+Migrations: Creating table: roles
+Migrations: Creating table: roles_users
+Migrations: Creating table: permissions
+Migrations: Creating table: permissions_users
+Migrations: Creating table: permissions_roles
+Migrations: Creating table: permissions_apps
+Migrations: Creating table: settings
+Migrations: Creating table: tags
+Migrations: Creating table: posts_tags
+Migrations: Creating table: apps
+Migrations: Creating table: app_settings
+Migrations: Creating table: app_fields
+Migrations: Creating table: clients
+Migrations: Creating table: accesstokens
+Migrations: Creating table: refreshtokens
+Migrations: Populating fixtures
+Migrations: Populating permissions
+Migrations: Creating owner
+Migrations: Populating default settings
+Migrations: Complete
+Ghost is running in development...
+Listening on 0.0.0.0:2368
+Url configured as: http://localhost:2368
+Ctrl+C to shut down
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That seems nice ! Ghost is running inside a container, on the machine we provisioned with docker-machine. How do access it now ? Well, we don&amp;rsquo;t. As you can see in the logs, Ghost is running on &lt;code&gt;localhost:2368&lt;/code&gt;, but &lt;code&gt;localhost&lt;/code&gt; here does not mean our local box, but the docker container. In order to access this port, we need to tell docker that it needs to forward it somewhere we can access, and that is done with the &lt;code&gt;-P&lt;/code&gt;, which forward all the ports declared in the Dockerfile to random accessible ports, or &lt;code&gt;-p &amp;lt;port_we_want_to_use&amp;gt;:&amp;lt;port_we_want_to_access&amp;gt;&lt;/code&gt; which let us choose which port we want to access, and where.
+So, let&amp;rsquo;s hit &lt;code&gt;Ctrl+C&lt;/code&gt; in order to stop our Ghost container, and relaunch it with the &lt;code&gt;-p&lt;/code&gt; option :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm -p 9999:2368 ghost
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will need to get the address of the docker host in order to access it. It&amp;rsquo;s really easy to get: we only have to ask docker-machine for it :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker-machine ip ghost
+192.168.56.77
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now open your favorite browser and go to this address, on port 9999 (for me it would be &lt;code&gt;http://192.168.56.77:9999&lt;/code&gt;) and you should see Ghost running.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;persisting-our-content:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Persisting our content&lt;/h2&gt;
+
+&lt;p&gt;Ok, now we are able to launch Ghost in a docker container. However, &lt;em&gt;everything&lt;/em&gt; is in the container, including you data, and that&amp;rsquo;s not really what we want. Let&amp;rsquo;s see how we could use docker&amp;rsquo;s volumes to our advantage.
+The only things we need to persist in Ghost are our config file, &lt;code&gt;config.js&lt;/code&gt;, and the &lt;code&gt;content/&lt;/code&gt; folder, where our themes are stored, and more importantly our blog posts. The Ghost docker image we&amp;rsquo;re using is making our life easier, as it is built to accept a volume that will be mapped to the Ghost&amp;rsquo;s &lt;code&gt;content/&lt;/code&gt; folder, and will look into this folder for a &lt;code&gt;config.js&lt;/code&gt; file that will be used in place of the image&amp;rsquo;s default one. So we can map only one folder, containing everything we need, and this folder will be everything we need to care about (ie. for backups).&lt;/p&gt;
+
+&lt;p&gt;You can re-use the &lt;code&gt;content&lt;/code&gt; folder of your existing blog, if you want to migrate. If you start from scratch, you can simply download the latest Ghost package and extract it from there.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ wget https://ghost.org/zip/ghost-latest.zip
+$ unzip ghost-latest.zip &amp;quot;content/*&amp;quot;
+$ rm -f ghost-latest.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you can run the Ghost image, using that &lt;code&gt;content/&lt;/code&gt; folder as a volume :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm -p 9999:2368 -v $(pwd)/content:/var/lib/ghost ghost
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; In case it&amp;rsquo;s not clear, &lt;code&gt;$(pwd)/content&lt;/code&gt; means &amp;ldquo;my current working directory, concatenated to &lt;code&gt;/content&lt;/code&gt;&amp;rdquo;. You could replace it with something like &lt;code&gt;-v /home/adrien/sandbox/ghost-docker/content&lt;/code&gt;, but for the sake of copy&amp;amp;paste I tried to put something more general.&lt;/p&gt;
+
+&lt;h2 id=&#34;adding-some-simplicity-with-docker-compose:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Adding some simplicity with docker-compose&lt;/h2&gt;
+
+&lt;p&gt;Ok so now our blog is running inside a container, Ghost&amp;rsquo;s port is exposed, content folder is mapped, and we&amp;rsquo;re quite happy. We could leave it that way and go do some other stuff, but we used a quite complex command line to launch the blog, and who knows if by the time we need to relaunch it we&amp;rsquo;ll remember it ?
+Well, we could avoid the need to remember it by using &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;docker-compose&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Compose is a tool for defining and running complex applications with Docker. With Compose, you define a multi-container application in a single file, then spin your application up in a single command which does everything that needs to be done to get it running.
+-- &lt;cite&gt;&lt;a href=&#34;https://docs.docker.com/compose&#34;&gt;https://docs.docker.com/compose&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Well, our application is not per say &amp;ldquo;complex&amp;rdquo;, but we can use compose anyway (so we can be lazy later).&lt;/p&gt;
+
+&lt;p&gt;The only thing to do, besides &lt;a href=&#34;https://docs.docker.com/compose/#installation-and-set-up&#34;&gt;installing compose on our box&lt;/a&gt;, is to create a simple YAML file, named &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;blog:
+  image: ghost
+  command: npm start
+  volumes:
+    - content:/var/lib/ghost
+  ports:
+    - 9999:2368
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can now run the blog with the command :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker-compose up -d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;-d&lt;/code&gt; flag tells docker to launch the container in the background. We can check that it&amp;rsquo;s correctly running with a classic &lt;code&gt;docker ps&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker ps
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                    NAMES
+9a626c13449d        ghost:0             &amp;quot;/entrypoint.sh npm    7 seconds ago       Up 6 seconds        0.0.0.0:9999-&amp;gt;2368/tcp   blogcompose_blog_1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;what-s-next:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;What&amp;rsquo;s next ?&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ve seen how to setup the blog using docker, machine and compose and now we need to think about exploiting it ! A good next step would be to setup a backup, a script copying our &lt;code&gt;content&lt;/code&gt; folder and our &lt;code&gt;docker-compose.yml&lt;/code&gt; file somewhere safe. We could also add a custom theme to our newly created blog, by putting it in our &lt;code&gt;content/themes/&lt;/code&gt; folder and restarting the container.&lt;/p&gt;
+
+&lt;p&gt;Or we could simply connect to Ghost, and start writing stuff ! Happy blogging !&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Proxy configuration for Docker on CentOS 7</title>
+      <link>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</link>
+      <pubDate>Wed, 10 Sep 2014 10:57:23 +0000</pubDate>
+      
+      <guid>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</guid>
+      <description>&lt;p&gt;We saw earlier how to &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;configure the proxy for docker on Ubuntu 14.04&lt;/a&gt;, let&amp;rsquo;s now see how to do that on CentOS 7.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+HTTPS_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll need to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# systemctl restart docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You may still need to declare the proxy in the Dockerfile too, as seen &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;in the Ubuntu article&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running docker behind a proxy on Ubuntu 14.04</title>
+      <link>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
+      <pubDate>Wed, 10 Sep 2014 10:32:00 +0000</pubDate>
+      
+      <guid>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&amp;rsquo;s see how to fix that.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/defaults/docker.io&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export http_proxy=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll have to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo service docker.io restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should allow docker daemon to pull images from the central registry. However, if you need to configure the proxy in the Dockerfile (ie. if you&amp;rsquo;re using &lt;code&gt;apt-get&lt;/code&gt; to install packages), you&amp;rsquo;ll need to declare it there too.&lt;/p&gt;
+
+&lt;p&gt;Add the following lines at the top of your Dockerfile:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ENV http_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV https_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTP_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTPS_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With those settings, your container should now build, using the proxy to access the outside world.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04: How to open ssh:// links in a terminal</title>
+      <link>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</link>
+      <pubDate>Thu, 07 Aug 2014 12:05:32 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re using a web based tool to manage your servers, chances are that this tool is providing &lt;code&gt;ssh://&lt;/code&gt; links to connect directly to those server with one click from your web browser. Let&amp;rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link.&lt;/p&gt;
+
+&lt;p&gt;First we need a script which is able to process a string like &amp;ldquo;ssh://user@host:port&amp;rdquo;. Create a file named &lt;code&gt;ssh-handler.sh&lt;/code&gt; somewhere in your home directory (ie. &lt;code&gt;~/.local/bin/ssh-handler.sh&lt;/code&gt; - I tend to put my custom executables in &lt;code&gt;~/.local/bin&lt;/code&gt;, and I added that to my &lt;code&gt;PATH&lt;/code&gt;)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+d=${1#ssh://}
+gnome-terminal -e &amp;quot;ssh $d&amp;quot; &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make it executable with a &lt;code&gt;chmod a+x ~/.local/bin/ssh-handler.sh&lt;/code&gt;.
+If you want to test it, open an &lt;code&gt;xterm&lt;/code&gt; (so we can make sure the script will open gnome-terminal by itself), and execute &lt;code&gt;~/.local/bin/ssh-handler.sh ssh://localhost&lt;/code&gt;. This should open a gnome-terminal window, prompting you for your local password (provided that you have an sshd running on your local machine).&lt;/p&gt;
+
+&lt;p&gt;Now we need to create a &lt;code&gt;.desktop&lt;/code&gt; file which will use the handler we just created. Create a file in &lt;code&gt;~/.local/share/applications/&lt;/code&gt; named &lt;code&gt;ssh-handler.desktop&lt;/code&gt;, with the following content:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[Desktop Entry]
+Type=Application
+Name=SSH Handler
+Exec=ssh-handler.sh %u
+Icon=utilities-terminal
+StartupNotify=false
+MimeType=x-scheme-handler/ssh;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important&lt;/strong&gt;: if your &lt;code&gt;~/.local/bin&lt;/code&gt; folder is not in your PATH variable, you will have to specify the full path of the &lt;code&gt;ssh-handler.sh&lt;/code&gt; script in the &lt;code&gt;Exec=&lt;/code&gt; line, ie. &lt;code&gt;Exec=/home/adrien/.local/bin/ssh-handler.sh&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Once this file is created, the last step is to tell the system that the SSH links should be handled by default by this desktop entry. Before we do that, it can be a good idea to check that nothing is currently handling the SSH protocol, or if something is handling it make sure that we can replace it safely. To check that, run the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;xdg-mime query default x-scheme-handler/ssh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If the output is blank, we&amp;rsquo;re good ! It not, use your best judgement to decide if you want to replace it or not.&lt;/p&gt;
+
+&lt;p&gt;Now we can run the following command to define our &lt;code&gt;ssh-handler.desktop&lt;/code&gt; file as the default handler for ssh protocol:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;xdg-mime default ssh-handler.desktop x-scheme-handler/ssh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it ! Clicking on &lt;code&gt;ssh://...&lt;/code&gt; links in your browser should now directly open a terminal window and connect to the specified host.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</title>
+      <link>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
+      <pubDate>Tue, 05 Aug 2014 15:12:00 +0000</pubDate>
+      
+      <guid>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
+      <description>&lt;p&gt;When SSH&amp;rsquo;ing to old boxes within tmux, I sometimes get the following error:
+&lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt;, and a very ugly prompt.&lt;/p&gt;
+
+&lt;p&gt;An easy way to fix this is to set a different value for the &lt;code&gt;default-terminal&lt;/code&gt; setting in your &lt;code&gt;tmux.conf&lt;/code&gt;. You only have to open your &lt;code&gt;~/.tmux.conf&lt;/code&gt; and add the following line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;set -g default-terminal &amp;quot;xterm&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, note that this will affect all your sessions.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to redefine your &lt;code&gt;default-terminal&lt;/code&gt; value, you can fix this only when needed by setting a different value for the &lt;code&gt;TERM&lt;/code&gt; variable when you ssh to those boxes. So, instead of ssh&amp;rsquo;ing like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh adrien@my-box
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;you do that:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;TERM=xterm ssh adrien@my-box
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And you should not see the &lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt; message anymore.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Git: setup a remote repo from a local repo</title>
+      <link>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</link>
+      <pubDate>Wed, 16 Jul 2014 17:19:44 +0000</pubDate>
+      
+      <guid>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</guid>
+      <description>&lt;p&gt;Let&amp;rsquo;s assume you started a new project. You&amp;rsquo;re using Git for versionning, because it&amp;rsquo;s easy to set it up locally, and for a few hours/days/weeks you&amp;rsquo;re just happy with your local repository. However, now you need to go bigger and start sharing the code with your coworkers, or maybe want to setup a continuous integration system, or whatever else, and for that your need to create a remote repository which will act as reference for all the actors of your project.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s quite easy to do, actually. First thing you need to do is to create a &lt;em&gt;bare repository&lt;/em&gt; on your remote server. The main difference between a bare repository and a classic one (like the one on your computer), is that the bare repository does not have a working copy checked out, it only have the versionning information (which is in the &lt;code&gt;.git&lt;/code&gt; folder of your local repo).&lt;/p&gt;
+
+&lt;p&gt;So let&amp;rsquo;s create that remote repo. Connect to your remote host using ssh, and go where you want to store your repo (ie. create a folder named &lt;code&gt;repositories&lt;/code&gt; in your user&amp;rsquo;s home, with a sub-folder named after your project, so the repository path is &lt;code&gt;~/repositories/my-project.git&lt;/code&gt;)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mkdir -p ~/repositories/my-project.git
+$ cd ~/repositories/my-project.git
+$ git init --bare .
+Initialized empty Git repository in /home/adrien/repositories/my-project.git/
+
+$ ls -A
+branches  config  description  HEAD  hooks  info  objects  refs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;rsquo;s all for the remote repository. Now we need to setup your local repo so you can push your commits to your newly created repo. We can do that with the following commands, on your local work directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd my-repo
+$ git add origin your-user@your-host:~/repositories/my-project.git
+$ git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And we are done ! Your coworker can now clone your repo from the remote host:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git clone your-user@your-host:~/repositories/my-project.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; If you plan to have a bunch of git repositories stored here, you might want to check out &lt;a href=&#34;http://gitblit.com/&#34;&gt;GitBlit&lt;/a&gt;, which will allow you to view and manage your git repositories easily, and serve them through http.
+It would also be interresting to implement some sort of backup strategy for your repositories.&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Git behind a proxy</title>
+      <link>http://nknu.net/git-through-proxy/</link>
+      <pubDate>Fri, 30 May 2014 12:47:43 +0000</pubDate>
+      
+      <guid>http://nknu.net/git-through-proxy/</guid>
+      <description>
+
+&lt;p&gt;If you need to access a git repository somewhere on the internet (let&amp;rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&amp;rsquo;ll need to go through an HTTP proxy. Let&amp;rsquo;s see how we can configure that.&lt;/p&gt;
+
+&lt;h4 id=&#34;option-1-environment-variables:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 1 : Environment variables&lt;/h4&gt;
+
+&lt;p&gt;Git honor the environment variables &lt;code&gt;http_proxy&lt;/code&gt; and &lt;code&gt;https_proxy&lt;/code&gt;, so one way of solving our problem is setting those variables as follow:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http_proxy=&#39;http://proxy_host:proxy_port&#39;
+https_proxy=$http_proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your proxy requires authentication, you need  to specify your user/password in the URL:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http_proxy=&#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you need more info about setting proxy info in your environment, check &lt;a href=&#34;http://nknu.net/ubuntu-14-04-proxy-authentication-config/&#34;&gt;that article I wrote about that a few month back&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;option-2-git-s-variable-http-proxy:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 2 : Git&amp;rsquo;s variable http.proxy&lt;/h4&gt;
+
+&lt;p&gt;Git also check what&amp;rsquo;s in its own &lt;code&gt;http.proxy&lt;/code&gt; variable, so you can set it on a per-project basis with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config http.proxy &#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or on your global git configuration with this one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global http.proxy &#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Et voilà ! You should now be able to clone your external repo (ie. on GitHub).&lt;/p&gt;
+
+&lt;h4 id=&#34;okay-this-got-http-and-https-repo-working-but-what-about-git:26f68760661a68a37e1944470cf4b238&#34;&gt;Okay, this got http:// and https:// repo working, but what about git:// ?&lt;/h4&gt;
+
+&lt;p&gt;If the settings above did not solve your problem when cloning repositories using the &lt;code&gt;git://&lt;/code&gt; protocol. That&amp;rsquo;s a solid hint that your network config does not allow you to connect to remote port 9418, which is used by git&amp;rsquo;s own protocol.&lt;/p&gt;
+
+&lt;p&gt;You have an easy way and a hard way to work arround that.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The easy way&lt;/strong&gt; is to use the HTTP protocol instead of the git protocol. You can tell git to do that with the almost magical &lt;code&gt;url.&amp;lt;&amp;gt;.insteadOf&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global url.https://github.com/.insteadOf git://github.com/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That basically tells git to systematically replace &lt;code&gt;git://github.com&lt;/code&gt; with &lt;code&gt;https://github.com&lt;/code&gt; when you call an external URL, resolving our problem.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The hard way&lt;/strong&gt; is to use corkscrew or socat to proxy your connection through the http proxy. You&amp;rsquo;ll need to do that if &lt;code&gt;git://&lt;/code&gt; is the only protocol your remote repository is exposing. I&amp;rsquo;ve never seen such a repo, so that&amp;rsquo;s something I did not try, but &lt;a href=&#34;http://gitolite.com/git-over-proxy.html#proxying-the-git-protocol&#34;&gt;here is a page describing how to do it&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to sync your subtitles with media player classic</title>
+      <link>http://nknu.net/sync-your-subtitles-with-mpc-hc/</link>
+      <pubDate>Sat, 17 May 2014 19:05:36 +0000</pubDate>
+      
+      <guid>http://nknu.net/sync-your-subtitles-with-mpc-hc/</guid>
+      <description>&lt;p&gt;Sometimes when you download a video on the internet, you get subtitles on a separate file (ie. from &lt;a href=&#34;http://www.opensubtitles.org/&#34;&gt;Open Subtitles&lt;/a&gt;, &lt;a href=&#34;http://subscene.com/&#34;&gt;Subscene&lt;/a&gt;, &lt;a href=&#34;http://www.addic7ed.com/&#34;&gt;addic7ed&lt;/a&gt;, etc&amp;hellip;), and they are not always perfectly sync&amp;rsquo;ed. If you&amp;rsquo;re using &lt;a href=&#34;http://mpc-hc.org/&#34;&gt;Media Player Classic&lt;/a&gt;, you can fix that pretty easily with its &amp;ldquo;Sub resync&amp;rdquo; feature.  Open your video with Media Player Classic and load your subtitles, then hit &lt;code&gt;ctrl&lt;/code&gt; + &lt;code&gt;6&lt;/code&gt; (or &lt;code&gt;View -&amp;gt; Subresync&lt;/code&gt;) to open the sub-resync console.
+Now find a line in the subtitles that match what is being said on the video, right-click the line on the &amp;ldquo;Time&amp;rdquo; colum, and select &lt;code&gt;Current&lt;/code&gt; (or hit &lt;code&gt;F5&lt;/code&gt;). You can see that the timings in the subtitle file have been adjusted.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/May/AirForceOne-MPC-HC.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Best part is that you can save those modifications directly in the subtitle file by going to &lt;code&gt;File -&amp;gt; Save subtitles&lt;/code&gt;, so next time you play that video, you will not have to do that manipulation all over again.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>apt-get install error at run-parts zz-update-grub</title>
+      <link>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</link>
+      <pubDate>Wed, 14 May 2014 11:22:01 +0000</pubDate>
+      
+      <guid>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</guid>
+      <description>&lt;p&gt;When you install programs using &lt;code&gt;apt-get&lt;/code&gt;, post-install tasks are executed to keep the system consistent. However, sometimes, those tasks does not go well, as in the example below (on a Debian Squeeze - yeah, I know, this system is not really up to date &amp;hellip;).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ apt-get install whatever
+...
+Running depmod.
+Running update-initramfs.
+update-initramfs: Generating /boot/initrd.img-2.6.32-5-amd64
+Examining /etc/kernel/postinst.d.
+run-parts: executing /etc/kernel/postinst.d/initramfs-tools 2.6.32-5-amd64 /boot/vmlinuz-2.6.32-5-amd64
+run-parts: executing /etc/kernel/postinst.d/zz-update-grub 2.6.32-5-amd64 /boot/vmlinuz-2.6.32-5-amd64
+Generating grub.cfg ...
+/usr/sbin/grub-probe: error: Couldn&#39;t find PV pv3. Check your device.map.
+run-parts: /etc/kernel/postinst.d/zz-update-grub exited with return code 1
+Failed to process /etc/kernel/postinst.d at /var/lib/dpkg/info/linux-image-2.6.32-5-amd64.postinst line 799.
+dpkg : erreur de traitement de linux-image-2.6.32-5-amd64 (--configure) :
+ le sous-processus script post-installation installé a retourné une erreur de sortie d&#39;état 1
+configured to not write apport reports
+                                      Des erreurs ont été rencontrées pendant l&#39;exécution :
+ linux-image-2.6.32-5-amd64
+E: Sub-process /usr/bin/dpkg returned an error code (1)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In that case, the cause seems to be a corrupted GRUB device map, as stated in the error message.
+This device.map file can be found in your /boot/grub folder, and is a list of device where GRUB will look for a boot configuration.
+For example, when not corrupted, mine looks like:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat /boot/grub/device.map
+(fd0)   /dev/fd0
+(hd0)   /dev/sda
+(hd1)   /dev/sdb
+(hd2)   /dev/sdc
+(hd3)   /dev/sdd
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;In order to fix our issue, we need to generate a new device map. It can be done easily with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ grub-mkdevicemap
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Once done, resume the post-install tasks using the &lt;code&gt;dpkg --configure --pending&lt;/code&gt; command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# dpkg --configure --pending
+Paramétrage de linux-image-2.6.32-5-amd64 (2.6.32-48squeeze1) ...
+Running depmod.
+Running update-initramfs.
+update-initramfs: Generating /boot/initrd.img-2.6.32-5-amd64
+Examining /etc/kernel/postinst.d.
+run-parts: executing /etc/kernel/postinst.d/initramfs-tools 2.6.32-5-amd64 /boot/vmlinuz-2.6.32-5-amd64
+run-parts: executing /etc/kernel/postinst.d/zz-update-grub 2.6.32-5-amd64 /boot/vmlinuz-2.6.32-5-amd64
+Generating grub.cfg ...
+Found linux image: /boot/vmlinuz-2.6.32-5-amd64
+Found initrd image: /boot/initrd.img-2.6.32-5-amd64
+done
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can now re-launch your initial &lt;code&gt;apt-get install&lt;/code&gt; command in order to make sure everything is OK, and it should now exit without any error message.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to create a custom RHEL install CD</title>
+      <link>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</link>
+      <pubDate>Thu, 08 May 2014 21:31:12 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</guid>
+      <description>&lt;p&gt;You&amp;rsquo;ll need the RHEL standard installation ISO as a base, but you probably have it in one form or another if you&amp;rsquo;re reading this guide &amp;hellip;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Mount the ISO somewhere&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /mnt/rhelcd
+mount /path/to/rhel-dvd.iso /mnt/rhelcd -o loop
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Copy the content of the disk somewhere on your hard drive, so we can work on it and make our modifications.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir ~/workdir
+cp /mnt/rhelcd/* ~/workdir
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note: There are a few dotfiles in the disk, so don&amp;rsquo;t forget them, as depending on your system setup they might not be copied along when you perform the &lt;code&gt;cp&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create your kickstart file, describing your installation. I will not cover the creation of that file in that guide, but you can find plenty of information about that &lt;a href=&#34;https://www.google.fr/search?q=how+to+create+kickstart+file&amp;amp;oq=how+to+create+kickstart+file&amp;amp;aqs=chrome..69i57j0l5.4759j0j7&amp;amp;sourceid=chrome&amp;amp;es_sm=119&amp;amp;ie=UTF-8&#34;&gt;on the internets&lt;/a&gt;. Let me know in the comments if you feel that I should add a guide for creating the kickstart file here though.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;You can now put the kickstart file in the workdir. I like to create a dedicated folder where I put all the custom stuff I plan to add to the installation (rpms, binairies, config files, &amp;hellip;), but feel free to put it right in the root directory if you prefer.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;workdir
+├── nknu
+│   ├── bin
+│   │   ├── some-binary-file-1
+│   │   └── some-binary-file-2
+│   ├── kickstart.cfg
+│   └── rpms
+│       ├── a-nice-rpm
+│       └── another-rpm
+└── ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Edit the file &lt;code&gt;isolinux/isolinux.cfg&lt;/code&gt; and change the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;label linux
+menu label ^Install or upgrade an existing system
+menu default
+kernel vmlinuz
+append initrd=initrd.img
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;label linux
+menu label ^Install or upgrade an existing system
+menu default
+kernel vmlinuz
+append initrd=initrd.img ks=cdrom://nknu/kickstart.cfg
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Make sure your label is either the default one or the only one, if you want the installation to be 100% unattended.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;You can now rebuild the ISO image with your modifications by launching the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ~/workdir
+mkisofs -o ~/my-custom-rhel-cd.iso -b isolinux/isolinux.bin -c isolinux/boot.cat --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V disks .
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Burn the newly created &lt;code&gt;~/my-custom-rhel-cd.iso&lt;/code&gt; file on a CD (or just use it in a VM), and you&amp;rsquo;re done !&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; This should work for CentOS too, but I did not try.&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading !&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04 Exchange configuration, with Thunderbird and Pidgin</title>
+      <link>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</link>
+      <pubDate>Wed, 23 Apr 2014 22:49:27 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</guid>
+      <description>
+
+&lt;p&gt;A lot of companies are using Microsoft&amp;rsquo;s Exchange for their communications, with Outlook for the mails/agenda and Lync for instant messaging, and those are common blocking points when one want to switch to Linux on his primary work computer. An easy workaround would be to user Outlook Web Access, but it lacks some features (notifications, desktop integration, &amp;hellip;) and it&amp;rsquo;s not always very convenient (you can&amp;rsquo;t use its advanced features if you&amp;rsquo;re using Chrome for example). However it is possible to have a fully functionnal mail/calendar/IM on Linux, able to connect to the Exchange ecosystem of your company, using Davmail as a gateway, Thunderbird as email and agenda client, and pidgin as instant messenging client. Let&amp;rsquo;s see how we can do that on an Ubuntu 14.04.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;#davmail&#34;&gt;Davmail: the bridge between two worlds&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#thunderbird&#34;&gt;Thunderbird: our new Outlook&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#mail&#34;&gt;Mail&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#agenda&#34;&gt;Agenda&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#address-book&#34;&gt;Address book&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pidgin&#34;&gt;Replacing Lync with Pidgin&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;span-id-davmail-davmail-the-bridge-between-two-worlds-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;davmail&#34;&gt;Davmail: the bridge between two worlds&lt;/span&gt;&lt;/h3&gt;
+
+&lt;p&gt;The first thing we have to do is to find a way to communicate with the Exchange server. That&amp;rsquo;s what &lt;a href=&#34;http://davmail.sourceforge.net/&#34;&gt;DavMail&lt;/a&gt; do. According to its official website:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;DavMail is a POP/IMAP/SMTP/Caldav/Carddav/LDAP exchange gateway allowing users to use any mail/calendar client (e.g. Thunderbird with Lightning or Apple iCal) with an Exchange server, even from the internet or behind a firewall through Outlook Web Access. DavMail now includes an LDAP gateway to Exchange global address book and user personal contacts to allow recipient address completion in mail compose window and full calendar support with attendees free/busy display.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;First thing we need to do is to install it. You can get it &lt;a href=&#34;http://sourceforge.net/projects/davmail/files/&#34;&gt;from its official download page&lt;/a&gt;. Once downloaded, install it by either double clicking the file, or by opening a terminal and typing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo dpkg -i davmail_4.4.1-2225-1_all.deb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;(Replace the version with the actual version of the file you downloaded)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Once installed, you can open it from the Dash (hit &lt;code&gt;Super&lt;/code&gt; and then type &amp;ldquo;Davmail&amp;rdquo;) or from the console (just type &lt;code&gt;davmail&lt;/code&gt;). You can keep the default settings for everything except the &amp;ldquo;URL OWA (Exchange)&amp;rdquo; field, where you need to put your Outlook Web Access URL.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;span id=&#34;find-out-owa-url&#34;&gt;&lt;strong&gt;Finding out your OWA URL:&lt;/strong&gt;&lt;/span&gt; you can ask your admin, or try to guess it with trial and error: depending on your version of Exchange it should be something like &lt;code&gt;https://&amp;lt;domain.net|server&amp;gt;/exchange&lt;/code&gt; or &lt;code&gt;https://&amp;lt;domain.net|server&amp;gt;/owa&lt;/code&gt;. You can find which server/domain you need to use by digging into your Outlook properties. In the latest version of Outlook, you may find this information by clicking on the &amp;ldquo;File&amp;rdquo; tab in the top left corner of the ribbon, then &amp;ldquo;Information&amp;rdquo;. If it&amp;rsquo;s not there and you&amp;rsquo;re using Lync, you can right-click on its tray icon and select &amp;ldquo;Configuration informations&amp;rdquo;, it will open a windows full of information, and if you go to the &amp;ldquo;EWS URL&amp;rdquo; line, you&amp;rsquo;ll see which server you need to connect to.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;center&gt;
+&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/davmail-config-1.png&#34; alt=&#34;Davmail - configuration&#34; /&gt;
+&lt;/center&gt;&lt;/p&gt;
+
+&lt;p&gt;Hit the save button, and we&amp;rsquo;re done ! You should see a popup saying that Davmail is running.&lt;/p&gt;
+
+&lt;p&gt;Note that if you have other people in your organization willing to use davmail as well, you can install on a server and configure it once and for all so everyone can use it.
+If you&amp;rsquo;re installing it only for you though, and on your local machine, you&amp;rsquo;ll certainly want it to start with your session. Ubuntu has a dedicated tool for managing startup application, called &amp;hellip; &amp;ldquo;Startup applications&amp;rdquo;. Open the Dash and type &amp;ldquo;Startup applications&amp;rdquo;, create a new entry named &amp;ldquo;Davmail&amp;rdquo; and just enter &amp;ldquo;davmail&amp;rdquo; in the command field.&lt;/p&gt;
+
+&lt;h3 id=&#34;span-id-thunderbird-thunderbird-our-new-outlook-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;thunderbird&#34;&gt;Thunderbird: our new Outlook&lt;/span&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.mozilla.org/fr/thunderbird/&#34;&gt;Thunderbird&lt;/a&gt; is pre-installed on Ubuntu 14.04. If it&amp;rsquo;s not installed on your distribution, you can find out how to get it on its &lt;a href=&#34;http://www.mozilla.org/fr/thunderbird/&#34;&gt;official website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;span-id-mails-mails-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;mails&#34;&gt;Mails&lt;/span&gt;&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Open Thunderbird&lt;/li&gt;
+&lt;li&gt;Go to &lt;code&gt;File −&amp;gt; New -&amp;gt; Existing mail account ...&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fill in the name, email and password fields&lt;/li&gt;
+&lt;li&gt;Click the &amp;ldquo;Manual configuration&amp;rdquo; button, and fill in the fields as follow (adapt the following values if you modified the davmail configuration):
+
+&lt;ul&gt;
+&lt;li&gt;Incoming:
+
+&lt;ul&gt;
+&lt;li&gt;Type: IMAP&lt;/li&gt;
+&lt;li&gt;Server: localhost&lt;/li&gt;
+&lt;li&gt;Port: 1143&lt;/li&gt;
+&lt;li&gt;SSL: None&lt;/li&gt;
+&lt;li&gt;Authentication: normal password&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Outgoinh:
+
+&lt;ul&gt;
+&lt;li&gt;Type: SMTP&lt;/li&gt;
+&lt;li&gt;Server: localhost&lt;/li&gt;
+&lt;li&gt;Port: 1025&lt;/li&gt;
+&lt;li&gt;SSL: None&lt;/li&gt;
+&lt;li&gt;Authentication: normal password&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Username: your Exchange username, usually what&amp;rsquo;s before the &amp;lsquo;@&amp;rsquo; in your email address (but not necessarily). Basically it&amp;rsquo;s the username you&amp;rsquo;re using to login into OWA.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Click &amp;ldquo;Test&amp;rdquo;, and if everything is OK you should be able to click &amp;ldquo;Done&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-mail-account-setup.png&#34; alt=&#34;Thunderbird mail account creation&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;At this point Thunderbird should start to fetch your emails from the server, and you should see them appear in your inbox.&lt;/p&gt;
+
+&lt;h4 id=&#34;span-id-agenda-agenda-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;agenda&#34;&gt;Agenda&lt;/span&gt;&lt;/h4&gt;
+
+&lt;p&gt;For the calendar, we&amp;rsquo;re going to use the following Thunderbird extensions: &lt;strong&gt;Lightning&lt;/strong&gt;, which adds agenda capabilities to Thunderbird, and &lt;strong&gt;ExchangeCalendar&lt;/strong&gt;, which allow to connect directly to Exchange calendars.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;In Thunderbird, to to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Use the search field to search for &amp;ldquo;Lightning&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Now we need to install ExchangeCalendar. It seems that the version available in the store is obsolete. The version used for this guide is 3.2.0-Beta77, if you can&amp;rsquo;t find it in the store (3.2.0-Beta77 or above), I&amp;rsquo;d suggest to download it directly from &lt;a href=&#34;http://www.1st-setup.nl/wordpress/?page_id=551&#34;&gt;this page&lt;/a&gt;.
+Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, click on the little toolbox right before the search area, select &amp;ldquo;Install from file&amp;rdquo;, and then navigate to the .xpi file you juste downloaded.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-install-addon-from-file.png&#34; alt=&#34;Thunderbird - Install from file&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once those two addons are installed, go back to Thunderbird&amp;rsquo;s main window and perform the following actions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Go to &lt;code&gt;File -&amp;gt; New -&amp;gt; Calendar&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select &amp;ldquo;On the network&amp;rdquo;, then click next&lt;/li&gt;
+&lt;li&gt;Select &amp;ldquo;Microsoft Exchange 2007/2010/2013&amp;rdquo;, then click next&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-add-calendar.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Give a name to the calendar, then click next&lt;/li&gt;
+&lt;li&gt;Fill in the fields as follow:
+
+&lt;ul&gt;
+&lt;li&gt;Server URL: your EWS URL. You can find it out with &lt;a href=&#34;#find-out-owa-url&#34;&gt;the method used for finding our OWA URL&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Mailbox name: your email address&lt;/li&gt;
+&lt;li&gt;User: your username (the one you use to login into OWA)&lt;/li&gt;
+&lt;li&gt;Domain: your company&amp;rsquo;s domain&lt;/li&gt;
+&lt;li&gt;Shared folder: leave that field empty&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Click the &amp;ldquo;Verify&amp;rdquo; button, and if everything is OK hit &amp;ldquo;Next&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-new-calendar-2-1.png&#34; alt=&#34;Thunderbird - Agenda configuration box&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The calendar should now appear in the &amp;ldquo;Agenda&amp;rdquo; tab of Thunderbird.&lt;/p&gt;
+
+&lt;h4 id=&#34;span-id-address-book-address-book-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;address-book&#34;&gt;Address book&lt;/span&gt;&lt;/h4&gt;
+
+&lt;p&gt;If your company is using LDAP for the address book, you can configure Thunderbird to use if with the following steps:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;In the Thunderbird toolbar, click the &amp;ldquo;Address Book&amp;rdquo; button.&lt;/li&gt;
+&lt;li&gt;In the Address Book window, click &lt;code&gt;File -&amp;gt; New -&amp;gt; LDAP Directory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You may need to ask your administrator to give you the hostname and the Base DN&lt;/li&gt;
+&lt;li&gt;Click &amp;ldquo;OK&amp;rdquo;, and verify that you can successfully search people in the Address Book&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-address-book-ldap-config.png&#34; alt=&#34;Thunderbird - Address Book LDAP config&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once done, you can enable the address auto-completion when writing message in Thunderbird&amp;rsquo;s preferences window (&lt;code&gt;Edit -&amp;gt; Preferences&lt;/code&gt;): in the &amp;ldquo;Composition&amp;rdquo; tab, check &amp;ldquo;Directory Server&amp;rdquo; then select the address book you just added.&lt;/p&gt;
+
+&lt;h3 id=&#34;span-id-pidgin-replacing-lync-with-pidgin-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;pidgin&#34;&gt;Replacing Lync with pidgin&lt;/span&gt;&lt;/h3&gt;
+
+&lt;p&gt;In order to have instant messenging available on our linux box, we&amp;rsquo;re going to use pidgin, with the pidgin-sipe plugin (to enable Exchange capabilities), and optionnaly pidgin-libnotify (to have a better integration into our Ubuntu 14.04).&lt;/p&gt;
+
+&lt;p&gt;You will need to gather info from your Windows&amp;rsquo;s Lync setup, by right-clicking on its tray icon and opening the &amp;ldquo;Configuration Informations&amp;rdquo;. From this window, get the server name, you&amp;rsquo;ll need it to setup pidgin.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/pidgin-1.png&#34; alt=&#34;Lync - config info 1&#34; /&gt;
+&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/pidgin-2.png&#34; alt=&#34;Lync - config info 2&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If pidgin is not installed on your system, you can install it via the Ubuntu Software Center simply by searching for it, or by opening a terminal and typing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install pidgin pidgin-sipe pidgin-libnotify
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Launch pidgin, and go to &lt;code&gt;Account -&amp;gt; Manage -&amp;gt; Add ...&lt;/code&gt;, and fill in the fields as follow:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Tab &amp;ldquo;Essential&amp;rdquo;:
+
+&lt;ul&gt;
+&lt;li&gt;Protocol: Office communicator&lt;/li&gt;
+&lt;li&gt;User: your email address&lt;/li&gt;
+&lt;li&gt;Login: the login you use to access OWA&lt;/li&gt;
+&lt;li&gt;Password: your password for that account&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Tab &amp;ldquo;Advanced&amp;rdquo;:
+
+&lt;ul&gt;
+&lt;li&gt;Server: the server you found in your Lync settings&lt;/li&gt;
+&lt;li&gt;Connection type: Auto&lt;/li&gt;
+&lt;li&gt;Encryption: TSL-DSK&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Tab &amp;ldquo;Proxy&amp;rdquo;:
+
+&lt;ul&gt;
+&lt;li&gt;Type: No proxy&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Save and connect, you should see your contact list appear.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; in all my boxes (on Lubuntu 13.10 and Ubuntu 14.04), I&amp;rsquo;ve never managed to have pidgin work without setting the &lt;code&gt;NSS_SSL_CBC_RANDOM_IV&lt;/code&gt; environment variable to 0. Without this variable, I always got a &amp;ldquo;&lt;strong&gt;Read Error&lt;/strong&gt;&amp;rdquo; at connection.
+To set this variable, edit your ~/.profile file and add the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# SSL config for pidgin
+export NSS_SSL_CBC_RANDOM_IV=0`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will have to logout/login for this parameter to take effect.&lt;/p&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it ! Let me know in the comments if something does not work, of if you have a better method. Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Best Heartbleed explanation ever</title>
+      <link>http://nknu.net/best-heartbleed-explanation-ever/</link>
+      <pubDate>Thu, 17 Apr 2014 14:22:39 +0000</pubDate>
+      
+      <guid>http://nknu.net/best-heartbleed-explanation-ever/</guid>
+      <description>&lt;p&gt;xkcd posted a drawing explaining perfectly how the &lt;a href=&#34;http://heartbleed.com/&#34;&gt;Heartbleed bug&lt;/a&gt; works:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/heartbleed_explanation.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Source: &lt;a href=&#34;http://xkcd.com/1354/&#34;&gt;http://xkcd.com/1354/&lt;/a&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04 proxy config with authentication</title>
+      <link>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</link>
+      <pubDate>Wed, 16 Apr 2014 21:05:11 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</guid>
+      <description>
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Updated the 07 Aug 2014:&lt;/strong&gt; added autoconfig URL settings&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You have several options to work arround that.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Some applications don&amp;rsquo;t respect the settings defined by those methods. In that case, you&amp;rsquo;ll have to refer to their documentation to configure the proxy.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;1-the-apt-get-click-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
+
+&lt;p&gt;Install the package &lt;code&gt;dconf-editor&lt;/code&gt; (using the Ubuntu Software Center or simply typing &lt;code&gt;sudo apt-get install dconf-editor&lt;/code&gt; in your terminal), and open it (hit &lt;code&gt;alt-F2&lt;/code&gt; then type &lt;code&gt;dconf-editor&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;In the dconf Editor window, go to &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy -&amp;gt; http&lt;/code&gt; and configure your username and password.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have local domains/ip/masks you don&amp;rsquo;t want to use the proxy with, you can configure them in the &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy&lt;/code&gt; window, in the &lt;code&gt;ignore-hosts&lt;/code&gt; field. For example if your company use an internal network name &lt;code&gt;mycompany.lan&lt;/code&gt;, you can add &lt;code&gt;*.mycompany.lan&lt;/code&gt; to avoid using the proxy when accessing this domain.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Note that if your network provides an autoconfig script, you can use it here. Set the &lt;code&gt;mode&lt;/code&gt; to &lt;code&gt;auto&lt;/code&gt;, and enter the URL of the autoconfig script ing the &lt;code&gt;autoconfig-url&lt;/code&gt; field. When you use the &lt;code&gt;auto&lt;/code&gt; mode, every other setting exept &lt;code&gt;autoconfig-url&lt;/code&gt; is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type &lt;code&gt;chrome://net-internals/#proxy&lt;/code&gt; in the URL bar. The &lt;code&gt;PAC script&lt;/code&gt; line is what you&amp;rsquo;re looking for:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.&lt;/p&gt;
+
+&lt;p&gt;Create a &lt;code&gt;.proxy&lt;/code&gt; file in your home directory. Have it only read/write-able by yourself, as we will store your credentials in there (including your password).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;touch ~/.proxy
+chmod 600 ~/.proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open it with your favorite text editor and add the following content, replacing &lt;code&gt;username&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;proxy_hostname&lt;/code&gt; and &lt;code&gt;proxy_port&lt;/code&gt; by their actual values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Proxy config
+export http_proxy=&#39;username:password@http://proxy_hostname:proxy_port&#39;
+export no_proxy=’localhost,127.0.0.1,.mycompany.lan’
+
+export https_proxy=$http_proxy
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$http_proxy
+export NO_PROXY=$no_proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that option, the &lt;code&gt;no_proxy&lt;/code&gt; variable let you set a list of IP/mask/domains to ignore. Note that the domain syntax is slightly different than the dconf-editor one: only &lt;code&gt;.mycompany.net&lt;/code&gt; withouth any wildcard.&lt;/p&gt;
+
+&lt;p&gt;Edit your &lt;code&gt;~/.profile&lt;/code&gt; file and add the following lines, which will load the content of the file we just created when you start your session.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# include proxy config if it exists
+if [ -f $HOME/.proxy ]; then
+    . $HOME/.proxy
+fi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Log out and log back in, and your proxy settings should be taken into account.&lt;/p&gt;
+
+&lt;p&gt;Note that APT does not respect this setup. In order to have it use your proxy, you will have to edit the &lt;code&gt;/etc/apt/apt.conf&lt;/code&gt; file (create it if it does not exist) and add the following line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Acquire::http::Proxy &amp;quot;http://username:password@my.proxy.host:port&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Optionnal step&lt;/strong&gt;: if you want your proxy setting to be propagated when you&amp;rsquo;re using sudo, open the sudo config file with &lt;code&gt;sudo visudo&lt;/code&gt; and add the following line after the other &lt;code&gt;Defaults&lt;/code&gt; lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Defaults    env_keep += &amp;quot;http_proxy https_proxy no_proxy&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I hope it helped !&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Gain root permission inside VI with sudo</title>
+      <link>http://nknu.net/gain-root-permission-inside-vi/</link>
+      <pubDate>Tue, 08 Apr 2014 13:19:07 +0000</pubDate>
+      
+      <guid>http://nknu.net/gain-root-permission-inside-vi/</guid>
+      <description>&lt;p&gt;If you open a file owned by root in VI with your regular user, you will be unable to save it using the regular &lt;code&gt;:w&lt;/code&gt; command as the file will be opened read-only.&lt;/p&gt;
+
+&lt;p&gt;However you can write the content of your vi buffer to the file using the command &lt;code&gt;:w !sudo tee %&lt;/code&gt;, which will prompt for your sudo password.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to remember this line, you can add the following line to your &lt;code&gt;.vimrc&lt;/code&gt; file:
+&lt;code&gt;cmap w!! w !sudo tee % &amp;gt;/dev/null&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;Now, you just have to type &lt;code&gt;:w!!&lt;/code&gt; to call the command.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

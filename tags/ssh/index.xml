@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ssh on nknu.net</title>
+    <link>http://nknu.net/tags/ssh/</link>
+    <description>Recent content in Ssh on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 07 Aug 2014 12:05:32 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Ubuntu 14.04: How to open ssh:// links in a terminal</title>
+      <link>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</link>
+      <pubDate>Thu, 07 Aug 2014 12:05:32 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re using a web based tool to manage your servers, chances are that this tool is providing &lt;code&gt;ssh://&lt;/code&gt; links to connect directly to those server with one click from your web browser. Let&amp;rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link.&lt;/p&gt;
+
+&lt;p&gt;First we need a script which is able to process a string like &amp;ldquo;ssh://user@host:port&amp;rdquo;. Create a file named &lt;code&gt;ssh-handler.sh&lt;/code&gt; somewhere in your home directory (ie. &lt;code&gt;~/.local/bin/ssh-handler.sh&lt;/code&gt; - I tend to put my custom executables in &lt;code&gt;~/.local/bin&lt;/code&gt;, and I added that to my &lt;code&gt;PATH&lt;/code&gt;)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+d=${1#ssh://}
+gnome-terminal -e &amp;quot;ssh $d&amp;quot; &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make it executable with a &lt;code&gt;chmod a+x ~/.local/bin/ssh-handler.sh&lt;/code&gt;.
+If you want to test it, open an &lt;code&gt;xterm&lt;/code&gt; (so we can make sure the script will open gnome-terminal by itself), and execute &lt;code&gt;~/.local/bin/ssh-handler.sh ssh://localhost&lt;/code&gt;. This should open a gnome-terminal window, prompting you for your local password (provided that you have an sshd running on your local machine).&lt;/p&gt;
+
+&lt;p&gt;Now we need to create a &lt;code&gt;.desktop&lt;/code&gt; file which will use the handler we just created. Create a file in &lt;code&gt;~/.local/share/applications/&lt;/code&gt; named &lt;code&gt;ssh-handler.desktop&lt;/code&gt;, with the following content:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[Desktop Entry]
+Type=Application
+Name=SSH Handler
+Exec=ssh-handler.sh %u
+Icon=utilities-terminal
+StartupNotify=false
+MimeType=x-scheme-handler/ssh;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important&lt;/strong&gt;: if your &lt;code&gt;~/.local/bin&lt;/code&gt; folder is not in your PATH variable, you will have to specify the full path of the &lt;code&gt;ssh-handler.sh&lt;/code&gt; script in the &lt;code&gt;Exec=&lt;/code&gt; line, ie. &lt;code&gt;Exec=/home/adrien/.local/bin/ssh-handler.sh&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Once this file is created, the last step is to tell the system that the SSH links should be handled by default by this desktop entry. Before we do that, it can be a good idea to check that nothing is currently handling the SSH protocol, or if something is handling it make sure that we can replace it safely. To check that, run the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;xdg-mime query default x-scheme-handler/ssh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If the output is blank, we&amp;rsquo;re good ! It not, use your best judgement to decide if you want to replace it or not.&lt;/p&gt;
+
+&lt;p&gt;Now we can run the following command to define our &lt;code&gt;ssh-handler.desktop&lt;/code&gt; file as the default handler for ssh protocol:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;xdg-mime default ssh-handler.desktop x-scheme-handler/ssh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it ! Clicking on &lt;code&gt;ssh://...&lt;/code&gt; links in your browser should now directly open a terminal window and connect to the specified host.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</title>
+      <link>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
+      <pubDate>Tue, 05 Aug 2014 15:12:00 +0000</pubDate>
+      
+      <guid>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
+      <description>&lt;p&gt;When SSH&amp;rsquo;ing to old boxes within tmux, I sometimes get the following error:
+&lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt;, and a very ugly prompt.&lt;/p&gt;
+
+&lt;p&gt;An easy way to fix this is to set a different value for the &lt;code&gt;default-terminal&lt;/code&gt; setting in your &lt;code&gt;tmux.conf&lt;/code&gt;. You only have to open your &lt;code&gt;~/.tmux.conf&lt;/code&gt; and add the following line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;set -g default-terminal &amp;quot;xterm&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;However, note that this will affect all your sessions.&lt;/p&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to redefine your &lt;code&gt;default-terminal&lt;/code&gt; value, you can fix this only when needed by setting a different value for the &lt;code&gt;TERM&lt;/code&gt; variable when you ssh to those boxes. So, instead of ssh&amp;rsquo;ing like this:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ssh adrien@my-box
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;you do that:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;TERM=xterm ssh adrien@my-box
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And you should not see the &lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt; message anymore.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

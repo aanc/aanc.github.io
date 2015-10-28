@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/" title="How to configure Docker on Ubuntu 15.04 (workaround)">How to configure Docker on Ubuntu 15.04 (workaround)</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/docker"><span class="label label-success">docker</span></a>
+        
+          <a href="tags/workaround"><span class="label label-success">workaround</span></a>
+        
+          <a href="tags/15.04"><span class="label label-success">15.04</span></a>
+        
+          <a href="tags/vivid"><span class="label label-success">vivid</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2015-05-40">May 05, 2015</time></p>
+      <div class="article-content">
+        <p><p><strong>Article updated the 17th of August 2015,</strong> with the remarks of <em>Giacomo Orlandi</em> in the comments, who provided a cleaner way to update the systemd config, based on a discussion in <a href="https://github.com/docker/docker/issues/9889#issuecomment-109819996">this Docker&rsquo;s Github issue</a>.</p>
+
+<p>If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in <code>/etc/default/docker</code> anymore. That is due to the fact that Ubuntu is now using <code>systemd</code> instead of Upstart/SysV. Unfortunately, Docker&rsquo;s default systemd configuration is not ready for Ubuntu, and the config file is ignored.</p>
+
+<p>There is some <a href="https://github.com/docker/docker/pull/13439">work</a> <a href="https://github.com/docker/docker/issues/12926">in</a> <a href="https://github.com/docker/docker/issues/13384">progress</a> on Docker&rsquo;s side to fix that, but you may want to have a workaround in order to have it working until the official fix is released (hopefully with Docker 1.7).</p>
+
+<p>First thing to do is to confirm that systemd is in charge of your Docker service. We can do that by simply asking systemd to give us Docker&rsquo;s status, with the <code>systemctl status docker</code> command :</p>
+
+<pre><code> $ systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since mar. 2015-05-26 14:52:45 CEST; 58min ago
+     Docs: http://docs.docker.com
+ Main PID: 20075 (docker)
+   Memory: 198.2M
+   CGroup: /system.slice/docker.service
+           ├─20075 /usr/bin/docker -d -H fd://
+</code></pre>
+
+<p>Two things are interresting in this output. The first one is that we can see that the docker daemon is launched with parameter <code>-H fd://</code>, and nothing else (in my case, it should have some DNS declared, and an insecure registry - see the <code>DOCKER_OPTS</code> line of your <code>/etc/default/docker</code> file). The second one is that the systemd configuration file which is used is <code>/lib/systemd/system/docker.service</code>.</p>
+
+<p>Let&rsquo;s see what it looks like :</p>
+
+<pre><code>$ cat /lib/systemd/system/docker.service
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+ExecStart=/usr/bin/docker -d -H fd://
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
+</code></pre>
+
+<p>Ahah ! Here is our issue: the execution command defined in the <code>ExecStart</code> line is static: it does not use the variables defined in the <code>/etc/default/docker</code> file. In order to have the file loaded, we need to declare <code>/etc/default/docker</code> as an <a href="http://fedoraproject.org/wiki/Packaging%3aSystemd#EnvironmentFiles_and_support_for_.2Fetc.2Fsysconfig_files">EnvironmentFile</a>, and use the <code>DOCKER_OPTS</code> variable in the <code>ExecStart</code> line.</p>
+
+<p>Systemd allow the user to override the default value in the config file by creating <code>*.conf</code> files in a specific folder. We will need to create that folder, if it does not exist:</p>
+
+<pre><code>$ mkdir -p /etc/systemd/system/docker.service.d
+</code></pre>
+
+<p>Now, we can create our config override file in that folder :</p>
+
+<pre><code>$ vi /etc/systemd/system/docker.service.d/ubuntu.conf
+</code></pre>
+
+<p>containing the follwing lines:</p>
+
+<pre><code>$ [Service]
+# workaround to include default options
+EnvironmentFile=/etc/default/docker
+ExecStart=
+ExecStart=/usr/bin/docker -d -H fd:// $DOCKER_OPTS
+</code></pre>
+
+<p>Now, reload systemd&rsquo;s config with <code>systemctl daemon-reload</code> , and restart the Docker daemon in order to load the config file, with <code>systemctl restart docker</code>, and run a <code>systemctl status docker</code> to confirm that the config file has been loaded:</p>
+
+<pre><code>  ● docker.service - Docker Application Container Engine
+ Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+Drop-In: /etc/systemd/system/docker.service.d
+         └─ubuntu.conf
+ Active: active (running) since lun. 2015-08-17 15:29:39 CEST; 13min ago
+   Docs: http://docs.docker.com
+ Memory: 3.9M
+ CGroup: /system.slice/docker.service
+         ├─16089 /usr/bin/docker -d -H fd:// --dns 10.200.1.11 --dns 8.8.8.8 --insecure-registry insecure-registry:5000
+         └─17194 docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 43128 -container-ip 172.17.0.1 -container-port 3128
+</code></pre>
+
+<p>We can see the correct parameters in the Docker daemon command line, so it seems that <code>DOCKER_OPTS</code> has been taken into account.</p>
+
+<p>You will have one more thing to do if you declared variables other than <code>DOCKER_OPTS</code> in the <code>/etc/default/docker</code> file (ie. proxy configuration) : remove the exports. Systemd does not source the configuration file, it only loads declared variables into the process&rsquo; environment, so the lines that begin with <code>export</code> will be ignored. If you have some of those lines in your configuration file, you will have to remove the word <code>export</code>, and restart Docker&rsquo;s daemon. The following <code>sed</code> command will do that for you: <code>sed -i -e &quot;s/^export //&quot; -e &quot;s/#export /#/&quot; /etc/default/docker</code>. Try to pull an image from Docker Hub in order to confirm that everything is OK.</p>
+
+<p>With this workaround, you should be able to use Docker as usual on your Ubuntu 15.04 Vivid. However, don&rsquo;t forget that <em>it&rsquo;s only a workaround</em>, and not a very pretty one ! So be sure to update your Docker package as soon as Ubuntu Vivid&rsquo;s compatibility is officialy fixed !</p>
+
+<p>Thanks for reading, hope it helped.</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

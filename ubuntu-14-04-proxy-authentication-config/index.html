@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="http://nknu.net/ubuntu-14-04-proxy-authentication-config/" title="Ubuntu 14.04 proxy config with authentication">Ubuntu 14.04 proxy config with authentication</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/14.04"><span class="label label-success">14.04</span></a>
+        
+          <a href="tags/proxy"><span class="label label-success">proxy</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-04-90">Apr 04, 2014</time></p>
+      <div class="article-content">
+        <p>
+
+<p><strong><em>Updated the 07 Aug 2014:</strong> added autoconfig URL settings</em></p>
+
+<p>If you&rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.</p>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/network_config.png" alt="" /></p>
+
+<p>You have several options to work arround that.</p>
+
+<blockquote>
+<p><strong>Note:</strong> Some applications don&rsquo;t respect the settings defined by those methods. In that case, you&rsquo;ll have to refer to their documentation to configure the proxy.</p>
+</blockquote>
+
+<h3 id="1-the-apt-get-click-ish-way:c99365ddcfd67ec3678d89b8c03832d5">1. The apt-get/click&rsquo;ish way</h3>
+
+<p>Install the package <code>dconf-editor</code> (using the Ubuntu Software Center or simply typing <code>sudo apt-get install dconf-editor</code> in your terminal), and open it (hit <code>alt-F2</code> then type <code>dconf-editor</code>).</p>
+
+<p>In the dconf Editor window, go to <code>dconf-editor -&gt; system -&gt; proxy -&gt; http</code> and configure your username and password.</p>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/proxy_config.png" alt="" /></p>
+
+<p>If you have local domains/ip/masks you don&rsquo;t want to use the proxy with, you can configure them in the <code>dconf-editor -&gt; system -&gt; proxy</code> window, in the <code>ignore-hosts</code> field. For example if your company use an internal network name <code>mycompany.lan</code>, you can add <code>*.mycompany.lan</code> to avoid using the proxy when accessing this domain.</p>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/no_proxy.png" alt="" /></p>
+
+<p>Note that if your network provides an autoconfig script, you can use it here. Set the <code>mode</code> to <code>auto</code>, and enter the URL of the autoconfig script ing the <code>autoconfig-url</code> field. When you use the <code>auto</code> mode, every other setting exept <code>autoconfig-url</code> is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type <code>chrome://net-internals/#proxy</code> in the URL bar. The <code>PAC script</code> line is what you&rsquo;re looking for:</p>
+
+<p><img src="http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png" alt="" /></p>
+
+<h3 id="2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5">2. The console&rsquo;ish way</h3>
+
+<p>If you don&rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.</p>
+
+<p>Create a <code>.proxy</code> file in your home directory. Have it only read/write-able by yourself, as we will store your credentials in there (including your password).</p>
+
+<pre><code>touch ~/.proxy
+chmod 600 ~/.proxy
+</code></pre>
+
+<p>Open it with your favorite text editor and add the following content, replacing <code>username</code>, <code>password</code>, <code>proxy_hostname</code> and <code>proxy_port</code> by their actual values:</p>
+
+<pre><code># Proxy config
+export http_proxy='username:password@http://proxy_hostname:proxy_port'
+export no_proxy=’localhost,127.0.0.1,.mycompany.lan’
+
+export https_proxy=$http_proxy
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$http_proxy
+export NO_PROXY=$no_proxy
+</code></pre>
+
+<p>With that option, the <code>no_proxy</code> variable let you set a list of IP/mask/domains to ignore. Note that the domain syntax is slightly different than the dconf-editor one: only <code>.mycompany.net</code> withouth any wildcard.</p>
+
+<p>Edit your <code>~/.profile</code> file and add the following lines, which will load the content of the file we just created when you start your session.</p>
+
+<pre><code># include proxy config if it exists
+if [ -f $HOME/.proxy ]; then
+    . $HOME/.proxy
+fi
+</code></pre>
+
+<p>Log out and log back in, and your proxy settings should be taken into account.</p>
+
+<p>Note that APT does not respect this setup. In order to have it use your proxy, you will have to edit the <code>/etc/apt/apt.conf</code> file (create it if it does not exist) and add the following line:</p>
+
+<pre><code>Acquire::http::Proxy &quot;http://username:password@my.proxy.host:port&quot;;
+</code></pre>
+
+<p><strong>Optionnal step</strong>: if you want your proxy setting to be propagated when you&rsquo;re using sudo, open the sudo config file with <code>sudo visudo</code> and add the following line after the other <code>Defaults</code> lines:</p>
+
+<pre><code>Defaults    env_keep += &quot;http_proxy https_proxy no_proxy&quot;
+</code></pre>
+
+<p>I hope it helped !</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

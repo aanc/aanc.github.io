@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Proxy on nknu.net</title>
+    <link>http://nknu.net/tags/proxy/</link>
+    <description>Recent content in Proxy on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 10 Sep 2014 10:57:23 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Proxy configuration for Docker on CentOS 7</title>
+      <link>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</link>
+      <pubDate>Wed, 10 Sep 2014 10:57:23 +0000</pubDate>
+      
+      <guid>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</guid>
+      <description>&lt;p&gt;We saw earlier how to &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;configure the proxy for docker on Ubuntu 14.04&lt;/a&gt;, let&amp;rsquo;s now see how to do that on CentOS 7.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+HTTPS_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll need to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# systemctl restart docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You may still need to declare the proxy in the Dockerfile too, as seen &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;in the Ubuntu article&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running docker behind a proxy on Ubuntu 14.04</title>
+      <link>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
+      <pubDate>Wed, 10 Sep 2014 10:32:00 +0000</pubDate>
+      
+      <guid>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&amp;rsquo;s see how to fix that.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/defaults/docker.io&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export http_proxy=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll have to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo service docker.io restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should allow docker daemon to pull images from the central registry. However, if you need to configure the proxy in the Dockerfile (ie. if you&amp;rsquo;re using &lt;code&gt;apt-get&lt;/code&gt; to install packages), you&amp;rsquo;ll need to declare it there too.&lt;/p&gt;
+
+&lt;p&gt;Add the following lines at the top of your Dockerfile:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ENV http_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV https_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTP_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTPS_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With those settings, your container should now build, using the proxy to access the outside world.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Git behind a proxy</title>
+      <link>http://nknu.net/git-through-proxy/</link>
+      <pubDate>Fri, 30 May 2014 12:47:43 +0000</pubDate>
+      
+      <guid>http://nknu.net/git-through-proxy/</guid>
+      <description>
+
+&lt;p&gt;If you need to access a git repository somewhere on the internet (let&amp;rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&amp;rsquo;ll need to go through an HTTP proxy. Let&amp;rsquo;s see how we can configure that.&lt;/p&gt;
+
+&lt;h4 id=&#34;option-1-environment-variables:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 1 : Environment variables&lt;/h4&gt;
+
+&lt;p&gt;Git honor the environment variables &lt;code&gt;http_proxy&lt;/code&gt; and &lt;code&gt;https_proxy&lt;/code&gt;, so one way of solving our problem is setting those variables as follow:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http_proxy=&#39;http://proxy_host:proxy_port&#39;
+https_proxy=$http_proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your proxy requires authentication, you need  to specify your user/password in the URL:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http_proxy=&#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you need more info about setting proxy info in your environment, check &lt;a href=&#34;http://nknu.net/ubuntu-14-04-proxy-authentication-config/&#34;&gt;that article I wrote about that a few month back&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;option-2-git-s-variable-http-proxy:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 2 : Git&amp;rsquo;s variable http.proxy&lt;/h4&gt;
+
+&lt;p&gt;Git also check what&amp;rsquo;s in its own &lt;code&gt;http.proxy&lt;/code&gt; variable, so you can set it on a per-project basis with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config http.proxy &#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or on your global git configuration with this one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global http.proxy &#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Et voilà ! You should now be able to clone your external repo (ie. on GitHub).&lt;/p&gt;
+
+&lt;h4 id=&#34;okay-this-got-http-and-https-repo-working-but-what-about-git:26f68760661a68a37e1944470cf4b238&#34;&gt;Okay, this got http:// and https:// repo working, but what about git:// ?&lt;/h4&gt;
+
+&lt;p&gt;If the settings above did not solve your problem when cloning repositories using the &lt;code&gt;git://&lt;/code&gt; protocol. That&amp;rsquo;s a solid hint that your network config does not allow you to connect to remote port 9418, which is used by git&amp;rsquo;s own protocol.&lt;/p&gt;
+
+&lt;p&gt;You have an easy way and a hard way to work arround that.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The easy way&lt;/strong&gt; is to use the HTTP protocol instead of the git protocol. You can tell git to do that with the almost magical &lt;code&gt;url.&amp;lt;&amp;gt;.insteadOf&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global url.https://github.com/.insteadOf git://github.com/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That basically tells git to systematically replace &lt;code&gt;git://github.com&lt;/code&gt; with &lt;code&gt;https://github.com&lt;/code&gt; when you call an external URL, resolving our problem.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The hard way&lt;/strong&gt; is to use corkscrew or socat to proxy your connection through the http proxy. You&amp;rsquo;ll need to do that if &lt;code&gt;git://&lt;/code&gt; is the only protocol your remote repository is exposing. I&amp;rsquo;ve never seen such a repo, so that&amp;rsquo;s something I did not try, but &lt;a href=&#34;http://gitolite.com/git-over-proxy.html#proxying-the-git-protocol&#34;&gt;here is a page describing how to do it&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04 proxy config with authentication</title>
+      <link>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</link>
+      <pubDate>Wed, 16 Apr 2014 21:05:11 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</guid>
+      <description>
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Updated the 07 Aug 2014:&lt;/strong&gt; added autoconfig URL settings&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You have several options to work arround that.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Some applications don&amp;rsquo;t respect the settings defined by those methods. In that case, you&amp;rsquo;ll have to refer to their documentation to configure the proxy.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;1-the-apt-get-click-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
+
+&lt;p&gt;Install the package &lt;code&gt;dconf-editor&lt;/code&gt; (using the Ubuntu Software Center or simply typing &lt;code&gt;sudo apt-get install dconf-editor&lt;/code&gt; in your terminal), and open it (hit &lt;code&gt;alt-F2&lt;/code&gt; then type &lt;code&gt;dconf-editor&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;In the dconf Editor window, go to &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy -&amp;gt; http&lt;/code&gt; and configure your username and password.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have local domains/ip/masks you don&amp;rsquo;t want to use the proxy with, you can configure them in the &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy&lt;/code&gt; window, in the &lt;code&gt;ignore-hosts&lt;/code&gt; field. For example if your company use an internal network name &lt;code&gt;mycompany.lan&lt;/code&gt;, you can add &lt;code&gt;*.mycompany.lan&lt;/code&gt; to avoid using the proxy when accessing this domain.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Note that if your network provides an autoconfig script, you can use it here. Set the &lt;code&gt;mode&lt;/code&gt; to &lt;code&gt;auto&lt;/code&gt;, and enter the URL of the autoconfig script ing the &lt;code&gt;autoconfig-url&lt;/code&gt; field. When you use the &lt;code&gt;auto&lt;/code&gt; mode, every other setting exept &lt;code&gt;autoconfig-url&lt;/code&gt; is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type &lt;code&gt;chrome://net-internals/#proxy&lt;/code&gt; in the URL bar. The &lt;code&gt;PAC script&lt;/code&gt; line is what you&amp;rsquo;re looking for:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.&lt;/p&gt;
+
+&lt;p&gt;Create a &lt;code&gt;.proxy&lt;/code&gt; file in your home directory. Have it only read/write-able by yourself, as we will store your credentials in there (including your password).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;touch ~/.proxy
+chmod 600 ~/.proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open it with your favorite text editor and add the following content, replacing &lt;code&gt;username&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;proxy_hostname&lt;/code&gt; and &lt;code&gt;proxy_port&lt;/code&gt; by their actual values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Proxy config
+export http_proxy=&#39;username:password@http://proxy_hostname:proxy_port&#39;
+export no_proxy=’localhost,127.0.0.1,.mycompany.lan’
+
+export https_proxy=$http_proxy
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$http_proxy
+export NO_PROXY=$no_proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that option, the &lt;code&gt;no_proxy&lt;/code&gt; variable let you set a list of IP/mask/domains to ignore. Note that the domain syntax is slightly different than the dconf-editor one: only &lt;code&gt;.mycompany.net&lt;/code&gt; withouth any wildcard.&lt;/p&gt;
+
+&lt;p&gt;Edit your &lt;code&gt;~/.profile&lt;/code&gt; file and add the following lines, which will load the content of the file we just created when you start your session.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# include proxy config if it exists
+if [ -f $HOME/.proxy ]; then
+    . $HOME/.proxy
+fi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Log out and log back in, and your proxy settings should be taken into account.&lt;/p&gt;
+
+&lt;p&gt;Note that APT does not respect this setup. In order to have it use your proxy, you will have to edit the &lt;code&gt;/etc/apt/apt.conf&lt;/code&gt; file (create it if it does not exist) and add the following line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Acquire::http::Proxy &amp;quot;http://username:password@my.proxy.host:port&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Optionnal step&lt;/strong&gt;: if you want your proxy setting to be propagated when you&amp;rsquo;re using sudo, open the sudo config file with &lt;code&gt;sudo visudo&lt;/code&gt; and add the following line after the other &lt;code&gt;Defaults&lt;/code&gt; lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Defaults    env_keep += &amp;quot;http_proxy https_proxy no_proxy&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I hope it helped !&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

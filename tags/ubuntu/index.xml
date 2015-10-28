@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ubuntu on nknu.net</title>
+    <link>http://nknu.net/tags/ubuntu/</link>
+    <description>Recent content in Ubuntu on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 26 May 2015 16:13:55 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/ubuntu/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to configure Docker on Ubuntu 15.04 (workaround)</title>
+      <link>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</link>
+      <pubDate>Tue, 26 May 2015 16:13:55 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Article updated the 17th of August 2015,&lt;/strong&gt; with the remarks of &lt;em&gt;Giacomo Orlandi&lt;/em&gt; in the comments, who provided a cleaner way to update the systemd config, based on a discussion in &lt;a href=&#34;https://github.com/docker/docker/issues/9889#issuecomment-109819996&#34;&gt;this Docker&amp;rsquo;s Github issue&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in &lt;code&gt;/etc/default/docker&lt;/code&gt; anymore. That is due to the fact that Ubuntu is now using &lt;code&gt;systemd&lt;/code&gt; instead of Upstart/SysV. Unfortunately, Docker&amp;rsquo;s default systemd configuration is not ready for Ubuntu, and the config file is ignored.&lt;/p&gt;
+
+&lt;p&gt;There is some &lt;a href=&#34;https://github.com/docker/docker/pull/13439&#34;&gt;work&lt;/a&gt; &lt;a href=&#34;https://github.com/docker/docker/issues/12926&#34;&gt;in&lt;/a&gt; &lt;a href=&#34;https://github.com/docker/docker/issues/13384&#34;&gt;progress&lt;/a&gt; on Docker&amp;rsquo;s side to fix that, but you may want to have a workaround in order to have it working until the official fix is released (hopefully with Docker 1.7).&lt;/p&gt;
+
+&lt;p&gt;First thing to do is to confirm that systemd is in charge of your Docker service. We can do that by simply asking systemd to give us Docker&amp;rsquo;s status, with the &lt;code&gt;systemctl status docker&lt;/code&gt; command :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; $ systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since mar. 2015-05-26 14:52:45 CEST; 58min ago
+     Docs: http://docs.docker.com
+ Main PID: 20075 (docker)
+   Memory: 198.2M
+   CGroup: /system.slice/docker.service
+           ├─20075 /usr/bin/docker -d -H fd://
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Two things are interresting in this output. The first one is that we can see that the docker daemon is launched with parameter &lt;code&gt;-H fd://&lt;/code&gt;, and nothing else (in my case, it should have some DNS declared, and an insecure registry - see the &lt;code&gt;DOCKER_OPTS&lt;/code&gt; line of your &lt;code&gt;/etc/default/docker&lt;/code&gt; file). The second one is that the systemd configuration file which is used is &lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see what it looks like :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat /lib/systemd/system/docker.service
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+ExecStart=/usr/bin/docker -d -H fd://
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ahah ! Here is our issue: the execution command defined in the &lt;code&gt;ExecStart&lt;/code&gt; line is static: it does not use the variables defined in the &lt;code&gt;/etc/default/docker&lt;/code&gt; file. In order to have the file loaded, we need to declare &lt;code&gt;/etc/default/docker&lt;/code&gt; as an &lt;a href=&#34;http://fedoraproject.org/wiki/Packaging%3aSystemd#EnvironmentFiles_and_support_for_.2Fetc.2Fsysconfig_files&#34;&gt;EnvironmentFile&lt;/a&gt;, and use the &lt;code&gt;DOCKER_OPTS&lt;/code&gt; variable in the &lt;code&gt;ExecStart&lt;/code&gt; line.&lt;/p&gt;
+
+&lt;p&gt;Systemd allow the user to override the default value in the config file by creating &lt;code&gt;*.conf&lt;/code&gt; files in a specific folder. We will need to create that folder, if it does not exist:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mkdir -p /etc/systemd/system/docker.service.d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, we can create our config override file in that folder :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ vi /etc/systemd/system/docker.service.d/ubuntu.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;containing the follwing lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ [Service]
+# workaround to include default options
+EnvironmentFile=/etc/default/docker
+ExecStart=
+ExecStart=/usr/bin/docker -d -H fd:// $DOCKER_OPTS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, reload systemd&amp;rsquo;s config with &lt;code&gt;systemctl daemon-reload&lt;/code&gt; , and restart the Docker daemon in order to load the config file, with &lt;code&gt;systemctl restart docker&lt;/code&gt;, and run a &lt;code&gt;systemctl status docker&lt;/code&gt; to confirm that the config file has been loaded:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ● docker.service - Docker Application Container Engine
+ Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+Drop-In: /etc/systemd/system/docker.service.d
+         └─ubuntu.conf
+ Active: active (running) since lun. 2015-08-17 15:29:39 CEST; 13min ago
+   Docs: http://docs.docker.com
+ Memory: 3.9M
+ CGroup: /system.slice/docker.service
+         ├─16089 /usr/bin/docker -d -H fd:// --dns 10.200.1.11 --dns 8.8.8.8 --insecure-registry insecure-registry:5000
+         └─17194 docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 43128 -container-ip 172.17.0.1 -container-port 3128
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can see the correct parameters in the Docker daemon command line, so it seems that &lt;code&gt;DOCKER_OPTS&lt;/code&gt; has been taken into account.&lt;/p&gt;
+
+&lt;p&gt;You will have one more thing to do if you declared variables other than &lt;code&gt;DOCKER_OPTS&lt;/code&gt; in the &lt;code&gt;/etc/default/docker&lt;/code&gt; file (ie. proxy configuration) : remove the exports. Systemd does not source the configuration file, it only loads declared variables into the process&amp;rsquo; environment, so the lines that begin with &lt;code&gt;export&lt;/code&gt; will be ignored. If you have some of those lines in your configuration file, you will have to remove the word &lt;code&gt;export&lt;/code&gt;, and restart Docker&amp;rsquo;s daemon. The following &lt;code&gt;sed&lt;/code&gt; command will do that for you: &lt;code&gt;sed -i -e &amp;quot;s/^export //&amp;quot; -e &amp;quot;s/#export /#/&amp;quot; /etc/default/docker&lt;/code&gt;. Try to pull an image from Docker Hub in order to confirm that everything is OK.&lt;/p&gt;
+
+&lt;p&gt;With this workaround, you should be able to use Docker as usual on your Ubuntu 15.04 Vivid. However, don&amp;rsquo;t forget that &lt;em&gt;it&amp;rsquo;s only a workaround&lt;/em&gt;, and not a very pretty one ! So be sure to update your Docker package as soon as Ubuntu Vivid&amp;rsquo;s compatibility is officialy fixed !&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading, hope it helped.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running docker behind a proxy on Ubuntu 14.04</title>
+      <link>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
+      <pubDate>Wed, 10 Sep 2014 10:32:00 +0000</pubDate>
+      
+      <guid>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&amp;rsquo;s see how to fix that.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/defaults/docker.io&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export http_proxy=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll have to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo service docker.io restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should allow docker daemon to pull images from the central registry. However, if you need to configure the proxy in the Dockerfile (ie. if you&amp;rsquo;re using &lt;code&gt;apt-get&lt;/code&gt; to install packages), you&amp;rsquo;ll need to declare it there too.&lt;/p&gt;
+
+&lt;p&gt;Add the following lines at the top of your Dockerfile:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ENV http_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV https_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTP_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTPS_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With those settings, your container should now build, using the proxy to access the outside world.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04: How to open ssh:// links in a terminal</title>
+      <link>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</link>
+      <pubDate>Thu, 07 Aug 2014 12:05:32 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re using a web based tool to manage your servers, chances are that this tool is providing &lt;code&gt;ssh://&lt;/code&gt; links to connect directly to those server with one click from your web browser. Let&amp;rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link.&lt;/p&gt;
+
+&lt;p&gt;First we need a script which is able to process a string like &amp;ldquo;ssh://user@host:port&amp;rdquo;. Create a file named &lt;code&gt;ssh-handler.sh&lt;/code&gt; somewhere in your home directory (ie. &lt;code&gt;~/.local/bin/ssh-handler.sh&lt;/code&gt; - I tend to put my custom executables in &lt;code&gt;~/.local/bin&lt;/code&gt;, and I added that to my &lt;code&gt;PATH&lt;/code&gt;)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;#!/bin/sh
+d=${1#ssh://}
+gnome-terminal -e &amp;quot;ssh $d&amp;quot; &amp;amp;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Make it executable with a &lt;code&gt;chmod a+x ~/.local/bin/ssh-handler.sh&lt;/code&gt;.
+If you want to test it, open an &lt;code&gt;xterm&lt;/code&gt; (so we can make sure the script will open gnome-terminal by itself), and execute &lt;code&gt;~/.local/bin/ssh-handler.sh ssh://localhost&lt;/code&gt;. This should open a gnome-terminal window, prompting you for your local password (provided that you have an sshd running on your local machine).&lt;/p&gt;
+
+&lt;p&gt;Now we need to create a &lt;code&gt;.desktop&lt;/code&gt; file which will use the handler we just created. Create a file in &lt;code&gt;~/.local/share/applications/&lt;/code&gt; named &lt;code&gt;ssh-handler.desktop&lt;/code&gt;, with the following content:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;[Desktop Entry]
+Type=Application
+Name=SSH Handler
+Exec=ssh-handler.sh %u
+Icon=utilities-terminal
+StartupNotify=false
+MimeType=x-scheme-handler/ssh;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Important&lt;/strong&gt;: if your &lt;code&gt;~/.local/bin&lt;/code&gt; folder is not in your PATH variable, you will have to specify the full path of the &lt;code&gt;ssh-handler.sh&lt;/code&gt; script in the &lt;code&gt;Exec=&lt;/code&gt; line, ie. &lt;code&gt;Exec=/home/adrien/.local/bin/ssh-handler.sh&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Once this file is created, the last step is to tell the system that the SSH links should be handled by default by this desktop entry. Before we do that, it can be a good idea to check that nothing is currently handling the SSH protocol, or if something is handling it make sure that we can replace it safely. To check that, run the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;xdg-mime query default x-scheme-handler/ssh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If the output is blank, we&amp;rsquo;re good ! It not, use your best judgement to decide if you want to replace it or not.&lt;/p&gt;
+
+&lt;p&gt;Now we can run the following command to define our &lt;code&gt;ssh-handler.desktop&lt;/code&gt; file as the default handler for ssh protocol:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;xdg-mime default ssh-handler.desktop x-scheme-handler/ssh
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it ! Clicking on &lt;code&gt;ssh://...&lt;/code&gt; links in your browser should now directly open a terminal window and connect to the specified host.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04 Exchange configuration, with Thunderbird and Pidgin</title>
+      <link>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</link>
+      <pubDate>Wed, 23 Apr 2014 22:49:27 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</guid>
+      <description>
+
+&lt;p&gt;A lot of companies are using Microsoft&amp;rsquo;s Exchange for their communications, with Outlook for the mails/agenda and Lync for instant messaging, and those are common blocking points when one want to switch to Linux on his primary work computer. An easy workaround would be to user Outlook Web Access, but it lacks some features (notifications, desktop integration, &amp;hellip;) and it&amp;rsquo;s not always very convenient (you can&amp;rsquo;t use its advanced features if you&amp;rsquo;re using Chrome for example). However it is possible to have a fully functionnal mail/calendar/IM on Linux, able to connect to the Exchange ecosystem of your company, using Davmail as a gateway, Thunderbird as email and agenda client, and pidgin as instant messenging client. Let&amp;rsquo;s see how we can do that on an Ubuntu 14.04.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;a href=&#34;#davmail&#34;&gt;Davmail: the bridge between two worlds&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#thunderbird&#34;&gt;Thunderbird: our new Outlook&lt;/a&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;#mail&#34;&gt;Mail&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#agenda&#34;&gt;Agenda&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#address-book&#34;&gt;Address book&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;#pidgin&#34;&gt;Replacing Lync with Pidgin&lt;/a&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&#34;span-id-davmail-davmail-the-bridge-between-two-worlds-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;davmail&#34;&gt;Davmail: the bridge between two worlds&lt;/span&gt;&lt;/h3&gt;
+
+&lt;p&gt;The first thing we have to do is to find a way to communicate with the Exchange server. That&amp;rsquo;s what &lt;a href=&#34;http://davmail.sourceforge.net/&#34;&gt;DavMail&lt;/a&gt; do. According to its official website:&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;DavMail is a POP/IMAP/SMTP/Caldav/Carddav/LDAP exchange gateway allowing users to use any mail/calendar client (e.g. Thunderbird with Lightning or Apple iCal) with an Exchange server, even from the internet or behind a firewall through Outlook Web Access. DavMail now includes an LDAP gateway to Exchange global address book and user personal contacts to allow recipient address completion in mail compose window and full calendar support with attendees free/busy display.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;First thing we need to do is to install it. You can get it &lt;a href=&#34;http://sourceforge.net/projects/davmail/files/&#34;&gt;from its official download page&lt;/a&gt;. Once downloaded, install it by either double clicking the file, or by opening a terminal and typing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo dpkg -i davmail_4.4.1-2225-1_all.deb
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;em&gt;(Replace the version with the actual version of the file you downloaded)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Once installed, you can open it from the Dash (hit &lt;code&gt;Super&lt;/code&gt; and then type &amp;ldquo;Davmail&amp;rdquo;) or from the console (just type &lt;code&gt;davmail&lt;/code&gt;). You can keep the default settings for everything except the &amp;ldquo;URL OWA (Exchange)&amp;rdquo; field, where you need to put your Outlook Web Access URL.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;span id=&#34;find-out-owa-url&#34;&gt;&lt;strong&gt;Finding out your OWA URL:&lt;/strong&gt;&lt;/span&gt; you can ask your admin, or try to guess it with trial and error: depending on your version of Exchange it should be something like &lt;code&gt;https://&amp;lt;domain.net|server&amp;gt;/exchange&lt;/code&gt; or &lt;code&gt;https://&amp;lt;domain.net|server&amp;gt;/owa&lt;/code&gt;. You can find which server/domain you need to use by digging into your Outlook properties. In the latest version of Outlook, you may find this information by clicking on the &amp;ldquo;File&amp;rdquo; tab in the top left corner of the ribbon, then &amp;ldquo;Information&amp;rdquo;. If it&amp;rsquo;s not there and you&amp;rsquo;re using Lync, you can right-click on its tray icon and select &amp;ldquo;Configuration informations&amp;rdquo;, it will open a windows full of information, and if you go to the &amp;ldquo;EWS URL&amp;rdquo; line, you&amp;rsquo;ll see which server you need to connect to.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;center&gt;
+&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/davmail-config-1.png&#34; alt=&#34;Davmail - configuration&#34; /&gt;
+&lt;/center&gt;&lt;/p&gt;
+
+&lt;p&gt;Hit the save button, and we&amp;rsquo;re done ! You should see a popup saying that Davmail is running.&lt;/p&gt;
+
+&lt;p&gt;Note that if you have other people in your organization willing to use davmail as well, you can install on a server and configure it once and for all so everyone can use it.
+If you&amp;rsquo;re installing it only for you though, and on your local machine, you&amp;rsquo;ll certainly want it to start with your session. Ubuntu has a dedicated tool for managing startup application, called &amp;hellip; &amp;ldquo;Startup applications&amp;rdquo;. Open the Dash and type &amp;ldquo;Startup applications&amp;rdquo;, create a new entry named &amp;ldquo;Davmail&amp;rdquo; and just enter &amp;ldquo;davmail&amp;rdquo; in the command field.&lt;/p&gt;
+
+&lt;h3 id=&#34;span-id-thunderbird-thunderbird-our-new-outlook-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;thunderbird&#34;&gt;Thunderbird: our new Outlook&lt;/span&gt;&lt;/h3&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://www.mozilla.org/fr/thunderbird/&#34;&gt;Thunderbird&lt;/a&gt; is pre-installed on Ubuntu 14.04. If it&amp;rsquo;s not installed on your distribution, you can find out how to get it on its &lt;a href=&#34;http://www.mozilla.org/fr/thunderbird/&#34;&gt;official website&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;span-id-mails-mails-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;mails&#34;&gt;Mails&lt;/span&gt;&lt;/h4&gt;
+
+&lt;ol&gt;
+&lt;li&gt;Open Thunderbird&lt;/li&gt;
+&lt;li&gt;Go to &lt;code&gt;File −&amp;gt; New -&amp;gt; Existing mail account ...&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Fill in the name, email and password fields&lt;/li&gt;
+&lt;li&gt;Click the &amp;ldquo;Manual configuration&amp;rdquo; button, and fill in the fields as follow (adapt the following values if you modified the davmail configuration):
+
+&lt;ul&gt;
+&lt;li&gt;Incoming:
+
+&lt;ul&gt;
+&lt;li&gt;Type: IMAP&lt;/li&gt;
+&lt;li&gt;Server: localhost&lt;/li&gt;
+&lt;li&gt;Port: 1143&lt;/li&gt;
+&lt;li&gt;SSL: None&lt;/li&gt;
+&lt;li&gt;Authentication: normal password&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Outgoinh:
+
+&lt;ul&gt;
+&lt;li&gt;Type: SMTP&lt;/li&gt;
+&lt;li&gt;Server: localhost&lt;/li&gt;
+&lt;li&gt;Port: 1025&lt;/li&gt;
+&lt;li&gt;SSL: None&lt;/li&gt;
+&lt;li&gt;Authentication: normal password&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Username: your Exchange username, usually what&amp;rsquo;s before the &amp;lsquo;@&amp;rsquo; in your email address (but not necessarily). Basically it&amp;rsquo;s the username you&amp;rsquo;re using to login into OWA.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Click &amp;ldquo;Test&amp;rdquo;, and if everything is OK you should be able to click &amp;ldquo;Done&amp;rdquo;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-mail-account-setup.png&#34; alt=&#34;Thunderbird mail account creation&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;At this point Thunderbird should start to fetch your emails from the server, and you should see them appear in your inbox.&lt;/p&gt;
+
+&lt;h4 id=&#34;span-id-agenda-agenda-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;agenda&#34;&gt;Agenda&lt;/span&gt;&lt;/h4&gt;
+
+&lt;p&gt;For the calendar, we&amp;rsquo;re going to use the following Thunderbird extensions: &lt;strong&gt;Lightning&lt;/strong&gt;, which adds agenda capabilities to Thunderbird, and &lt;strong&gt;ExchangeCalendar&lt;/strong&gt;, which allow to connect directly to Exchange calendars.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;In Thunderbird, to to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Use the search field to search for &amp;ldquo;Lightning&amp;rdquo;&lt;/li&gt;
+&lt;li&gt;Install it&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Now we need to install ExchangeCalendar. It seems that the version available in the store is obsolete. The version used for this guide is 3.2.0-Beta77, if you can&amp;rsquo;t find it in the store (3.2.0-Beta77 or above), I&amp;rsquo;d suggest to download it directly from &lt;a href=&#34;http://www.1st-setup.nl/wordpress/?page_id=551&#34;&gt;this page&lt;/a&gt;.
+Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, click on the little toolbox right before the search area, select &amp;ldquo;Install from file&amp;rdquo;, and then navigate to the .xpi file you juste downloaded.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-install-addon-from-file.png&#34; alt=&#34;Thunderbird - Install from file&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once those two addons are installed, go back to Thunderbird&amp;rsquo;s main window and perform the following actions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Go to &lt;code&gt;File -&amp;gt; New -&amp;gt; Calendar&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Select &amp;ldquo;On the network&amp;rdquo;, then click next&lt;/li&gt;
+&lt;li&gt;Select &amp;ldquo;Microsoft Exchange 2007/2010/2013&amp;rdquo;, then click next&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-add-calendar.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Give a name to the calendar, then click next&lt;/li&gt;
+&lt;li&gt;Fill in the fields as follow:
+
+&lt;ul&gt;
+&lt;li&gt;Server URL: your EWS URL. You can find it out with &lt;a href=&#34;#find-out-owa-url&#34;&gt;the method used for finding our OWA URL&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;Mailbox name: your email address&lt;/li&gt;
+&lt;li&gt;User: your username (the one you use to login into OWA)&lt;/li&gt;
+&lt;li&gt;Domain: your company&amp;rsquo;s domain&lt;/li&gt;
+&lt;li&gt;Shared folder: leave that field empty&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Click the &amp;ldquo;Verify&amp;rdquo; button, and if everything is OK hit &amp;ldquo;Next&amp;rdquo;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-new-calendar-2-1.png&#34; alt=&#34;Thunderbird - Agenda configuration box&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;The calendar should now appear in the &amp;ldquo;Agenda&amp;rdquo; tab of Thunderbird.&lt;/p&gt;
+
+&lt;h4 id=&#34;span-id-address-book-address-book-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;address-book&#34;&gt;Address book&lt;/span&gt;&lt;/h4&gt;
+
+&lt;p&gt;If your company is using LDAP for the address book, you can configure Thunderbird to use if with the following steps:&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;In the Thunderbird toolbar, click the &amp;ldquo;Address Book&amp;rdquo; button.&lt;/li&gt;
+&lt;li&gt;In the Address Book window, click &lt;code&gt;File -&amp;gt; New -&amp;gt; LDAP Directory&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;You may need to ask your administrator to give you the hostname and the Base DN&lt;/li&gt;
+&lt;li&gt;Click &amp;ldquo;OK&amp;rdquo;, and verify that you can successfully search people in the Address Book&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-address-book-ldap-config.png&#34; alt=&#34;Thunderbird - Address Book LDAP config&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Once done, you can enable the address auto-completion when writing message in Thunderbird&amp;rsquo;s preferences window (&lt;code&gt;Edit -&amp;gt; Preferences&lt;/code&gt;): in the &amp;ldquo;Composition&amp;rdquo; tab, check &amp;ldquo;Directory Server&amp;rdquo; then select the address book you just added.&lt;/p&gt;
+
+&lt;h3 id=&#34;span-id-pidgin-replacing-lync-with-pidgin-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;pidgin&#34;&gt;Replacing Lync with pidgin&lt;/span&gt;&lt;/h3&gt;
+
+&lt;p&gt;In order to have instant messenging available on our linux box, we&amp;rsquo;re going to use pidgin, with the pidgin-sipe plugin (to enable Exchange capabilities), and optionnaly pidgin-libnotify (to have a better integration into our Ubuntu 14.04).&lt;/p&gt;
+
+&lt;p&gt;You will need to gather info from your Windows&amp;rsquo;s Lync setup, by right-clicking on its tray icon and opening the &amp;ldquo;Configuration Informations&amp;rdquo;. From this window, get the server name, you&amp;rsquo;ll need it to setup pidgin.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/pidgin-1.png&#34; alt=&#34;Lync - config info 1&#34; /&gt;
+&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/pidgin-2.png&#34; alt=&#34;Lync - config info 2&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If pidgin is not installed on your system, you can install it via the Ubuntu Software Center simply by searching for it, or by opening a terminal and typing:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;sudo apt-get install pidgin pidgin-sipe pidgin-libnotify
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Launch pidgin, and go to &lt;code&gt;Account -&amp;gt; Manage -&amp;gt; Add ...&lt;/code&gt;, and fill in the fields as follow:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Tab &amp;ldquo;Essential&amp;rdquo;:
+
+&lt;ul&gt;
+&lt;li&gt;Protocol: Office communicator&lt;/li&gt;
+&lt;li&gt;User: your email address&lt;/li&gt;
+&lt;li&gt;Login: the login you use to access OWA&lt;/li&gt;
+&lt;li&gt;Password: your password for that account&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Tab &amp;ldquo;Advanced&amp;rdquo;:
+
+&lt;ul&gt;
+&lt;li&gt;Server: the server you found in your Lync settings&lt;/li&gt;
+&lt;li&gt;Connection type: Auto&lt;/li&gt;
+&lt;li&gt;Encryption: TSL-DSK&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Tab &amp;ldquo;Proxy&amp;rdquo;:
+
+&lt;ul&gt;
+&lt;li&gt;Type: No proxy&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Save and connect, you should see your contact list appear.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; in all my boxes (on Lubuntu 13.10 and Ubuntu 14.04), I&amp;rsquo;ve never managed to have pidgin work without setting the &lt;code&gt;NSS_SSL_CBC_RANDOM_IV&lt;/code&gt; environment variable to 0. Without this variable, I always got a &amp;ldquo;&lt;strong&gt;Read Error&lt;/strong&gt;&amp;rdquo; at connection.
+To set this variable, edit your ~/.profile file and add the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# SSL config for pidgin
+export NSS_SSL_CBC_RANDOM_IV=0`
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You will have to logout/login for this parameter to take effect.&lt;/p&gt;
+
+&lt;p&gt;And that&amp;rsquo;s it ! Let me know in the comments if something does not work, of if you have a better method. Thanks for reading!&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Ubuntu 14.04 proxy config with authentication</title>
+      <link>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</link>
+      <pubDate>Wed, 16 Apr 2014 21:05:11 +0000</pubDate>
+      
+      <guid>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</guid>
+      <description>
+
+&lt;p&gt;&lt;strong&gt;&lt;em&gt;Updated the 07 Aug 2014:&lt;/strong&gt; added autoconfig URL settings&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;If you&amp;rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;You have several options to work arround that.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Some applications don&amp;rsquo;t respect the settings defined by those methods. In that case, you&amp;rsquo;ll have to refer to their documentation to configure the proxy.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;1-the-apt-get-click-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
+
+&lt;p&gt;Install the package &lt;code&gt;dconf-editor&lt;/code&gt; (using the Ubuntu Software Center or simply typing &lt;code&gt;sudo apt-get install dconf-editor&lt;/code&gt; in your terminal), and open it (hit &lt;code&gt;alt-F2&lt;/code&gt; then type &lt;code&gt;dconf-editor&lt;/code&gt;).&lt;/p&gt;
+
+&lt;p&gt;In the dconf Editor window, go to &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy -&amp;gt; http&lt;/code&gt; and configure your username and password.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;If you have local domains/ip/masks you don&amp;rsquo;t want to use the proxy with, you can configure them in the &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy&lt;/code&gt; window, in the &lt;code&gt;ignore-hosts&lt;/code&gt; field. For example if your company use an internal network name &lt;code&gt;mycompany.lan&lt;/code&gt;, you can add &lt;code&gt;*.mycompany.lan&lt;/code&gt; to avoid using the proxy when accessing this domain.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Note that if your network provides an autoconfig script, you can use it here. Set the &lt;code&gt;mode&lt;/code&gt; to &lt;code&gt;auto&lt;/code&gt;, and enter the URL of the autoconfig script ing the &lt;code&gt;autoconfig-url&lt;/code&gt; field. When you use the &lt;code&gt;auto&lt;/code&gt; mode, every other setting exept &lt;code&gt;autoconfig-url&lt;/code&gt; is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type &lt;code&gt;chrome://net-internals/#proxy&lt;/code&gt; in the URL bar. The &lt;code&gt;PAC script&lt;/code&gt; line is what you&amp;rsquo;re looking for:&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
+
+&lt;p&gt;If you don&amp;rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.&lt;/p&gt;
+
+&lt;p&gt;Create a &lt;code&gt;.proxy&lt;/code&gt; file in your home directory. Have it only read/write-able by yourself, as we will store your credentials in there (including your password).&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;touch ~/.proxy
+chmod 600 ~/.proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Open it with your favorite text editor and add the following content, replacing &lt;code&gt;username&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;proxy_hostname&lt;/code&gt; and &lt;code&gt;proxy_port&lt;/code&gt; by their actual values:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# Proxy config
+export http_proxy=&#39;username:password@http://proxy_hostname:proxy_port&#39;
+export no_proxy=’localhost,127.0.0.1,.mycompany.lan’
+
+export https_proxy=$http_proxy
+export HTTP_PROXY=$http_proxy
+export HTTPS_PROXY=$http_proxy
+export NO_PROXY=$no_proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that option, the &lt;code&gt;no_proxy&lt;/code&gt; variable let you set a list of IP/mask/domains to ignore. Note that the domain syntax is slightly different than the dconf-editor one: only &lt;code&gt;.mycompany.net&lt;/code&gt; withouth any wildcard.&lt;/p&gt;
+
+&lt;p&gt;Edit your &lt;code&gt;~/.profile&lt;/code&gt; file and add the following lines, which will load the content of the file we just created when you start your session.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# include proxy config if it exists
+if [ -f $HOME/.proxy ]; then
+    . $HOME/.proxy
+fi
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Log out and log back in, and your proxy settings should be taken into account.&lt;/p&gt;
+
+&lt;p&gt;Note that APT does not respect this setup. In order to have it use your proxy, you will have to edit the &lt;code&gt;/etc/apt/apt.conf&lt;/code&gt; file (create it if it does not exist) and add the following line:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Acquire::http::Proxy &amp;quot;http://username:password@my.proxy.host:port&amp;quot;;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Optionnal step&lt;/strong&gt;: if you want your proxy setting to be propagated when you&amp;rsquo;re using sudo, open the sudo config file with &lt;code&gt;sudo visudo&lt;/code&gt; and add the following line after the other &lt;code&gt;Defaults&lt;/code&gt; lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;Defaults    env_keep += &amp;quot;http_proxy https_proxy no_proxy&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I hope it helped !&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

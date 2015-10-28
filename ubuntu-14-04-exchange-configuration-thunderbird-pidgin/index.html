@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/" title="Ubuntu 14.04 Exchange configuration, with Thunderbird and Pidgin">Ubuntu 14.04 Exchange configuration, with Thunderbird and Pidgin</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
+        
+          <a href="tags/thunderbird"><span class="label label-success">thunderbird</span></a>
+        
+          <a href="tags/pidgin"><span class="label label-success">pidgin</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+          <a href="tags/exchange"><span class="label label-success">exchange</span></a>
+        
+          <a href="tags/davmail"><span class="label label-success">davmail</span></a>
+        
+          <a href="tags/14.04"><span class="label label-success">14.04</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-04-100">Apr 04, 2014</time></p>
+      <div class="article-content">
+        <p>
+
+<p>A lot of companies are using Microsoft&rsquo;s Exchange for their communications, with Outlook for the mails/agenda and Lync for instant messaging, and those are common blocking points when one want to switch to Linux on his primary work computer. An easy workaround would be to user Outlook Web Access, but it lacks some features (notifications, desktop integration, &hellip;) and it&rsquo;s not always very convenient (you can&rsquo;t use its advanced features if you&rsquo;re using Chrome for example). However it is possible to have a fully functionnal mail/calendar/IM on Linux, able to connect to the Exchange ecosystem of your company, using Davmail as a gateway, Thunderbird as email and agenda client, and pidgin as instant messenging client. Let&rsquo;s see how we can do that on an Ubuntu 14.04.</p>
+
+<ol>
+<li><a href="#davmail">Davmail: the bridge between two worlds</a></li>
+<li><a href="#thunderbird">Thunderbird: our new Outlook</a>
+
+<ul>
+<li><a href="#mail">Mail</a></li>
+<li><a href="#agenda">Agenda</a></li>
+<li><a href="#address-book">Address book</a></li>
+</ul></li>
+<li><a href="#pidgin">Replacing Lync with Pidgin</a></li>
+</ol>
+
+<h3 id="span-id-davmail-davmail-the-bridge-between-two-worlds-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3"><span id="davmail">Davmail: the bridge between two worlds</span></h3>
+
+<p>The first thing we have to do is to find a way to communicate with the Exchange server. That&rsquo;s what <a href="http://davmail.sourceforge.net/">DavMail</a> do. According to its official website:</p>
+
+<blockquote>
+<p>DavMail is a POP/IMAP/SMTP/Caldav/Carddav/LDAP exchange gateway allowing users to use any mail/calendar client (e.g. Thunderbird with Lightning or Apple iCal) with an Exchange server, even from the internet or behind a firewall through Outlook Web Access. DavMail now includes an LDAP gateway to Exchange global address book and user personal contacts to allow recipient address completion in mail compose window and full calendar support with attendees free/busy display.</p>
+</blockquote>
+
+<p>First thing we need to do is to install it. You can get it <a href="http://sourceforge.net/projects/davmail/files/">from its official download page</a>. Once downloaded, install it by either double clicking the file, or by opening a terminal and typing:</p>
+
+<pre><code>sudo dpkg -i davmail_4.4.1-2225-1_all.deb
+</code></pre>
+
+<p><em>(Replace the version with the actual version of the file you downloaded)</em></p>
+
+<p>Once installed, you can open it from the Dash (hit <code>Super</code> and then type &ldquo;Davmail&rdquo;) or from the console (just type <code>davmail</code>). You can keep the default settings for everything except the &ldquo;URL OWA (Exchange)&rdquo; field, where you need to put your Outlook Web Access URL.</p>
+
+<blockquote>
+<p><span id="find-out-owa-url"><strong>Finding out your OWA URL:</strong></span> you can ask your admin, or try to guess it with trial and error: depending on your version of Exchange it should be something like <code>https://&lt;domain.net|server&gt;/exchange</code> or <code>https://&lt;domain.net|server&gt;/owa</code>. You can find which server/domain you need to use by digging into your Outlook properties. In the latest version of Outlook, you may find this information by clicking on the &ldquo;File&rdquo; tab in the top left corner of the ribbon, then &ldquo;Information&rdquo;. If it&rsquo;s not there and you&rsquo;re using Lync, you can right-click on its tray icon and select &ldquo;Configuration informations&rdquo;, it will open a windows full of information, and if you go to the &ldquo;EWS URL&rdquo; line, you&rsquo;ll see which server you need to connect to.</p>
+</blockquote>
+
+<p><center>
+<img src="http://nknu.net/content/images/2014/Apr/davmail-config-1.png" alt="Davmail - configuration" />
+</center></p>
+
+<p>Hit the save button, and we&rsquo;re done ! You should see a popup saying that Davmail is running.</p>
+
+<p>Note that if you have other people in your organization willing to use davmail as well, you can install on a server and configure it once and for all so everyone can use it.
+If you&rsquo;re installing it only for you though, and on your local machine, you&rsquo;ll certainly want it to start with your session. Ubuntu has a dedicated tool for managing startup application, called &hellip; &ldquo;Startup applications&rdquo;. Open the Dash and type &ldquo;Startup applications&rdquo;, create a new entry named &ldquo;Davmail&rdquo; and just enter &ldquo;davmail&rdquo; in the command field.</p>
+
+<h3 id="span-id-thunderbird-thunderbird-our-new-outlook-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3"><span id="thunderbird">Thunderbird: our new Outlook</span></h3>
+
+<p><a href="http://www.mozilla.org/fr/thunderbird/">Thunderbird</a> is pre-installed on Ubuntu 14.04. If it&rsquo;s not installed on your distribution, you can find out how to get it on its <a href="http://www.mozilla.org/fr/thunderbird/">official website</a>.</p>
+
+<h4 id="span-id-mails-mails-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3"><span id="mails">Mails</span></h4>
+
+<ol>
+<li>Open Thunderbird</li>
+<li>Go to <code>File −&gt; New -&gt; Existing mail account ...</code></li>
+<li>Fill in the name, email and password fields</li>
+<li>Click the &ldquo;Manual configuration&rdquo; button, and fill in the fields as follow (adapt the following values if you modified the davmail configuration):
+
+<ul>
+<li>Incoming:
+
+<ul>
+<li>Type: IMAP</li>
+<li>Server: localhost</li>
+<li>Port: 1143</li>
+<li>SSL: None</li>
+<li>Authentication: normal password</li>
+</ul></li>
+<li>Outgoinh:
+
+<ul>
+<li>Type: SMTP</li>
+<li>Server: localhost</li>
+<li>Port: 1025</li>
+<li>SSL: None</li>
+<li>Authentication: normal password</li>
+</ul></li>
+<li>Username: your Exchange username, usually what&rsquo;s before the &lsquo;@&rsquo; in your email address (but not necessarily). Basically it&rsquo;s the username you&rsquo;re using to login into OWA.</li>
+</ul></li>
+<li>Click &ldquo;Test&rdquo;, and if everything is OK you should be able to click &ldquo;Done&rdquo;</li>
+</ol>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/thunderbird-mail-account-setup.png" alt="Thunderbird mail account creation" /></p>
+
+<p>At this point Thunderbird should start to fetch your emails from the server, and you should see them appear in your inbox.</p>
+
+<h4 id="span-id-agenda-agenda-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3"><span id="agenda">Agenda</span></h4>
+
+<p>For the calendar, we&rsquo;re going to use the following Thunderbird extensions: <strong>Lightning</strong>, which adds agenda capabilities to Thunderbird, and <strong>ExchangeCalendar</strong>, which allow to connect directly to Exchange calendars.</p>
+
+<ol>
+<li>In Thunderbird, to to <code>Tools -&gt; Addons</code></li>
+<li>Use the search field to search for &ldquo;Lightning&rdquo;</li>
+<li>Install it</li>
+</ol>
+
+<p>Now we need to install ExchangeCalendar. It seems that the version available in the store is obsolete. The version used for this guide is 3.2.0-Beta77, if you can&rsquo;t find it in the store (3.2.0-Beta77 or above), I&rsquo;d suggest to download it directly from <a href="http://www.1st-setup.nl/wordpress/?page_id=551">this page</a>.
+Once downloaded, go back to <code>Tools -&gt; Addons</code>, click on the little toolbox right before the search area, select &ldquo;Install from file&rdquo;, and then navigate to the .xpi file you juste downloaded.</p>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/thunderbird-install-addon-from-file.png" alt="Thunderbird - Install from file" /></p>
+
+<p>Once those two addons are installed, go back to Thunderbird&rsquo;s main window and perform the following actions:</p>
+
+<ul>
+<li>Go to <code>File -&gt; New -&gt; Calendar</code></li>
+<li>Select &ldquo;On the network&rdquo;, then click next</li>
+<li>Select &ldquo;Microsoft Exchange 2007/2010/2013&rdquo;, then click next</li>
+</ul>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/thunderbird-add-calendar.png" alt="" /></p>
+
+<ul>
+<li>Give a name to the calendar, then click next</li>
+<li>Fill in the fields as follow:
+
+<ul>
+<li>Server URL: your EWS URL. You can find it out with <a href="#find-out-owa-url">the method used for finding our OWA URL</a></li>
+<li>Mailbox name: your email address</li>
+<li>User: your username (the one you use to login into OWA)</li>
+<li>Domain: your company&rsquo;s domain</li>
+<li>Shared folder: leave that field empty</li>
+</ul></li>
+<li>Click the &ldquo;Verify&rdquo; button, and if everything is OK hit &ldquo;Next&rdquo;</li>
+</ul>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/thunderbird-new-calendar-2-1.png" alt="Thunderbird - Agenda configuration box" /></p>
+
+<p>The calendar should now appear in the &ldquo;Agenda&rdquo; tab of Thunderbird.</p>
+
+<h4 id="span-id-address-book-address-book-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3"><span id="address-book">Address book</span></h4>
+
+<p>If your company is using LDAP for the address book, you can configure Thunderbird to use if with the following steps:</p>
+
+<ol>
+<li>In the Thunderbird toolbar, click the &ldquo;Address Book&rdquo; button.</li>
+<li>In the Address Book window, click <code>File -&gt; New -&gt; LDAP Directory</code></li>
+<li>You may need to ask your administrator to give you the hostname and the Base DN</li>
+<li>Click &ldquo;OK&rdquo;, and verify that you can successfully search people in the Address Book</li>
+</ol>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/thunderbird-address-book-ldap-config.png" alt="Thunderbird - Address Book LDAP config" /></p>
+
+<p>Once done, you can enable the address auto-completion when writing message in Thunderbird&rsquo;s preferences window (<code>Edit -&gt; Preferences</code>): in the &ldquo;Composition&rdquo; tab, check &ldquo;Directory Server&rdquo; then select the address book you just added.</p>
+
+<h3 id="span-id-pidgin-replacing-lync-with-pidgin-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3"><span id="pidgin">Replacing Lync with pidgin</span></h3>
+
+<p>In order to have instant messenging available on our linux box, we&rsquo;re going to use pidgin, with the pidgin-sipe plugin (to enable Exchange capabilities), and optionnaly pidgin-libnotify (to have a better integration into our Ubuntu 14.04).</p>
+
+<p>You will need to gather info from your Windows&rsquo;s Lync setup, by right-clicking on its tray icon and opening the &ldquo;Configuration Informations&rdquo;. From this window, get the server name, you&rsquo;ll need it to setup pidgin.</p>
+
+<p><img src="http://nknu.net/content/images/2014/Apr/pidgin-1.png" alt="Lync - config info 1" />
+<img src="http://nknu.net/content/images/2014/Apr/pidgin-2.png" alt="Lync - config info 2" /></p>
+
+<p>If pidgin is not installed on your system, you can install it via the Ubuntu Software Center simply by searching for it, or by opening a terminal and typing:</p>
+
+<pre><code>sudo apt-get install pidgin pidgin-sipe pidgin-libnotify
+</code></pre>
+
+<p>Launch pidgin, and go to <code>Account -&gt; Manage -&gt; Add ...</code>, and fill in the fields as follow:</p>
+
+<ul>
+<li>Tab &ldquo;Essential&rdquo;:
+
+<ul>
+<li>Protocol: Office communicator</li>
+<li>User: your email address</li>
+<li>Login: the login you use to access OWA</li>
+<li>Password: your password for that account</li>
+</ul></li>
+<li>Tab &ldquo;Advanced&rdquo;:
+
+<ul>
+<li>Server: the server you found in your Lync settings</li>
+<li>Connection type: Auto</li>
+<li>Encryption: TSL-DSK</li>
+</ul></li>
+<li>Tab &ldquo;Proxy&rdquo;:
+
+<ul>
+<li>Type: No proxy</li>
+</ul></li>
+</ul>
+
+<p>Save and connect, you should see your contact list appear.</p>
+
+<p><strong>Note:</strong> in all my boxes (on Lubuntu 13.10 and Ubuntu 14.04), I&rsquo;ve never managed to have pidgin work without setting the <code>NSS_SSL_CBC_RANDOM_IV</code> environment variable to 0. Without this variable, I always got a &ldquo;<strong>Read Error</strong>&rdquo; at connection.
+To set this variable, edit your ~/.profile file and add the following:</p>
+
+<pre><code># SSL config for pidgin
+export NSS_SSL_CBC_RANDOM_IV=0`
+</code></pre>
+
+<p>You will have to logout/login for this parameter to take effect.</p>
+
+<p>And that&rsquo;s it ! Let me know in the comments if something does not work, of if you have a better method. Thanks for reading!</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

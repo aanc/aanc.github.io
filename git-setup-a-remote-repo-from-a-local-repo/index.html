@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.15-DEV" />
+    
+    <title>nknu.net - mockup theme</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="http://nknu.net/">nknu.net</a>
+			</h1>
+			<nav>
+				<a href="http://nknu.net/">Home</a>
+				<a href="">About</a>
+				<a href="">Work</a>
+			</nav>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/" title="Git: setup a remote repo from a local repo">Git: setup a remote repo from a local repo</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/git"><span class="label label-success">git</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2014-07-50">Jul 07, 2014</time></p>
+      <div class="article-content">
+        <p><p>Let&rsquo;s assume you started a new project. You&rsquo;re using Git for versionning, because it&rsquo;s easy to set it up locally, and for a few hours/days/weeks you&rsquo;re just happy with your local repository. However, now you need to go bigger and start sharing the code with your coworkers, or maybe want to setup a continuous integration system, or whatever else, and for that your need to create a remote repository which will act as reference for all the actors of your project.</p>
+
+<p>That&rsquo;s quite easy to do, actually. First thing you need to do is to create a <em>bare repository</em> on your remote server. The main difference between a bare repository and a classic one (like the one on your computer), is that the bare repository does not have a working copy checked out, it only have the versionning information (which is in the <code>.git</code> folder of your local repo).</p>
+
+<p>So let&rsquo;s create that remote repo. Connect to your remote host using ssh, and go where you want to store your repo (ie. create a folder named <code>repositories</code> in your user&rsquo;s home, with a sub-folder named after your project, so the repository path is <code>~/repositories/my-project.git</code>)</p>
+
+<pre><code>$ mkdir -p ~/repositories/my-project.git
+$ cd ~/repositories/my-project.git
+$ git init --bare .
+Initialized empty Git repository in /home/adrien/repositories/my-project.git/
+
+$ ls -A
+branches  config  description  HEAD  hooks  info  objects  refs
+</code></pre>
+
+<p>That&rsquo;s all for the remote repository. Now we need to setup your local repo so you can push your commits to your newly created repo. We can do that with the following commands, on your local work directory:</p>
+
+<pre><code>$ cd my-repo
+$ git add origin your-user@your-host:~/repositories/my-project.git
+$ git push origin master
+</code></pre>
+
+<p>And we are done ! Your coworker can now clone your repo from the remote host:</p>
+
+<pre><code>$ git clone your-user@your-host:~/repositories/my-project.git
+</code></pre>
+
+<blockquote>
+<p><strong>Note:</strong> If you plan to have a bunch of git repositories stored here, you might want to check out <a href="http://gitblit.com/">GitBlit</a>, which will allow you to view and manage your git repositories easily, and serve them through http.
+It would also be interresting to implement some sort of backup strategy for your repositories.</p>
+</blockquote>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <div class="author">
+  <div class="author-title">Author</div>
+  <img src="http://www.gravatar.com/avatar/?s=100" alt="" class="pull-left"/>
+</div>
+
+    </div>
+  </div>
+</div>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="http://nknu.net/js/main.js"></script>
+</body>
+</html>
+

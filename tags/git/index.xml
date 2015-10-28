@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Git on nknu.net</title>
+    <link>http://nknu.net/tags/git/</link>
+    <description>Recent content in Git on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 16 Jul 2014 17:19:44 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Git: setup a remote repo from a local repo</title>
+      <link>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</link>
+      <pubDate>Wed, 16 Jul 2014 17:19:44 +0000</pubDate>
+      
+      <guid>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</guid>
+      <description>&lt;p&gt;Let&amp;rsquo;s assume you started a new project. You&amp;rsquo;re using Git for versionning, because it&amp;rsquo;s easy to set it up locally, and for a few hours/days/weeks you&amp;rsquo;re just happy with your local repository. However, now you need to go bigger and start sharing the code with your coworkers, or maybe want to setup a continuous integration system, or whatever else, and for that your need to create a remote repository which will act as reference for all the actors of your project.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s quite easy to do, actually. First thing you need to do is to create a &lt;em&gt;bare repository&lt;/em&gt; on your remote server. The main difference between a bare repository and a classic one (like the one on your computer), is that the bare repository does not have a working copy checked out, it only have the versionning information (which is in the &lt;code&gt;.git&lt;/code&gt; folder of your local repo).&lt;/p&gt;
+
+&lt;p&gt;So let&amp;rsquo;s create that remote repo. Connect to your remote host using ssh, and go where you want to store your repo (ie. create a folder named &lt;code&gt;repositories&lt;/code&gt; in your user&amp;rsquo;s home, with a sub-folder named after your project, so the repository path is &lt;code&gt;~/repositories/my-project.git&lt;/code&gt;)&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mkdir -p ~/repositories/my-project.git
+$ cd ~/repositories/my-project.git
+$ git init --bare .
+Initialized empty Git repository in /home/adrien/repositories/my-project.git/
+
+$ ls -A
+branches  config  description  HEAD  hooks  info  objects  refs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That&amp;rsquo;s all for the remote repository. Now we need to setup your local repo so you can push your commits to your newly created repo. We can do that with the following commands, on your local work directory:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cd my-repo
+$ git add origin your-user@your-host:~/repositories/my-project.git
+$ git push origin master
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;And we are done ! Your coworker can now clone your repo from the remote host:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ git clone your-user@your-host:~/repositories/my-project.git
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; If you plan to have a bunch of git repositories stored here, you might want to check out &lt;a href=&#34;http://gitblit.com/&#34;&gt;GitBlit&lt;/a&gt;, which will allow you to view and manage your git repositories easily, and serve them through http.
+It would also be interresting to implement some sort of backup strategy for your repositories.&lt;/p&gt;
+&lt;/blockquote&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Git behind a proxy</title>
+      <link>http://nknu.net/git-through-proxy/</link>
+      <pubDate>Fri, 30 May 2014 12:47:43 +0000</pubDate>
+      
+      <guid>http://nknu.net/git-through-proxy/</guid>
+      <description>
+
+&lt;p&gt;If you need to access a git repository somewhere on the internet (let&amp;rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&amp;rsquo;ll need to go through an HTTP proxy. Let&amp;rsquo;s see how we can configure that.&lt;/p&gt;
+
+&lt;h4 id=&#34;option-1-environment-variables:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 1 : Environment variables&lt;/h4&gt;
+
+&lt;p&gt;Git honor the environment variables &lt;code&gt;http_proxy&lt;/code&gt; and &lt;code&gt;https_proxy&lt;/code&gt;, so one way of solving our problem is setting those variables as follow:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http_proxy=&#39;http://proxy_host:proxy_port&#39;
+https_proxy=$http_proxy
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If your proxy requires authentication, you need  to specify your user/password in the URL:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;http_proxy=&#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;If you need more info about setting proxy info in your environment, check &lt;a href=&#34;http://nknu.net/ubuntu-14-04-proxy-authentication-config/&#34;&gt;that article I wrote about that a few month back&lt;/a&gt;.&lt;/p&gt;
+
+&lt;h4 id=&#34;option-2-git-s-variable-http-proxy:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 2 : Git&amp;rsquo;s variable http.proxy&lt;/h4&gt;
+
+&lt;p&gt;Git also check what&amp;rsquo;s in its own &lt;code&gt;http.proxy&lt;/code&gt; variable, so you can set it on a per-project basis with the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config http.proxy &#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;or on your global git configuration with this one:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global http.proxy &#39;http://username:password@proxy_host:proxy_port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Et voilà ! You should now be able to clone your external repo (ie. on GitHub).&lt;/p&gt;
+
+&lt;h4 id=&#34;okay-this-got-http-and-https-repo-working-but-what-about-git:26f68760661a68a37e1944470cf4b238&#34;&gt;Okay, this got http:// and https:// repo working, but what about git:// ?&lt;/h4&gt;
+
+&lt;p&gt;If the settings above did not solve your problem when cloning repositories using the &lt;code&gt;git://&lt;/code&gt; protocol. That&amp;rsquo;s a solid hint that your network config does not allow you to connect to remote port 9418, which is used by git&amp;rsquo;s own protocol.&lt;/p&gt;
+
+&lt;p&gt;You have an easy way and a hard way to work arround that.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The easy way&lt;/strong&gt; is to use the HTTP protocol instead of the git protocol. You can tell git to do that with the almost magical &lt;code&gt;url.&amp;lt;&amp;gt;.insteadOf&lt;/code&gt; command.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;git config --global url.https://github.com/.insteadOf git://github.com/
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That basically tells git to systematically replace &lt;code&gt;git://github.com&lt;/code&gt; with &lt;code&gt;https://github.com&lt;/code&gt; when you call an external URL, resolving our problem.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;The hard way&lt;/strong&gt; is to use corkscrew or socat to proxy your connection through the http proxy. You&amp;rsquo;ll need to do that if &lt;code&gt;git://&lt;/code&gt; is the only protocol your remote repository is exposing. I&amp;rsquo;ve never seen such a repo, so that&amp;rsquo;s something I did not try, but &lt;a href=&#34;http://gitolite.com/git-over-proxy.html#proxying-the-git-protocol&#34;&gt;here is a page describing how to do it&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to solve Git error HTTP 413</title>
+      <link>http://nknu.net/how-to-solve-git-error-http-413/</link>
+      <pubDate>Thu, 17 Oct 2013 18:01:57 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-solve-git-error-http-413/</guid>
+      <description>&lt;p&gt;If you have the following error when you push your repository to a remote :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;error: RPC failed; result=22, HTTP code = 413
+fatal: The remote end hung up unexpectedly
+fatal: The remote end hung up unexpectedly
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The issue may not be linked to git directly, but to your webserver, which may not be able to handle big files upload. Adding the &lt;code&gt;client_max_body_size 50m;&lt;/code&gt; directive to the &lt;code&gt;http&lt;/code&gt; section of your &lt;code&gt;nginx.conf&lt;/code&gt; file, then reload the nginx service, will solve the issue.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;&lt;strong&gt;Note:&lt;/strong&gt; you may need a higher value, depending on the size of the repository you&amp;rsquo;re trying to push.&lt;/em&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

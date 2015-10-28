@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Vmware on nknu.net</title>
+    <link>http://nknu.net/tags/vmware/</link>
+    <description>Recent content in Vmware on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Mon, 07 Apr 2014 14:42:17 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/vmware/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>VMware CLI unattended install, aka auto-answering &#39;yes&#39;</title>
+      <link>http://nknu.net/vmware-cli-unattended-install-aka-auto-answering-yes/</link>
+      <pubDate>Mon, 07 Apr 2014 14:42:17 +0000</pubDate>
+      
+      <guid>http://nknu.net/vmware-cli-unattended-install-aka-auto-answering-yes/</guid>
+      <description>&lt;p&gt;Today I had to automate the process of installing VMware Perl SDK (part of the &lt;a href=&#34;https://my.vmware.com/fr/web/vmware/details?downloadGroup=VSP510-VCLI-510&amp;amp;productId=285&#34;&gt;VMware CLI tools&lt;/a&gt;) on a RHEL 6.4 box. The manual procedure is quite simple and &lt;a href=&#34;http://pubs.vmware.com/vsphere-55/index.jsp#com.vmware.perlsdk.install.doc/cli_install.3.1.html&#34;&gt;well documented on VMware&amp;rsquo;s website&lt;/a&gt;, and it even has a very handy &amp;ldquo;default&amp;rdquo; option that automatically choose default settings during install without prompting for confirmation.
+However at the very begining you have to read the VMware terms and conditions, and type &amp;ldquo;yes&amp;rdquo; to accept them. That step was preventing my script from working 100% unattended.&lt;/p&gt;
+
+&lt;p&gt;That&amp;rsquo;s where I discovered the existence of the &lt;code&gt;yes&lt;/code&gt; command. You juste pipe it into your install script, and it answer yes to everything !&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;yes | ./vmware-install.pl default&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;In the case of VMware CLI, before accepting the terms and conditions you have to read them. And to do that, the install script is calling the default system pager (which was &lt;code&gt;more&lt;/code&gt; in my case). That&amp;rsquo;s one more blocking point as you need to either read it entirely (and scrolling down manually), or press &lt;code&gt;q&lt;/code&gt; to exit. You can workarround this by redefining the default pager for your install script by surcharging the PAGER environment variable:&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;yes | PAGER=cat ./vmware-install.pl default&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;and BOOM!, 100% interaction-free VMware CLI install, that you can put in your headless scripts.&lt;/p&gt;
+
+&lt;p&gt;Oh, and in case you need to say &amp;ldquo;no&amp;rdquo;, just &lt;code&gt;yes no&lt;/code&gt; !&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

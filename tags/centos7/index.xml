@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Centos7 on nknu.net</title>
+    <link>http://nknu.net/tags/centos7/</link>
+    <description>Recent content in Centos7 on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Wed, 10 Sep 2014 10:57:23 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/centos7/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Proxy configuration for Docker on CentOS 7</title>
+      <link>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</link>
+      <pubDate>Wed, 10 Sep 2014 10:57:23 +0000</pubDate>
+      
+      <guid>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</guid>
+      <description>&lt;p&gt;We saw earlier how to &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;configure the proxy for docker on Ubuntu 14.04&lt;/a&gt;, let&amp;rsquo;s now see how to do that on CentOS 7.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+HTTPS_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll need to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# systemctl restart docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You may still need to declare the proxy in the Dockerfile too, as seen &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;in the Ubuntu article&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

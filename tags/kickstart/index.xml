@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Kickstart on nknu.net</title>
+    <link>http://nknu.net/tags/kickstart/</link>
+    <description>Recent content in Kickstart on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Thu, 08 May 2014 21:31:12 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/kickstart/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to create a custom RHEL install CD</title>
+      <link>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</link>
+      <pubDate>Thu, 08 May 2014 21:31:12 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</guid>
+      <description>&lt;p&gt;You&amp;rsquo;ll need the RHEL standard installation ISO as a base, but you probably have it in one form or another if you&amp;rsquo;re reading this guide &amp;hellip;&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;Mount the ISO somewhere&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir /mnt/rhelcd
+mount /path/to/rhel-dvd.iso /mnt/rhelcd -o loop
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Copy the content of the disk somewhere on your hard drive, so we can work on it and make our modifications.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;mkdir ~/workdir
+cp /mnt/rhelcd/* ~/workdir
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Note: There are a few dotfiles in the disk, so don&amp;rsquo;t forget them, as depending on your system setup they might not be copied along when you perform the &lt;code&gt;cp&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Create your kickstart file, describing your installation. I will not cover the creation of that file in that guide, but you can find plenty of information about that &lt;a href=&#34;https://www.google.fr/search?q=how+to+create+kickstart+file&amp;amp;oq=how+to+create+kickstart+file&amp;amp;aqs=chrome..69i57j0l5.4759j0j7&amp;amp;sourceid=chrome&amp;amp;es_sm=119&amp;amp;ie=UTF-8&#34;&gt;on the internets&lt;/a&gt;. Let me know in the comments if you feel that I should add a guide for creating the kickstart file here though.&lt;/p&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;You can now put the kickstart file in the workdir. I like to create a dedicated folder where I put all the custom stuff I plan to add to the installation (rpms, binairies, config files, &amp;hellip;), but feel free to put it right in the root directory if you prefer.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;workdir
+├── nknu
+│   ├── bin
+│   │   ├── some-binary-file-1
+│   │   └── some-binary-file-2
+│   ├── kickstart.cfg
+│   └── rpms
+│       ├── a-nice-rpm
+│       └── another-rpm
+└── ...
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Edit the file &lt;code&gt;isolinux/isolinux.cfg&lt;/code&gt; and change the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;label linux
+menu label ^Install or upgrade an existing system
+menu default
+kernel vmlinuz
+append initrd=initrd.img
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;to&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;label linux
+menu label ^Install or upgrade an existing system
+menu default
+kernel vmlinuz
+append initrd=initrd.img ks=cdrom://nknu/kickstart.cfg
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Make sure your label is either the default one or the only one, if you want the installation to be 100% unattended.&lt;/p&gt;
+
+&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;You can now rebuild the ISO image with your modifications by launching the following command:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;cd ~/workdir
+mkisofs -o ~/my-custom-rhel-cd.iso -b isolinux/isolinux.bin -c isolinux/boot.cat --no-emul-boot --boot-load-size 4 --boot-info-table -J -R -V disks .
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Burn the newly created &lt;code&gt;~/my-custom-rhel-cd.iso&lt;/code&gt; file on a CD (or just use it in a VM), and you&amp;rsquo;re done !&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; This should work for CentOS too, but I did not try.&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading !&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

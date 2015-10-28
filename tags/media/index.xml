@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Media on nknu.net</title>
+    <link>http://nknu.net/tags/media/</link>
+    <description>Recent content in Media on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Sat, 17 May 2014 19:05:36 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/media/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to sync your subtitles with media player classic</title>
+      <link>http://nknu.net/sync-your-subtitles-with-mpc-hc/</link>
+      <pubDate>Sat, 17 May 2014 19:05:36 +0000</pubDate>
+      
+      <guid>http://nknu.net/sync-your-subtitles-with-mpc-hc/</guid>
+      <description>&lt;p&gt;Sometimes when you download a video on the internet, you get subtitles on a separate file (ie. from &lt;a href=&#34;http://www.opensubtitles.org/&#34;&gt;Open Subtitles&lt;/a&gt;, &lt;a href=&#34;http://subscene.com/&#34;&gt;Subscene&lt;/a&gt;, &lt;a href=&#34;http://www.addic7ed.com/&#34;&gt;addic7ed&lt;/a&gt;, etc&amp;hellip;), and they are not always perfectly sync&amp;rsquo;ed. If you&amp;rsquo;re using &lt;a href=&#34;http://mpc-hc.org/&#34;&gt;Media Player Classic&lt;/a&gt;, you can fix that pretty easily with its &amp;ldquo;Sub resync&amp;rdquo; feature.  Open your video with Media Player Classic and load your subtitles, then hit &lt;code&gt;ctrl&lt;/code&gt; + &lt;code&gt;6&lt;/code&gt; (or &lt;code&gt;View -&amp;gt; Subresync&lt;/code&gt;) to open the sub-resync console.
+Now find a line in the subtitles that match what is being said on the video, right-click the line on the &amp;ldquo;Time&amp;rdquo; colum, and select &lt;code&gt;Current&lt;/code&gt; (or hit &lt;code&gt;F5&lt;/code&gt;). You can see that the timings in the subtitle file have been adjusted.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/May/AirForceOne-MPC-HC.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Best part is that you can save those modifications directly in the subtitle file by going to &lt;code&gt;File -&amp;gt; Save subtitles&lt;/code&gt;, so next time you play that video, you will not have to do that manipulation all over again.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on nknu.net</title>
+    <link>http://nknu.net/tags/docker/</link>
+    <description>Recent content in Docker on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <lastBuildDate>Tue, 26 May 2015 16:13:55 +0000</lastBuildDate>
+    <atom:link href="http://nknu.net/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to configure Docker on Ubuntu 15.04 (workaround)</title>
+      <link>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</link>
+      <pubDate>Tue, 26 May 2015 16:13:55 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</guid>
+      <description>&lt;p&gt;&lt;strong&gt;Article updated the 17th of August 2015,&lt;/strong&gt; with the remarks of &lt;em&gt;Giacomo Orlandi&lt;/em&gt; in the comments, who provided a cleaner way to update the systemd config, based on a discussion in &lt;a href=&#34;https://github.com/docker/docker/issues/9889#issuecomment-109819996&#34;&gt;this Docker&amp;rsquo;s Github issue&lt;/a&gt;.&lt;/p&gt;
+
+&lt;p&gt;If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in &lt;code&gt;/etc/default/docker&lt;/code&gt; anymore. That is due to the fact that Ubuntu is now using &lt;code&gt;systemd&lt;/code&gt; instead of Upstart/SysV. Unfortunately, Docker&amp;rsquo;s default systemd configuration is not ready for Ubuntu, and the config file is ignored.&lt;/p&gt;
+
+&lt;p&gt;There is some &lt;a href=&#34;https://github.com/docker/docker/pull/13439&#34;&gt;work&lt;/a&gt; &lt;a href=&#34;https://github.com/docker/docker/issues/12926&#34;&gt;in&lt;/a&gt; &lt;a href=&#34;https://github.com/docker/docker/issues/13384&#34;&gt;progress&lt;/a&gt; on Docker&amp;rsquo;s side to fix that, but you may want to have a workaround in order to have it working until the official fix is released (hopefully with Docker 1.7).&lt;/p&gt;
+
+&lt;p&gt;First thing to do is to confirm that systemd is in charge of your Docker service. We can do that by simply asking systemd to give us Docker&amp;rsquo;s status, with the &lt;code&gt;systemctl status docker&lt;/code&gt; command :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt; $ systemctl status docker
+● docker.service - Docker Application Container Engine
+   Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+   Active: active (running) since mar. 2015-05-26 14:52:45 CEST; 58min ago
+     Docs: http://docs.docker.com
+ Main PID: 20075 (docker)
+   Memory: 198.2M
+   CGroup: /system.slice/docker.service
+           ├─20075 /usr/bin/docker -d -H fd://
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Two things are interresting in this output. The first one is that we can see that the docker daemon is launched with parameter &lt;code&gt;-H fd://&lt;/code&gt;, and nothing else (in my case, it should have some DNS declared, and an insecure registry - see the &lt;code&gt;DOCKER_OPTS&lt;/code&gt; line of your &lt;code&gt;/etc/default/docker&lt;/code&gt; file). The second one is that the systemd configuration file which is used is &lt;code&gt;/lib/systemd/system/docker.service&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Let&amp;rsquo;s see what it looks like :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ cat /lib/systemd/system/docker.service
+[Unit]
+Description=Docker Application Container Engine
+Documentation=http://docs.docker.com
+After=network.target docker.socket
+Requires=docker.socket
+
+[Service]
+ExecStart=/usr/bin/docker -d -H fd://
+MountFlags=slave
+LimitNOFILE=1048576
+LimitNPROC=1048576
+LimitCORE=infinity
+
+[Install]
+WantedBy=multi-user.target
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Ahah ! Here is our issue: the execution command defined in the &lt;code&gt;ExecStart&lt;/code&gt; line is static: it does not use the variables defined in the &lt;code&gt;/etc/default/docker&lt;/code&gt; file. In order to have the file loaded, we need to declare &lt;code&gt;/etc/default/docker&lt;/code&gt; as an &lt;a href=&#34;http://fedoraproject.org/wiki/Packaging%3aSystemd#EnvironmentFiles_and_support_for_.2Fetc.2Fsysconfig_files&#34;&gt;EnvironmentFile&lt;/a&gt;, and use the &lt;code&gt;DOCKER_OPTS&lt;/code&gt; variable in the &lt;code&gt;ExecStart&lt;/code&gt; line.&lt;/p&gt;
+
+&lt;p&gt;Systemd allow the user to override the default value in the config file by creating &lt;code&gt;*.conf&lt;/code&gt; files in a specific folder. We will need to create that folder, if it does not exist:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ mkdir -p /etc/systemd/system/docker.service.d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, we can create our config override file in that folder :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ vi /etc/systemd/system/docker.service.d/ubuntu.conf
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;containing the follwing lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ [Service]
+# workaround to include default options
+EnvironmentFile=/etc/default/docker
+ExecStart=
+ExecStart=/usr/bin/docker -d -H fd:// $DOCKER_OPTS
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now, reload systemd&amp;rsquo;s config with &lt;code&gt;systemctl daemon-reload&lt;/code&gt; , and restart the Docker daemon in order to load the config file, with &lt;code&gt;systemctl restart docker&lt;/code&gt;, and run a &lt;code&gt;systemctl status docker&lt;/code&gt; to confirm that the config file has been loaded:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  ● docker.service - Docker Application Container Engine
+ Loaded: loaded (/lib/systemd/system/docker.service; enabled; vendor preset: enabled)
+Drop-In: /etc/systemd/system/docker.service.d
+         └─ubuntu.conf
+ Active: active (running) since lun. 2015-08-17 15:29:39 CEST; 13min ago
+   Docs: http://docs.docker.com
+ Memory: 3.9M
+ CGroup: /system.slice/docker.service
+         ├─16089 /usr/bin/docker -d -H fd:// --dns 10.200.1.11 --dns 8.8.8.8 --insecure-registry insecure-registry:5000
+         └─17194 docker-proxy -proto tcp -host-ip 0.0.0.0 -host-port 43128 -container-ip 172.17.0.1 -container-port 3128
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can see the correct parameters in the Docker daemon command line, so it seems that &lt;code&gt;DOCKER_OPTS&lt;/code&gt; has been taken into account.&lt;/p&gt;
+
+&lt;p&gt;You will have one more thing to do if you declared variables other than &lt;code&gt;DOCKER_OPTS&lt;/code&gt; in the &lt;code&gt;/etc/default/docker&lt;/code&gt; file (ie. proxy configuration) : remove the exports. Systemd does not source the configuration file, it only loads declared variables into the process&amp;rsquo; environment, so the lines that begin with &lt;code&gt;export&lt;/code&gt; will be ignored. If you have some of those lines in your configuration file, you will have to remove the word &lt;code&gt;export&lt;/code&gt;, and restart Docker&amp;rsquo;s daemon. The following &lt;code&gt;sed&lt;/code&gt; command will do that for you: &lt;code&gt;sed -i -e &amp;quot;s/^export //&amp;quot; -e &amp;quot;s/#export /#/&amp;quot; /etc/default/docker&lt;/code&gt;. Try to pull an image from Docker Hub in order to confirm that everything is OK.&lt;/p&gt;
+
+&lt;p&gt;With this workaround, you should be able to use Docker as usual on your Ubuntu 15.04 Vivid. However, don&amp;rsquo;t forget that &lt;em&gt;it&amp;rsquo;s only a workaround&lt;/em&gt;, and not a very pretty one ! So be sure to update your Docker package as soon as Ubuntu Vivid&amp;rsquo;s compatibility is officialy fixed !&lt;/p&gt;
+
+&lt;p&gt;Thanks for reading, hope it helped.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>How to easily deploy your ghost blog using docker-machine and docker-compose</title>
+      <link>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</link>
+      <pubDate>Fri, 01 May 2015 22:56:06 +0000</pubDate>
+      
+      <guid>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
+      <description>
+
+&lt;h2 id=&#34;prepare-your-docker-host-with-docker-machine:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Prepare your docker host (with docker-machine)&lt;/h2&gt;
+
+&lt;p&gt;First step is to have a docker-ready server. We have several ways of doing that: we can install docker on our server by hand (from packages, from source, using docker.io neat curl|sh, &amp;hellip;), we can use boot2docker, or we can user docker machine to directly provision a server for us. We&amp;rsquo;ll do the later as it&amp;rsquo;s reeeaallly easy, with Virtualbox as provider. You&amp;rsquo;ll need to have Virtualbox installed on your machine. Feel free to use any other provider, if you don&amp;rsquo;t want to use Virtualbox : it should not have any impact on the rest of the guide (you can deploy on DigitalOcean, &lt;a href=&#34;https://community.runabove.com/kb/en/instances/docker-in-5-minutes-on-runabove-with-docker-machine.html&#34;&gt;Runabove&lt;/a&gt;, &amp;hellip;).&lt;/p&gt;
+
+&lt;p&gt;Installing docker-machine on our workstation is as easy as copying the executable corresponding to our OS somewhere in your path. Check &lt;a href=&#34;https://docs.docker.com/machine/#installation&#34;&gt;this page&lt;/a&gt; to have the latest instructions about docker-machine&amp;rsquo;s installation. In my case I&amp;rsquo;m running on Ubuntu, so I&amp;rsquo;ll take the &lt;code&gt;docker-machine_linux64&lt;/code&gt; executable and copy it to &lt;code&gt;/usr/local/bin/docker-machine&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;Now that we have installed docker-machine, creating a docker host is really straightfoward :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker-machine create -d virtualbox ghost
+INFO[0000] Creating client certificate: /home/adrien/.docker/machine/certs/cert.pem
+INFO[0000] Creating SSH key...                          
+INFO[0000] Image cache does not exist, creating it at /home/adrien/.docker/machine/cache...
+INFO[0000] No default boot2docker iso found locally, downloading the latest release...
+INFO[0001] Downloading latest boot2docker release to /home/adrien/.docker/machine/cache/boot2docker.iso...
+INFO[0050] Creating VirtualBox VM...                    
+INFO[0058] Starting VirtualBox VM...                    
+INFO[0059] Waiting for VM to start...                   
+INFO[0104] &amp;quot;ghost&amp;quot; has been created and is now the active machine.
+INFO[0104] To point your Docker client at it, run this in your shell: eval &amp;quot;$(docker-machine env ghost)&amp;quot;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With that output, we can be pretty confident that our machine was successfuly created, but if you need an extra confirmation you can check that the machine is indeed running in your Virtualbox Manager.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/GhostDockerMachine.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;p&gt;As suggested by the output of docker-machine, we can now run &lt;code&gt;eval &amp;quot;$(docker-machine env ghost)&amp;quot;&lt;/code&gt; in order to point our docker client to this newly created docker daemon, so every &lt;code&gt;docker&lt;/code&gt; command we&amp;rsquo;ll run from now will be sent to the docker daemon in the machine we just created.&lt;/p&gt;
+
+&lt;h2 id=&#34;starting-ghost-in-a-container:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Starting Ghost in a container&lt;/h2&gt;
+
+&lt;p&gt;At this point we have a docker machine ready to run our containers. Let&amp;rsquo;s run standard Ghost container on it, in order to check that everything is OK.
+Docker Hub provides &lt;a href=&#34;https://registry.hub.docker.com/u/library/ghost/&#34;&gt;an official Ghost image&lt;/a&gt; which we will use (you can see how it&amp;rsquo;s built &lt;a href=&#34;https://github.com/docker-library/ghost&#34;&gt;here&lt;/a&gt;. Let&amp;rsquo;s run it and see how it goes :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm ghost
+
+&amp;gt; ghost@0.6.0 start /usr/src/ghost
+&amp;gt; node index
+
+Migrations: Database initialisation required for version 003
+Migrations: Creating tables...
+Migrations: Creating table: posts
+Migrations: Creating table: users
+Migrations: Creating table: roles
+Migrations: Creating table: roles_users
+Migrations: Creating table: permissions
+Migrations: Creating table: permissions_users
+Migrations: Creating table: permissions_roles
+Migrations: Creating table: permissions_apps
+Migrations: Creating table: settings
+Migrations: Creating table: tags
+Migrations: Creating table: posts_tags
+Migrations: Creating table: apps
+Migrations: Creating table: app_settings
+Migrations: Creating table: app_fields
+Migrations: Creating table: clients
+Migrations: Creating table: accesstokens
+Migrations: Creating table: refreshtokens
+Migrations: Populating fixtures
+Migrations: Populating permissions
+Migrations: Creating owner
+Migrations: Populating default settings
+Migrations: Complete
+Ghost is running in development...
+Listening on 0.0.0.0:2368
+Url configured as: http://localhost:2368
+Ctrl+C to shut down
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;That seems nice ! Ghost is running inside a container, on the machine we provisioned with docker-machine. How do access it now ? Well, we don&amp;rsquo;t. As you can see in the logs, Ghost is running on &lt;code&gt;localhost:2368&lt;/code&gt;, but &lt;code&gt;localhost&lt;/code&gt; here does not mean our local box, but the docker container. In order to access this port, we need to tell docker that it needs to forward it somewhere we can access, and that is done with the &lt;code&gt;-P&lt;/code&gt;, which forward all the ports declared in the Dockerfile to random accessible ports, or &lt;code&gt;-p &amp;lt;port_we_want_to_use&amp;gt;:&amp;lt;port_we_want_to_access&amp;gt;&lt;/code&gt; which let us choose which port we want to access, and where.
+So, let&amp;rsquo;s hit &lt;code&gt;Ctrl+C&lt;/code&gt; in order to stop our Ghost container, and relaunch it with the &lt;code&gt;-p&lt;/code&gt; option :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm -p 9999:2368 ghost
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We will need to get the address of the docker host in order to access it. It&amp;rsquo;s really easy to get: we only have to ask docker-machine for it :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker-machine ip ghost
+192.168.56.77
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now open your favorite browser and go to this address, on port 9999 (for me it would be &lt;code&gt;http://192.168.56.77:9999&lt;/code&gt;) and you should see Ghost running.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&#34;persisting-our-content:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Persisting our content&lt;/h2&gt;
+
+&lt;p&gt;Ok, now we are able to launch Ghost in a docker container. However, &lt;em&gt;everything&lt;/em&gt; is in the container, including you data, and that&amp;rsquo;s not really what we want. Let&amp;rsquo;s see how we could use docker&amp;rsquo;s volumes to our advantage.
+The only things we need to persist in Ghost are our config file, &lt;code&gt;config.js&lt;/code&gt;, and the &lt;code&gt;content/&lt;/code&gt; folder, where our themes are stored, and more importantly our blog posts. The Ghost docker image we&amp;rsquo;re using is making our life easier, as it is built to accept a volume that will be mapped to the Ghost&amp;rsquo;s &lt;code&gt;content/&lt;/code&gt; folder, and will look into this folder for a &lt;code&gt;config.js&lt;/code&gt; file that will be used in place of the image&amp;rsquo;s default one. So we can map only one folder, containing everything we need, and this folder will be everything we need to care about (ie. for backups).&lt;/p&gt;
+
+&lt;p&gt;You can re-use the &lt;code&gt;content&lt;/code&gt; folder of your existing blog, if you want to migrate. If you start from scratch, you can simply download the latest Ghost package and extract it from there.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ wget https://ghost.org/zip/ghost-latest.zip
+$ unzip ghost-latest.zip &amp;quot;content/*&amp;quot;
+$ rm -f ghost-latest.zip
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now you can run the Ghost image, using that &lt;code&gt;content/&lt;/code&gt; folder as a volume :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker run --rm -p 9999:2368 -v $(pwd)/content:/var/lib/ghost ghost
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; In case it&amp;rsquo;s not clear, &lt;code&gt;$(pwd)/content&lt;/code&gt; means &amp;ldquo;my current working directory, concatenated to &lt;code&gt;/content&lt;/code&gt;&amp;rdquo;. You could replace it with something like &lt;code&gt;-v /home/adrien/sandbox/ghost-docker/content&lt;/code&gt;, but for the sake of copy&amp;amp;paste I tried to put something more general.&lt;/p&gt;
+
+&lt;h2 id=&#34;adding-some-simplicity-with-docker-compose:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Adding some simplicity with docker-compose&lt;/h2&gt;
+
+&lt;p&gt;Ok so now our blog is running inside a container, Ghost&amp;rsquo;s port is exposed, content folder is mapped, and we&amp;rsquo;re quite happy. We could leave it that way and go do some other stuff, but we used a quite complex command line to launch the blog, and who knows if by the time we need to relaunch it we&amp;rsquo;ll remember it ?
+Well, we could avoid the need to remember it by using &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;docker-compose&lt;/a&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;Compose is a tool for defining and running complex applications with Docker. With Compose, you define a multi-container application in a single file, then spin your application up in a single command which does everything that needs to be done to get it running.
+-- &lt;cite&gt;&lt;a href=&#34;https://docs.docker.com/compose&#34;&gt;https://docs.docker.com/compose&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Well, our application is not per say &amp;ldquo;complex&amp;rdquo;, but we can use compose anyway (so we can be lazy later).&lt;/p&gt;
+
+&lt;p&gt;The only thing to do, besides &lt;a href=&#34;https://docs.docker.com/compose/#installation-and-set-up&#34;&gt;installing compose on our box&lt;/a&gt;, is to create a simple YAML file, named &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;blog:
+  image: ghost
+  command: npm start
+  volumes:
+    - content:/var/lib/ghost
+  ports:
+    - 9999:2368
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;We can now run the blog with the command :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker-compose up -d
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;The &lt;code&gt;-d&lt;/code&gt; flag tells docker to launch the container in the background. We can check that it&amp;rsquo;s correctly running with a classic &lt;code&gt;docker ps&lt;/code&gt;&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ docker ps
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                    NAMES
+9a626c13449d        ghost:0             &amp;quot;/entrypoint.sh npm    7 seconds ago       Up 6 seconds        0.0.0.0:9999-&amp;gt;2368/tcp   blogcompose_blog_1
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h2 id=&#34;what-s-next:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;What&amp;rsquo;s next ?&lt;/h2&gt;
+
+&lt;p&gt;We&amp;rsquo;ve seen how to setup the blog using docker, machine and compose and now we need to think about exploiting it ! A good next step would be to setup a backup, a script copying our &lt;code&gt;content&lt;/code&gt; folder and our &lt;code&gt;docker-compose.yml&lt;/code&gt; file somewhere safe. We could also add a custom theme to our newly created blog, by putting it in our &lt;code&gt;content/themes/&lt;/code&gt; folder and restarting the container.&lt;/p&gt;
+
+&lt;p&gt;Or we could simply connect to Ghost, and start writing stuff ! Happy blogging !&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Proxy configuration for Docker on CentOS 7</title>
+      <link>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</link>
+      <pubDate>Wed, 10 Sep 2014 10:57:23 +0000</pubDate>
+      
+      <guid>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</guid>
+      <description>&lt;p&gt;We saw earlier how to &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;configure the proxy for docker on Ubuntu 14.04&lt;/a&gt;, let&amp;rsquo;s now see how to do that on CentOS 7.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;HTTP_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+HTTPS_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll need to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;# systemctl restart docker
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You may still need to declare the proxy in the Dockerfile too, as seen &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;in the Ubuntu article&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Running docker behind a proxy on Ubuntu 14.04</title>
+      <link>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
+      <pubDate>Wed, 10 Sep 2014 10:32:00 +0000</pubDate>
+      
+      <guid>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
+      <description>&lt;p&gt;If you&amp;rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&amp;rsquo;s see how to fix that.&lt;/p&gt;
+
+&lt;p&gt;Edit &lt;code&gt;/etc/defaults/docker.io&lt;/code&gt; and add the following lines:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;export http_proxy=&#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;For those settings to be taken into account, you&amp;rsquo;ll have to restart your docker daemon:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo service docker.io restart
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;This should allow docker daemon to pull images from the central registry. However, if you need to configure the proxy in the Dockerfile (ie. if you&amp;rsquo;re using &lt;code&gt;apt-get&lt;/code&gt; to install packages), you&amp;rsquo;ll need to declare it there too.&lt;/p&gt;
+
+&lt;p&gt;Add the following lines at the top of your Dockerfile:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;ENV http_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV https_proxy &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTP_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+ENV HTTPS_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;With those settings, your container should now build, using the proxy to access the outside world.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
