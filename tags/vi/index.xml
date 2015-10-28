@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Vi on nknu.net</title>
-    <link>http://nknu.net/tags/vi/</link>
+    <link>https://aanc.github.io/tags/vi/</link>
     <description>Recent content in Vi on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Tue, 08 Apr 2014 13:19:07 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/vi/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/vi/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Gain root permission inside VI with sudo</title>
-      <link>http://nknu.net/gain-root-permission-inside-vi/</link>
+      <link>https://aanc.github.io/gain-root-permission-inside-vi/</link>
       <pubDate>Tue, 08 Apr 2014 13:19:07 +0000</pubDate>
       
-      <guid>http://nknu.net/gain-root-permission-inside-vi/</guid>
+      <guid>https://aanc.github.io/gain-root-permission-inside-vi/</guid>
       <description>&lt;p&gt;If you open a file owned by root in VI with your regular user, you will be unable to save it using the regular &lt;code&gt;:w&lt;/code&gt; command as the file will be opened read-only.&lt;/p&gt;
 
 &lt;p&gt;However you can write the content of your vi buffer to the file using the command &lt;code&gt;:w !sudo tee %&lt;/code&gt;, which will prompt for your sudo password.&lt;/p&gt;

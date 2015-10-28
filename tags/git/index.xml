@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Git on nknu.net</title>
-    <link>http://nknu.net/tags/git/</link>
+    <link>https://aanc.github.io/tags/git/</link>
     <description>Recent content in Git on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 16 Jul 2014 17:19:44 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/git/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/git/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Git: setup a remote repo from a local repo</title>
-      <link>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</link>
+      <link>https://aanc.github.io/git-setup-a-remote-repo-from-a-local-repo/</link>
       <pubDate>Wed, 16 Jul 2014 17:19:44 +0000</pubDate>
       
-      <guid>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</guid>
+      <guid>https://aanc.github.io/git-setup-a-remote-repo-from-a-local-repo/</guid>
       <description>&lt;p&gt;Let&amp;rsquo;s assume you started a new project. You&amp;rsquo;re using Git for versionning, because it&amp;rsquo;s easy to set it up locally, and for a few hours/days/weeks you&amp;rsquo;re just happy with your local repository. However, now you need to go bigger and start sharing the code with your coworkers, or maybe want to setup a continuous integration system, or whatever else, and for that your need to create a remote repository which will act as reference for all the actors of your project.&lt;/p&gt;
 
 &lt;p&gt;That&amp;rsquo;s quite easy to do, actually. First thing you need to do is to create a &lt;em&gt;bare repository&lt;/em&gt; on your remote server. The main difference between a bare repository and a classic one (like the one on your computer), is that the bare repository does not have a working copy checked out, it only have the versionning information (which is in the &lt;code&gt;.git&lt;/code&gt; folder of your local repo).&lt;/p&gt;
@@ -50,10 +50,10 @@ It would also be interresting to implement some sort of backup strategy for your
     
     <item>
       <title>Git behind a proxy</title>
-      <link>http://nknu.net/git-through-proxy/</link>
+      <link>https://aanc.github.io/git-through-proxy/</link>
       <pubDate>Fri, 30 May 2014 12:47:43 +0000</pubDate>
       
-      <guid>http://nknu.net/git-through-proxy/</guid>
+      <guid>https://aanc.github.io/git-through-proxy/</guid>
       <description>
 
 &lt;p&gt;If you need to access a git repository somewhere on the internet (let&amp;rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&amp;rsquo;ll need to go through an HTTP proxy. Let&amp;rsquo;s see how we can configure that.&lt;/p&gt;
@@ -106,10 +106,10 @@ https_proxy=$http_proxy
     
     <item>
       <title>How to solve Git error HTTP 413</title>
-      <link>http://nknu.net/how-to-solve-git-error-http-413/</link>
+      <link>https://aanc.github.io/how-to-solve-git-error-http-413/</link>
       <pubDate>Thu, 17 Oct 2013 18:01:57 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-solve-git-error-http-413/</guid>
+      <guid>https://aanc.github.io/how-to-solve-git-error-http-413/</guid>
       <description>&lt;p&gt;If you have the following error when you push your repository to a remote :&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;error: RPC failed; result=22, HTTP code = 413

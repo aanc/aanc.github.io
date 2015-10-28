@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Docker on nknu.net</title>
-    <link>http://nknu.net/tags/docker/</link>
+    <link>https://aanc.github.io/tags/docker/</link>
     <description>Recent content in Docker on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Tue, 26 May 2015 16:13:55 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/docker/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/docker/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to configure Docker on Ubuntu 15.04 (workaround)</title>
-      <link>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</link>
+      <link>https://aanc.github.io/how-to-configure-docker-on-ubuntu-15-04/</link>
       <pubDate>Tue, 26 May 2015 16:13:55 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</guid>
+      <guid>https://aanc.github.io/how-to-configure-docker-on-ubuntu-15-04/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Article updated the 17th of August 2015,&lt;/strong&gt; with the remarks of &lt;em&gt;Giacomo Orlandi&lt;/em&gt; in the comments, who provided a cleaner way to update the systemd config, based on a discussion in &lt;a href=&#34;https://github.com/docker/docker/issues/9889#issuecomment-109819996&#34;&gt;this Docker&amp;rsquo;s Github issue&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in &lt;code&gt;/etc/default/docker&lt;/code&gt; anymore. That is due to the fact that Ubuntu is now using &lt;code&gt;systemd&lt;/code&gt; instead of Upstart/SysV. Unfortunately, Docker&amp;rsquo;s default systemd configuration is not ready for Ubuntu, and the config file is ignored.&lt;/p&gt;
@@ -102,10 +102,10 @@ Drop-In: /etc/systemd/system/docker.service.d
     
     <item>
       <title>How to easily deploy your ghost blog using docker-machine and docker-compose</title>
-      <link>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</link>
+      <link>https://aanc.github.io/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</link>
       <pubDate>Fri, 01 May 2015 22:56:06 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
+      <guid>https://aanc.github.io/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
       <description>
 
 &lt;h2 id=&#34;prepare-your-docker-host-with-docker-machine:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Prepare your docker host (with docker-machine)&lt;/h2&gt;
@@ -131,7 +131,7 @@ INFO[0104] To point your Docker client at it, run this in your shell: eval &amp;
 
 &lt;p&gt;With that output, we can be pretty confident that our machine was successfuly created, but if you need an extra confirmation you can check that the machine is indeed running in your Virtualbox Manager.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/GhostDockerMachine.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2015/04/GhostDockerMachine.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;As suggested by the output of docker-machine, we can now run &lt;code&gt;eval &amp;quot;$(docker-machine env ghost)&amp;quot;&lt;/code&gt; in order to point our docker client to this newly created docker daemon, so every &lt;code&gt;docker&lt;/code&gt; command we&amp;rsquo;ll run from now will be sent to the docker daemon in the machine we just created.&lt;/p&gt;
 
@@ -189,7 +189,7 @@ So, let&amp;rsquo;s hit &lt;code&gt;Ctrl+C&lt;/code&gt; in order to stop our Gho
 
 &lt;p&gt;Now open your favorite browser and go to this address, on port 9999 (for me it would be &lt;code&gt;http://192.168.56.77:9999&lt;/code&gt;) and you should see Ghost running.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;persisting-our-content:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Persisting our content&lt;/h2&gt;
 
@@ -255,10 +255,10 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
     
     <item>
       <title>Proxy configuration for Docker on CentOS 7</title>
-      <link>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</link>
+      <link>https://aanc.github.io/proxy-configuration-for-docker-on-centos-7/</link>
       <pubDate>Wed, 10 Sep 2014 10:57:23 +0000</pubDate>
       
-      <guid>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</guid>
+      <guid>https://aanc.github.io/proxy-configuration-for-docker-on-centos-7/</guid>
       <description>&lt;p&gt;We saw earlier how to &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;configure the proxy for docker on Ubuntu 14.04&lt;/a&gt;, let&amp;rsquo;s now see how to do that on CentOS 7.&lt;/p&gt;
 
 &lt;p&gt;Edit &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt; and add the following lines:&lt;/p&gt;
@@ -278,10 +278,10 @@ HTTPS_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
     
     <item>
       <title>Running docker behind a proxy on Ubuntu 14.04</title>
-      <link>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
+      <link>https://aanc.github.io/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
       <pubDate>Wed, 10 Sep 2014 10:32:00 +0000</pubDate>
       
-      <guid>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
+      <guid>https://aanc.github.io/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
       <description>&lt;p&gt;If you&amp;rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&amp;rsquo;s see how to fix that.&lt;/p&gt;
 
 &lt;p&gt;Edit &lt;code&gt;/etc/defaults/docker.io&lt;/code&gt; and add the following lines:&lt;/p&gt;

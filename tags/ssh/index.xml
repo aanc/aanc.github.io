@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Ssh on nknu.net</title>
-    <link>http://nknu.net/tags/ssh/</link>
+    <link>https://aanc.github.io/tags/ssh/</link>
     <description>Recent content in Ssh on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Thu, 07 Aug 2014 12:05:32 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/ssh/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Ubuntu 14.04: How to open ssh:// links in a terminal</title>
-      <link>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</link>
+      <link>https://aanc.github.io/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</link>
       <pubDate>Thu, 07 Aug 2014 12:05:32 +0000</pubDate>
       
-      <guid>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</guid>
+      <guid>https://aanc.github.io/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</guid>
       <description>&lt;p&gt;If you&amp;rsquo;re using a web based tool to manage your servers, chances are that this tool is providing &lt;code&gt;ssh://&lt;/code&gt; links to connect directly to those server with one click from your web browser. Let&amp;rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link.&lt;/p&gt;
 
 &lt;p&gt;First we need a script which is able to process a string like &amp;ldquo;ssh://user@host:port&amp;rdquo;. Create a file named &lt;code&gt;ssh-handler.sh&lt;/code&gt; somewhere in your home directory (ie. &lt;code&gt;~/.local/bin/ssh-handler.sh&lt;/code&gt; - I tend to put my custom executables in &lt;code&gt;~/.local/bin&lt;/code&gt;, and I added that to my &lt;code&gt;PATH&lt;/code&gt;)&lt;/p&gt;
@@ -59,10 +59,10 @@ MimeType=x-scheme-handler/ssh;
     
     <item>
       <title>Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</title>
-      <link>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
+      <link>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
       <pubDate>Tue, 05 Aug 2014 15:12:00 +0000</pubDate>
       
-      <guid>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
+      <guid>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
       <description>&lt;p&gt;When SSH&amp;rsquo;ing to old boxes within tmux, I sometimes get the following error:
 &lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt;, and a very ugly prompt.&lt;/p&gt;
 

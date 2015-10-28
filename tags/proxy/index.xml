@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Proxy on nknu.net</title>
-    <link>http://nknu.net/tags/proxy/</link>
+    <link>https://aanc.github.io/tags/proxy/</link>
     <description>Recent content in Proxy on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 10 Sep 2014 10:57:23 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/proxy/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Proxy configuration for Docker on CentOS 7</title>
-      <link>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</link>
+      <link>https://aanc.github.io/proxy-configuration-for-docker-on-centos-7/</link>
       <pubDate>Wed, 10 Sep 2014 10:57:23 +0000</pubDate>
       
-      <guid>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</guid>
+      <guid>https://aanc.github.io/proxy-configuration-for-docker-on-centos-7/</guid>
       <description>&lt;p&gt;We saw earlier how to &lt;a href=&#34;http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/&#34;&gt;configure the proxy for docker on Ubuntu 14.04&lt;/a&gt;, let&amp;rsquo;s now see how to do that on CentOS 7.&lt;/p&gt;
 
 &lt;p&gt;Edit &lt;code&gt;/etc/sysconfig/docker&lt;/code&gt; and add the following lines:&lt;/p&gt;
@@ -33,10 +33,10 @@ HTTPS_PROXY=&#39;http://user:password@proxy-host:proxy-port&#39;
     
     <item>
       <title>Running docker behind a proxy on Ubuntu 14.04</title>
-      <link>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
+      <link>https://aanc.github.io/running-docker-behind-a-proxy-on-ubuntu-14-04/</link>
       <pubDate>Wed, 10 Sep 2014 10:32:00 +0000</pubDate>
       
-      <guid>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
+      <guid>https://aanc.github.io/running-docker-behind-a-proxy-on-ubuntu-14-04/</guid>
       <description>&lt;p&gt;If you&amp;rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&amp;rsquo;s see how to fix that.&lt;/p&gt;
 
 &lt;p&gt;Edit &lt;code&gt;/etc/defaults/docker.io&lt;/code&gt; and add the following lines:&lt;/p&gt;
@@ -65,10 +65,10 @@ ENV HTTPS_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
     
     <item>
       <title>Git behind a proxy</title>
-      <link>http://nknu.net/git-through-proxy/</link>
+      <link>https://aanc.github.io/git-through-proxy/</link>
       <pubDate>Fri, 30 May 2014 12:47:43 +0000</pubDate>
       
-      <guid>http://nknu.net/git-through-proxy/</guid>
+      <guid>https://aanc.github.io/git-through-proxy/</guid>
       <description>
 
 &lt;p&gt;If you need to access a git repository somewhere on the internet (let&amp;rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&amp;rsquo;ll need to go through an HTTP proxy. Let&amp;rsquo;s see how we can configure that.&lt;/p&gt;
@@ -121,17 +121,17 @@ https_proxy=$http_proxy
     
     <item>
       <title>Ubuntu 14.04 proxy config with authentication</title>
-      <link>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</link>
+      <link>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</link>
       <pubDate>Wed, 16 Apr 2014 21:05:11 +0000</pubDate>
       
-      <guid>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</guid>
+      <guid>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</guid>
       <description>
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Updated the 07 Aug 2014:&lt;/strong&gt; added autoconfig URL settings&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;If you&amp;rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;You have several options to work arround that.&lt;/p&gt;
 
@@ -145,15 +145,15 @@ https_proxy=$http_proxy
 
 &lt;p&gt;In the dconf Editor window, go to &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy -&amp;gt; http&lt;/code&gt; and configure your username and password.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If you have local domains/ip/masks you don&amp;rsquo;t want to use the proxy with, you can configure them in the &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy&lt;/code&gt; window, in the &lt;code&gt;ignore-hosts&lt;/code&gt; field. For example if your company use an internal network name &lt;code&gt;mycompany.lan&lt;/code&gt;, you can add &lt;code&gt;*.mycompany.lan&lt;/code&gt; to avoid using the proxy when accessing this domain.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Note that if your network provides an autoconfig script, you can use it here. Set the &lt;code&gt;mode&lt;/code&gt; to &lt;code&gt;auto&lt;/code&gt;, and enter the URL of the autoconfig script ing the &lt;code&gt;autoconfig-url&lt;/code&gt; field. When you use the &lt;code&gt;auto&lt;/code&gt; mode, every other setting exept &lt;code&gt;autoconfig-url&lt;/code&gt; is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type &lt;code&gt;chrome://net-internals/#proxy&lt;/code&gt; in the URL bar. The &lt;code&gt;PAC script&lt;/code&gt; line is what you&amp;rsquo;re looking for:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
 

@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Compose on nknu.net</title>
-    <link>http://nknu.net/tags/compose/</link>
+    <link>https://aanc.github.io/tags/compose/</link>
     <description>Recent content in Compose on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Fri, 01 May 2015 22:56:06 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/compose/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/compose/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to easily deploy your ghost blog using docker-machine and docker-compose</title>
-      <link>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</link>
+      <link>https://aanc.github.io/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</link>
       <pubDate>Fri, 01 May 2015 22:56:06 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
+      <guid>https://aanc.github.io/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
       <description>
 
 &lt;h2 id=&#34;prepare-your-docker-host-with-docker-machine:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Prepare your docker host (with docker-machine)&lt;/h2&gt;
@@ -39,7 +39,7 @@ INFO[0104] To point your Docker client at it, run this in your shell: eval &amp;
 
 &lt;p&gt;With that output, we can be pretty confident that our machine was successfuly created, but if you need an extra confirmation you can check that the machine is indeed running in your Virtualbox Manager.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/GhostDockerMachine.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2015/04/GhostDockerMachine.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;As suggested by the output of docker-machine, we can now run &lt;code&gt;eval &amp;quot;$(docker-machine env ghost)&amp;quot;&lt;/code&gt; in order to point our docker client to this newly created docker daemon, so every &lt;code&gt;docker&lt;/code&gt; command we&amp;rsquo;ll run from now will be sent to the docker daemon in the machine we just created.&lt;/p&gt;
 
@@ -97,7 +97,7 @@ So, let&amp;rsquo;s hit &lt;code&gt;Ctrl+C&lt;/code&gt; in order to stop our Gho
 
 &lt;p&gt;Now open your favorite browser and go to this address, on port 9999 (for me it would be &lt;code&gt;http://192.168.56.77:9999&lt;/code&gt;) and you should see Ghost running.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;h2 id=&#34;persisting-our-content:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Persisting our content&lt;/h2&gt;
 

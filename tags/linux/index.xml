@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Linux on nknu.net</title>
-    <link>http://nknu.net/tags/linux/</link>
+    <link>https://aanc.github.io/tags/linux/</link>
     <description>Recent content in Linux on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Tue, 05 Aug 2014 15:12:00 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</title>
-      <link>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
+      <link>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
       <pubDate>Tue, 05 Aug 2014 15:12:00 +0000</pubDate>
       
-      <guid>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
+      <guid>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
       <description>&lt;p&gt;When SSH&amp;rsquo;ing to old boxes within tmux, I sometimes get the following error:
 &lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt;, and a very ugly prompt.&lt;/p&gt;
 
@@ -40,10 +40,10 @@
     
     <item>
       <title>apt-get install error at run-parts zz-update-grub</title>
-      <link>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</link>
+      <link>https://aanc.github.io/apt-get-install-error-at-run-parts-zz-update-grub/</link>
       <pubDate>Wed, 14 May 2014 11:22:01 +0000</pubDate>
       
-      <guid>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</guid>
+      <guid>https://aanc.github.io/apt-get-install-error-at-run-parts-zz-update-grub/</guid>
       <description>&lt;p&gt;When you install programs using &lt;code&gt;apt-get&lt;/code&gt;, post-install tasks are executed to keep the system consistent. However, sometimes, those tasks does not go well, as in the example below (on a Debian Squeeze - yeah, I know, this system is not really up to date &amp;hellip;).&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ apt-get install whatever
@@ -105,10 +105,10 @@ done
     
     <item>
       <title>How to create a custom RHEL install CD</title>
-      <link>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</link>
+      <link>https://aanc.github.io/how-to-create-a-custom-rhel-install-cd/</link>
       <pubDate>Thu, 08 May 2014 21:31:12 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</guid>
+      <guid>https://aanc.github.io/how-to-create-a-custom-rhel-install-cd/</guid>
       <description>&lt;p&gt;You&amp;rsquo;ll need the RHEL standard installation ISO as a base, but you probably have it in one form or another if you&amp;rsquo;re reading this guide &amp;hellip;&lt;/p&gt;
 
 &lt;ol&gt;
@@ -181,10 +181,10 @@ mkisofs -o ~/my-custom-rhel-cd.iso -b isolinux/isolinux.bin -c isolinux/boot.cat
     
     <item>
       <title>Ubuntu 14.04 Exchange configuration, with Thunderbird and Pidgin</title>
-      <link>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</link>
+      <link>https://aanc.github.io/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</link>
       <pubDate>Wed, 23 Apr 2014 22:49:27 +0000</pubDate>
       
-      <guid>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</guid>
+      <guid>https://aanc.github.io/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</guid>
       <description>
 
 &lt;p&gt;A lot of companies are using Microsoft&amp;rsquo;s Exchange for their communications, with Outlook for the mails/agenda and Lync for instant messaging, and those are common blocking points when one want to switch to Linux on his primary work computer. An easy workaround would be to user Outlook Web Access, but it lacks some features (notifications, desktop integration, &amp;hellip;) and it&amp;rsquo;s not always very convenient (you can&amp;rsquo;t use its advanced features if you&amp;rsquo;re using Chrome for example). However it is possible to have a fully functionnal mail/calendar/IM on Linux, able to connect to the Exchange ecosystem of your company, using Davmail as a gateway, Thunderbird as email and agenda client, and pidgin as instant messenging client. Let&amp;rsquo;s see how we can do that on an Ubuntu 14.04.&lt;/p&gt;
@@ -223,7 +223,7 @@ mkisofs -o ~/my-custom-rhel-cd.iso -b isolinux/isolinux.bin -c isolinux/boot.cat
 &lt;/blockquote&gt;
 
 &lt;p&gt;&lt;center&gt;
-&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/davmail-config-1.png&#34; alt=&#34;Davmail - configuration&#34; /&gt;
+&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/davmail-config-1.png&#34; alt=&#34;Davmail - configuration&#34; /&gt;
 &lt;/center&gt;&lt;/p&gt;
 
 &lt;p&gt;Hit the save button, and we&amp;rsquo;re done ! You should see a popup saying that Davmail is running.&lt;/p&gt;
@@ -267,7 +267,7 @@ If you&amp;rsquo;re installing it only for you though, and on your local machine
 &lt;li&gt;Click &amp;ldquo;Test&amp;rdquo;, and if everything is OK you should be able to click &amp;ldquo;Done&amp;rdquo;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-mail-account-setup.png&#34; alt=&#34;Thunderbird mail account creation&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/thunderbird-mail-account-setup.png&#34; alt=&#34;Thunderbird mail account creation&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;At this point Thunderbird should start to fetch your emails from the server, and you should see them appear in your inbox.&lt;/p&gt;
 
@@ -284,7 +284,7 @@ If you&amp;rsquo;re installing it only for you though, and on your local machine
 &lt;p&gt;Now we need to install ExchangeCalendar. It seems that the version available in the store is obsolete. The version used for this guide is 3.2.0-Beta77, if you can&amp;rsquo;t find it in the store (3.2.0-Beta77 or above), I&amp;rsquo;d suggest to download it directly from &lt;a href=&#34;http://www.1st-setup.nl/wordpress/?page_id=551&#34;&gt;this page&lt;/a&gt;.
 Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, click on the little toolbox right before the search area, select &amp;ldquo;Install from file&amp;rdquo;, and then navigate to the .xpi file you juste downloaded.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-install-addon-from-file.png&#34; alt=&#34;Thunderbird - Install from file&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/thunderbird-install-addon-from-file.png&#34; alt=&#34;Thunderbird - Install from file&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Once those two addons are installed, go back to Thunderbird&amp;rsquo;s main window and perform the following actions:&lt;/p&gt;
 
@@ -294,7 +294,7 @@ Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, cli
 &lt;li&gt;Select &amp;ldquo;Microsoft Exchange 2007/2010/2013&amp;rdquo;, then click next&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-add-calendar.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/thunderbird-add-calendar.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;ul&gt;
 &lt;li&gt;Give a name to the calendar, then click next&lt;/li&gt;
@@ -310,7 +310,7 @@ Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, cli
 &lt;li&gt;Click the &amp;ldquo;Verify&amp;rdquo; button, and if everything is OK hit &amp;ldquo;Next&amp;rdquo;&lt;/li&gt;
 &lt;/ul&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-new-calendar-2-1.png&#34; alt=&#34;Thunderbird - Agenda configuration box&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/thunderbird-new-calendar-2-1.png&#34; alt=&#34;Thunderbird - Agenda configuration box&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;The calendar should now appear in the &amp;ldquo;Agenda&amp;rdquo; tab of Thunderbird.&lt;/p&gt;
 
@@ -325,7 +325,7 @@ Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, cli
 &lt;li&gt;Click &amp;ldquo;OK&amp;rdquo;, and verify that you can successfully search people in the Address Book&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/thunderbird-address-book-ldap-config.png&#34; alt=&#34;Thunderbird - Address Book LDAP config&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/thunderbird-address-book-ldap-config.png&#34; alt=&#34;Thunderbird - Address Book LDAP config&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Once done, you can enable the address auto-completion when writing message in Thunderbird&amp;rsquo;s preferences window (&lt;code&gt;Edit -&amp;gt; Preferences&lt;/code&gt;): in the &amp;ldquo;Composition&amp;rdquo; tab, check &amp;ldquo;Directory Server&amp;rdquo; then select the address book you just added.&lt;/p&gt;
 
@@ -335,8 +335,8 @@ Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, cli
 
 &lt;p&gt;You will need to gather info from your Windows&amp;rsquo;s Lync setup, by right-clicking on its tray icon and opening the &amp;ldquo;Configuration Informations&amp;rdquo;. From this window, get the server name, you&amp;rsquo;ll need it to setup pidgin.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/pidgin-1.png&#34; alt=&#34;Lync - config info 1&#34; /&gt;
-&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/pidgin-2.png&#34; alt=&#34;Lync - config info 2&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/pidgin-1.png&#34; alt=&#34;Lync - config info 1&#34; /&gt;
+&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/pidgin-2.png&#34; alt=&#34;Lync - config info 2&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If pidgin is not installed on your system, you can install it via the Ubuntu Software Center simply by searching for it, or by opening a terminal and typing:&lt;/p&gt;
 
@@ -385,17 +385,17 @@ export NSS_SSL_CBC_RANDOM_IV=0`
     
     <item>
       <title>Ubuntu 14.04 proxy config with authentication</title>
-      <link>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</link>
+      <link>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</link>
       <pubDate>Wed, 16 Apr 2014 21:05:11 +0000</pubDate>
       
-      <guid>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</guid>
+      <guid>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</guid>
       <description>
 
 &lt;p&gt;&lt;strong&gt;&lt;em&gt;Updated the 07 Aug 2014:&lt;/strong&gt; added autoconfig URL settings&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;If you&amp;rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;You have several options to work arround that.&lt;/p&gt;
 
@@ -409,15 +409,15 @@ export NSS_SSL_CBC_RANDOM_IV=0`
 
 &lt;p&gt;In the dconf Editor window, go to &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy -&amp;gt; http&lt;/code&gt; and configure your username and password.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;If you have local domains/ip/masks you don&amp;rsquo;t want to use the proxy with, you can configure them in the &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy&lt;/code&gt; window, in the &lt;code&gt;ignore-hosts&lt;/code&gt; field. For example if your company use an internal network name &lt;code&gt;mycompany.lan&lt;/code&gt;, you can add &lt;code&gt;*.mycompany.lan&lt;/code&gt; to avoid using the proxy when accessing this domain.&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Note that if your network provides an autoconfig script, you can use it here. Set the &lt;code&gt;mode&lt;/code&gt; to &lt;code&gt;auto&lt;/code&gt;, and enter the URL of the autoconfig script ing the &lt;code&gt;autoconfig-url&lt;/code&gt; field. When you use the &lt;code&gt;auto&lt;/code&gt; mode, every other setting exept &lt;code&gt;autoconfig-url&lt;/code&gt; is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type &lt;code&gt;chrome://net-internals/#proxy&lt;/code&gt; in the URL bar. The &lt;code&gt;PAC script&lt;/code&gt; line is what you&amp;rsquo;re looking for:&lt;/p&gt;
 
-&lt;p&gt;&lt;img src=&#34;http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
 
@@ -469,10 +469,10 @@ fi
     
     <item>
       <title>Gain root permission inside VI with sudo</title>
-      <link>http://nknu.net/gain-root-permission-inside-vi/</link>
+      <link>https://aanc.github.io/gain-root-permission-inside-vi/</link>
       <pubDate>Tue, 08 Apr 2014 13:19:07 +0000</pubDate>
       
-      <guid>http://nknu.net/gain-root-permission-inside-vi/</guid>
+      <guid>https://aanc.github.io/gain-root-permission-inside-vi/</guid>
       <description>&lt;p&gt;If you open a file owned by root in VI with your regular user, you will be unable to save it using the regular &lt;code&gt;:w&lt;/code&gt; command as the file will be opened read-only.&lt;/p&gt;
 
 &lt;p&gt;However you can write the content of your vi buffer to the file using the command &lt;code&gt;:w !sudo tee %&lt;/code&gt;, which will prompt for your sudo password.&lt;/p&gt;
@@ -486,10 +486,10 @@ fi
     
     <item>
       <title>VMware CLI unattended install, aka auto-answering &#39;yes&#39;</title>
-      <link>http://nknu.net/vmware-cli-unattended-install-aka-auto-answering-yes/</link>
+      <link>https://aanc.github.io/vmware-cli-unattended-install-aka-auto-answering-yes/</link>
       <pubDate>Mon, 07 Apr 2014 14:42:17 +0000</pubDate>
       
-      <guid>http://nknu.net/vmware-cli-unattended-install-aka-auto-answering-yes/</guid>
+      <guid>https://aanc.github.io/vmware-cli-unattended-install-aka-auto-answering-yes/</guid>
       <description>&lt;p&gt;Today I had to automate the process of installing VMware Perl SDK (part of the &lt;a href=&#34;https://my.vmware.com/fr/web/vmware/details?downloadGroup=VSP510-VCLI-510&amp;amp;productId=285&#34;&gt;VMware CLI tools&lt;/a&gt;) on a RHEL 6.4 box. The manual procedure is quite simple and &lt;a href=&#34;http://pubs.vmware.com/vsphere-55/index.jsp#com.vmware.perlsdk.install.doc/cli_install.3.1.html&#34;&gt;well documented on VMware&amp;rsquo;s website&lt;/a&gt;, and it even has a very handy &amp;ldquo;default&amp;rdquo; option that automatically choose default settings during install without prompting for confirmation.
 However at the very begining you have to read the VMware terms and conditions, and type &amp;ldquo;yes&amp;rdquo; to accept them. That step was preventing my script from working 100% unattended.&lt;/p&gt;
 

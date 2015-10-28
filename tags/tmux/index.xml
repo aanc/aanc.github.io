@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Tmux on nknu.net</title>
-    <link>http://nknu.net/tags/tmux/</link>
+    <link>https://aanc.github.io/tags/tmux/</link>
     <description>Recent content in Tmux on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Tue, 05 Aug 2014 15:12:00 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/tmux/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/tmux/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</title>
-      <link>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
+      <link>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</link>
       <pubDate>Tue, 05 Aug 2014 15:12:00 +0000</pubDate>
       
-      <guid>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
+      <guid>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</guid>
       <description>&lt;p&gt;When SSH&amp;rsquo;ing to old boxes within tmux, I sometimes get the following error:
 &lt;code&gt;&#39;screen-256color&#39;: unknown terminal type&lt;/code&gt;, and a very ugly prompt.&lt;/p&gt;
 

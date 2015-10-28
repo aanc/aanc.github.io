@@ -10,7 +10,7 @@
 
     
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link href="http://nknu.net/css/main.css" rel="stylesheet">
+    <link href="https://aanc.github.io/css/main.css" rel="stylesheet">
     <link href='http://fonts.googleapis.com/css?family=Ubuntu:300,400,700,400italic' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
 
@@ -22,10 +22,10 @@
 	<header>
 		<div class="container clearfix">
 			<h1 id="logo">
-				<a href="http://nknu.net/">nknu.net</a>
+				<a href="https://aanc.github.io/">nknu.net</a>
 			</h1>
 			<nav>
-				<a href="http://nknu.net/">Home</a>
+				<a href="https://aanc.github.io/">Home</a>
 				<a href="">About</a>
 				<a href="">Work</a>
 			</nav>
@@ -36,7 +36,7 @@
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-offset-2 col-sm-7">
-      <h1 class="article-title"><a href="http://nknu.net/ubuntu-14-04-proxy-authentication-config/" title="Ubuntu 14.04 proxy config with authentication">Ubuntu 14.04 proxy config with authentication</a></h1>
+      <h1 class="article-title"><a href="https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/" title="Ubuntu 14.04 proxy config with authentication">Ubuntu 14.04 proxy config with authentication</a></h1>
       <div class="article-tags">
         
           <a href="tags/ubuntu"><span class="label label-success">ubuntu</span></a>
@@ -58,7 +58,7 @@
 
 <p>If you&rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.</p>
 
-<p><img src="http://nknu.net/content/images/2014/Apr/network_config.png" alt="" /></p>
+<p><img src="https://aanc.github.io/content/images/2014/Apr/network_config.png" alt="" /></p>
 
 <p>You have several options to work arround that.</p>
 
@@ -72,15 +72,15 @@
 
 <p>In the dconf Editor window, go to <code>dconf-editor -&gt; system -&gt; proxy -&gt; http</code> and configure your username and password.</p>
 
-<p><img src="http://nknu.net/content/images/2014/Apr/proxy_config.png" alt="" /></p>
+<p><img src="https://aanc.github.io/content/images/2014/Apr/proxy_config.png" alt="" /></p>
 
 <p>If you have local domains/ip/masks you don&rsquo;t want to use the proxy with, you can configure them in the <code>dconf-editor -&gt; system -&gt; proxy</code> window, in the <code>ignore-hosts</code> field. For example if your company use an internal network name <code>mycompany.lan</code>, you can add <code>*.mycompany.lan</code> to avoid using the proxy when accessing this domain.</p>
 
-<p><img src="http://nknu.net/content/images/2014/Apr/no_proxy.png" alt="" /></p>
+<p><img src="https://aanc.github.io/content/images/2014/Apr/no_proxy.png" alt="" /></p>
 
 <p>Note that if your network provides an autoconfig script, you can use it here. Set the <code>mode</code> to <code>auto</code>, and enter the URL of the autoconfig script ing the <code>autoconfig-url</code> field. When you use the <code>auto</code> mode, every other setting exept <code>autoconfig-url</code> is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type <code>chrome://net-internals/#proxy</code> in the URL bar. The <code>PAC script</code> line is what you&rsquo;re looking for:</p>
 
-<p><img src="http://nknu.net/content/images/2014/Aug/proxy-autoconfig-url.png" alt="" /></p>
+<p><img src="https://aanc.github.io/content/images/2014/Aug/proxy-autoconfig-url.png" alt="" /></p>
 
 <h3 id="2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5">2. The console&rsquo;ish way</h3>
 
@@ -152,7 +152,7 @@ fi
 
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
 
-<script src="http://nknu.net/js/main.js"></script>
+<script src="https://aanc.github.io/js/main.js"></script>
 </body>
 </html>
 

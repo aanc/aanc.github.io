@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Fix on nknu.net</title>
-    <link>http://nknu.net/tags/fix/</link>
+    <link>https://aanc.github.io/tags/fix/</link>
     <description>Recent content in Fix on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Wed, 14 May 2014 11:22:01 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/fix/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/fix/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>apt-get install error at run-parts zz-update-grub</title>
-      <link>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</link>
+      <link>https://aanc.github.io/apt-get-install-error-at-run-parts-zz-update-grub/</link>
       <pubDate>Wed, 14 May 2014 11:22:01 +0000</pubDate>
       
-      <guid>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</guid>
+      <guid>https://aanc.github.io/apt-get-install-error-at-run-parts-zz-update-grub/</guid>
       <description>&lt;p&gt;When you install programs using &lt;code&gt;apt-get&lt;/code&gt;, post-install tasks are executed to keep the system consistent. However, sometimes, those tasks does not go well, as in the example below (on a Debian Squeeze - yeah, I know, this system is not really up to date &amp;hellip;).&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;$ apt-get install whatever

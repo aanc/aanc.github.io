@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Nginx on nknu.net</title>
-    <link>http://nknu.net/tags/nginx/</link>
+    <link>https://aanc.github.io/tags/nginx/</link>
     <description>Recent content in Nginx on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Thu, 17 Oct 2013 18:01:57 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to solve Git error HTTP 413</title>
-      <link>http://nknu.net/how-to-solve-git-error-http-413/</link>
+      <link>https://aanc.github.io/how-to-solve-git-error-http-413/</link>
       <pubDate>Thu, 17 Oct 2013 18:01:57 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-solve-git-error-http-413/</guid>
+      <guid>https://aanc.github.io/how-to-solve-git-error-http-413/</guid>
       <description>&lt;p&gt;If you have the following error when you push your repository to a remote :&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;error: RPC failed; result=22, HTTP code = 413
@@ -29,10 +29,10 @@ fatal: The remote end hung up unexpectedly
     
     <item>
       <title>How to use nginx as a reverse proxy</title>
-      <link>http://nknu.net/how-to-use-nginx-as-a-reverse-proxy/</link>
+      <link>https://aanc.github.io/how-to-use-nginx-as-a-reverse-proxy/</link>
       <pubDate>Wed, 16 Oct 2013 11:19:55 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-use-nginx-as-a-reverse-proxy/</guid>
+      <guid>https://aanc.github.io/how-to-use-nginx-as-a-reverse-proxy/</guid>
       <description>&lt;p&gt;Open the configuration file of your nginx&amp;rsquo;s site, usually located in &lt;code&gt;/etc/nginx/sites-available/&lt;/code&gt;, and put the following directives in your server block:&lt;/p&gt;
 
 &lt;pre&gt;&lt;code&gt;server {

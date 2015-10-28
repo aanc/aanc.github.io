@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Rhel on nknu.net</title>
-    <link>http://nknu.net/tags/rhel/</link>
+    <link>https://aanc.github.io/tags/rhel/</link>
     <description>Recent content in Rhel on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Thu, 08 May 2014 21:31:12 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/rhel/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/rhel/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to create a custom RHEL install CD</title>
-      <link>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</link>
+      <link>https://aanc.github.io/how-to-create-a-custom-rhel-install-cd/</link>
       <pubDate>Thu, 08 May 2014 21:31:12 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</guid>
+      <guid>https://aanc.github.io/how-to-create-a-custom-rhel-install-cd/</guid>
       <description>&lt;p&gt;You&amp;rsquo;ll need the RHEL standard installation ISO as a base, but you probably have it in one form or another if you&amp;rsquo;re reading this guide &amp;hellip;&lt;/p&gt;
 
 &lt;ol&gt;

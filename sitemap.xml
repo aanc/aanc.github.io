@@ -2,98 +2,98 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://nknu.net/</loc>
+    <loc>https://aanc.github.io/</loc>
     <lastmod>2015-05-26T16:13:55+00:00</lastmod>
     <priority>0</priority>
   </url>
   
   <url>
-    <loc>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</loc>
+    <loc>https://aanc.github.io/how-to-configure-docker-on-ubuntu-15-04/</loc>
     <lastmod>2015-05-26T16:13:55+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</loc>
+    <loc>https://aanc.github.io/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</loc>
     <lastmod>2015-05-01T22:56:06+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/proxy-configuration-for-docker-on-centos-7/</loc>
+    <loc>https://aanc.github.io/proxy-configuration-for-docker-on-centos-7/</loc>
     <lastmod>2014-09-10T10:57:23+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/running-docker-behind-a-proxy-on-ubuntu-14-04/</loc>
+    <loc>https://aanc.github.io/running-docker-behind-a-proxy-on-ubuntu-14-04/</loc>
     <lastmod>2014-09-10T10:32:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</loc>
+    <loc>https://aanc.github.io/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/</loc>
     <lastmod>2014-08-07T12:05:32+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</loc>
+    <loc>https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/</loc>
     <lastmod>2014-08-05T15:12:00+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/git-setup-a-remote-repo-from-a-local-repo/</loc>
+    <loc>https://aanc.github.io/git-setup-a-remote-repo-from-a-local-repo/</loc>
     <lastmod>2014-07-16T17:19:44+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/git-through-proxy/</loc>
+    <loc>https://aanc.github.io/git-through-proxy/</loc>
     <lastmod>2014-05-30T12:47:43+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/sync-your-subtitles-with-mpc-hc/</loc>
+    <loc>https://aanc.github.io/sync-your-subtitles-with-mpc-hc/</loc>
     <lastmod>2014-05-17T19:05:36+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/apt-get-install-error-at-run-parts-zz-update-grub/</loc>
+    <loc>https://aanc.github.io/apt-get-install-error-at-run-parts-zz-update-grub/</loc>
     <lastmod>2014-05-14T11:22:01+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/how-to-create-a-custom-rhel-install-cd/</loc>
+    <loc>https://aanc.github.io/how-to-create-a-custom-rhel-install-cd/</loc>
     <lastmod>2014-05-08T21:31:12+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</loc>
+    <loc>https://aanc.github.io/ubuntu-14-04-exchange-configuration-thunderbird-pidgin/</loc>
     <lastmod>2014-04-23T22:49:27+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/best-heartbleed-explanation-ever/</loc>
+    <loc>https://aanc.github.io/best-heartbleed-explanation-ever/</loc>
     <lastmod>2014-04-17T14:22:39+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/ubuntu-14-04-proxy-authentication-config/</loc>
+    <loc>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</loc>
     <lastmod>2014-04-16T21:05:11+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/gain-root-permission-inside-vi/</loc>
+    <loc>https://aanc.github.io/gain-root-permission-inside-vi/</loc>
     <lastmod>2014-04-08T13:19:07+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/vmware-cli-unattended-install-aka-auto-answering-yes/</loc>
+    <loc>https://aanc.github.io/vmware-cli-unattended-install-aka-auto-answering-yes/</loc>
     <lastmod>2014-04-07T14:42:17+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/how-to-solve-git-error-http-413/</loc>
+    <loc>https://aanc.github.io/how-to-solve-git-error-http-413/</loc>
     <lastmod>2013-10-17T18:01:57+00:00</lastmod>
   </url>
   
   <url>
-    <loc>http://nknu.net/how-to-use-nginx-as-a-reverse-proxy/</loc>
+    <loc>https://aanc.github.io/how-to-use-nginx-as-a-reverse-proxy/</loc>
     <lastmod>2013-10-16T11:19:55+00:00</lastmod>
   </url>
   

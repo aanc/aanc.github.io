@@ -2,18 +2,18 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Vivid on nknu.net</title>
-    <link>http://nknu.net/tags/vivid/</link>
+    <link>https://aanc.github.io/tags/vivid/</link>
     <description>Recent content in Vivid on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
     <lastBuildDate>Tue, 26 May 2015 16:13:55 +0000</lastBuildDate>
-    <atom:link href="http://nknu.net/tags/vivid/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://aanc.github.io/tags/vivid/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
       <title>How to configure Docker on Ubuntu 15.04 (workaround)</title>
-      <link>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</link>
+      <link>https://aanc.github.io/how-to-configure-docker-on-ubuntu-15-04/</link>
       <pubDate>Tue, 26 May 2015 16:13:55 +0000</pubDate>
       
-      <guid>http://nknu.net/how-to-configure-docker-on-ubuntu-15-04/</guid>
+      <guid>https://aanc.github.io/how-to-configure-docker-on-ubuntu-15-04/</guid>
       <description>&lt;p&gt;&lt;strong&gt;Article updated the 17th of August 2015,&lt;/strong&gt; with the remarks of &lt;em&gt;Giacomo Orlandi&lt;/em&gt; in the comments, who provided a cleaner way to update the systemd config, based on a discussion in &lt;a href=&#34;https://github.com/docker/docker/issues/9889#issuecomment-109819996&#34;&gt;this Docker&amp;rsquo;s Github issue&lt;/a&gt;.&lt;/p&gt;
 
 &lt;p&gt;If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in &lt;code&gt;/etc/default/docker&lt;/code&gt; anymore. That is due to the fact that Ubuntu is now using &lt;code&gt;systemd&lt;/code&gt; instead of Upstart/SysV. Unfortunately, Docker&amp;rsquo;s default systemd configuration is not ready for Ubuntu, and the config file is ignored.&lt;/p&gt;
