@@ -217,7 +217,7 @@ Well, we could avoid the need to remember it by using &lt;a href=&#34;https://do
 
 &lt;blockquote&gt;
 &lt;p&gt;Compose is a tool for defining and running complex applications with Docker. With Compose, you define a multi-container application in a single file, then spin your application up in a single command which does everything that needs to be done to get it running.
--- &lt;cite&gt;&lt;a href=&#34;https://docs.docker.com/compose&#34;&gt;https://docs.docker.com/compose&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
+&amp;ndash; &lt;cite&gt;&lt;a href=&#34;https://docs.docker.com/compose&#34;&gt;https://docs.docker.com/compose&lt;/a&gt;&lt;/cite&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Well, our application is not per say &amp;ldquo;complex&amp;rdquo;, but we can use compose anyway (so we can be lazy later).&lt;/p&gt;
