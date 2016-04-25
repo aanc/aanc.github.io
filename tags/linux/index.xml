@@ -5,8 +5,82 @@
     <link>https://aanc.github.io/tags/linux/</link>
     <description>Recent content in Linux on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 05 Aug 2014 15:12:00 +0000</lastBuildDate>
+    <lastBuildDate>Tue, 12 Apr 2016 12:30:23 +0000</lastBuildDate>
     <atom:link href="https://aanc.github.io/tags/linux/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to mount your android phone on fedora 23 using simple-mtpfs</title>
+      <link>https://aanc.github.io/mount-nexus5-on-fedora23-using-simple-mtpfs/</link>
+      <pubDate>Tue, 12 Apr 2016 12:30:23 +0000</pubDate>
+      
+      <guid>https://aanc.github.io/mount-nexus5-on-fedora23-using-simple-mtpfs/</guid>
+      <description>&lt;p&gt;On recent Fedora versions, it should works out of the box: you plug the phone, the system detects it and opens a file explorer allowing you to browse your device&amp;rsquo;s content.&lt;/p&gt;
+
+&lt;p&gt;However, if for some reason you want to mount the phone using &lt;code&gt;simple-mtpfs&lt;/code&gt;, you can proceed as follow.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Install &lt;code&gt;simple-mtpfs&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code&gt;dnf install simple-mtpfs
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;strong&gt;Note&lt;/strong&gt; : you also need the packages &lt;code&gt;fuse fuse-libs libmtp&lt;/code&gt;, but chances are that they are already installed on your system.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Connect your device (in my case, a LG Nexus 5), and do a &lt;code&gt;dmesg | tail&lt;/code&gt; :
+&lt;code&gt;
+[ 4158.530224] usb 4-1.7.2: new high-speed USB device number 4 using ehci-pci
+[ 4158.616409] usb 4-1.7.2: New USB device found, idVendor=18d1, idProduct=4ee1
+[ 4158.616415] usb 4-1.7.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[ 4158.616418] usb 4-1.7.2: Product: Nexus 5
+[ 4158.616421] usb 4-1.7.2: Manufacturer: LGE
+[ 4158.616423] usb 4-1.7.2: SerialNumber: xxxxxxxxxxxxxxxxxxxxxx
+&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Write down the &lt;code&gt;idVendor&lt;/code&gt; and &lt;code&gt;idProduct&lt;/code&gt; values.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;create file &lt;code&gt;/etc/udev/rules.d/10-phone.rules&lt;/code&gt;
+&lt;code&gt;
+SUBSYSTEM==&amp;quot;usb&amp;quot;, ATTR{idVendor}==&amp;quot;18d1&amp;quot;, ATTR{idProduct}=&amp;quot;4ee1&amp;quot;, SYMLINK=&amp;quot;nexus5&amp;quot;
+&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Make sure to replace the &lt;code&gt;ATTR{idVendor}&lt;/code&gt; and &lt;code&gt;ATTR{idProduct}&lt;/code&gt; values with the one you got from the &lt;code&gt;dmesg | tail&lt;/code&gt; command, and the &lt;code&gt;SYMLINK&lt;/code&gt; value with whatever you want - it will be the name of the symbolic link udev will create in your &lt;code&gt;/dev&lt;/code&gt; folder, pointing to your device.&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;reload udev rules :&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ sudo udevadm control --reload-rules
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;unplug/replug your device. You should now have a file in &lt;code&gt;/dev&lt;/code&gt; named as requested in the udev rules file created earlier.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;$ ls -l /dev/nexus5
+lrwxrwxrwx. 1 root root 15 Jan 12 10:44 /dev/nexus5 -&amp;gt; bus/usb/004/005
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+
+&lt;li&gt;&lt;p&gt;Make sure the phone is in MTP mode. You can check that directly on the phone, on your notification area, you should have a notification saying &amp;ldquo;USB for file transfers&amp;rdquo; (or something similar). If you have &amp;ldquo;USB for charging&amp;rdquo;, tap on the notification, and on the poping menu select &amp;ldquo;USB for file transfers (MTP)&amp;rdquo;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2016/mount-android-phone-on-fedora-using-simplemtp/phone-mtp-config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Mount the phone
+```
+$ simple-mtpfs /dev/nexus5 /tmp/test
+$ ls /tmp/test&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Alarms    cinegroup          Documents      Movies         panoramas      Ringtones   vervewireless
+  &amp;hellip;
+```&lt;/p&gt;
+
+&lt;p&gt;Et voilà!&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>Fixing &#39;screen256-color: unknown terminal type&#39; when ssh&#39;ing within tmux</title>
@@ -201,7 +275,7 @@ mkisofs -o ~/my-custom-rhel-cd.iso -b isolinux/isolinux.bin -c isolinux/boot.cat
 &lt;li&gt;&lt;a href=&#34;#pidgin&#34;&gt;Replacing Lync with Pidgin&lt;/a&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;h3 id=&#34;span-id-davmail-davmail-the-bridge-between-two-worlds-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;davmail&#34;&gt;Davmail: the bridge between two worlds&lt;/span&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;span-id-davmail-davmail-the-bridge-between-two-worlds-span&#34;&gt;&lt;span id=&#34;davmail&#34;&gt;Davmail: the bridge between two worlds&lt;/span&gt;&lt;/h3&gt;
 
 &lt;p&gt;The first thing we have to do is to find a way to communicate with the Exchange server. That&amp;rsquo;s what &lt;a href=&#34;http://davmail.sourceforge.net/&#34;&gt;DavMail&lt;/a&gt; do. According to its official website:&lt;/p&gt;
 
@@ -231,11 +305,11 @@ mkisofs -o ~/my-custom-rhel-cd.iso -b isolinux/isolinux.bin -c isolinux/boot.cat
 &lt;p&gt;Note that if you have other people in your organization willing to use davmail as well, you can install on a server and configure it once and for all so everyone can use it.
 If you&amp;rsquo;re installing it only for you though, and on your local machine, you&amp;rsquo;ll certainly want it to start with your session. Ubuntu has a dedicated tool for managing startup application, called &amp;hellip; &amp;ldquo;Startup applications&amp;rdquo;. Open the Dash and type &amp;ldquo;Startup applications&amp;rdquo;, create a new entry named &amp;ldquo;Davmail&amp;rdquo; and just enter &amp;ldquo;davmail&amp;rdquo; in the command field.&lt;/p&gt;
 
-&lt;h3 id=&#34;span-id-thunderbird-thunderbird-our-new-outlook-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;thunderbird&#34;&gt;Thunderbird: our new Outlook&lt;/span&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;span-id-thunderbird-thunderbird-our-new-outlook-span&#34;&gt;&lt;span id=&#34;thunderbird&#34;&gt;Thunderbird: our new Outlook&lt;/span&gt;&lt;/h3&gt;
 
 &lt;p&gt;&lt;a href=&#34;http://www.mozilla.org/fr/thunderbird/&#34;&gt;Thunderbird&lt;/a&gt; is pre-installed on Ubuntu 14.04. If it&amp;rsquo;s not installed on your distribution, you can find out how to get it on its &lt;a href=&#34;http://www.mozilla.org/fr/thunderbird/&#34;&gt;official website&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;span-id-mails-mails-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;mails&#34;&gt;Mails&lt;/span&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;span-id-mails-mails-span&#34;&gt;&lt;span id=&#34;mails&#34;&gt;Mails&lt;/span&gt;&lt;/h4&gt;
 
 &lt;ol&gt;
 &lt;li&gt;Open Thunderbird&lt;/li&gt;
@@ -271,7 +345,7 @@ If you&amp;rsquo;re installing it only for you though, and on your local machine
 
 &lt;p&gt;At this point Thunderbird should start to fetch your emails from the server, and you should see them appear in your inbox.&lt;/p&gt;
 
-&lt;h4 id=&#34;span-id-agenda-agenda-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;agenda&#34;&gt;Agenda&lt;/span&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;span-id-agenda-agenda-span&#34;&gt;&lt;span id=&#34;agenda&#34;&gt;Agenda&lt;/span&gt;&lt;/h4&gt;
 
 &lt;p&gt;For the calendar, we&amp;rsquo;re going to use the following Thunderbird extensions: &lt;strong&gt;Lightning&lt;/strong&gt;, which adds agenda capabilities to Thunderbird, and &lt;strong&gt;ExchangeCalendar&lt;/strong&gt;, which allow to connect directly to Exchange calendars.&lt;/p&gt;
 
@@ -314,7 +388,7 @@ Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, cli
 
 &lt;p&gt;The calendar should now appear in the &amp;ldquo;Agenda&amp;rdquo; tab of Thunderbird.&lt;/p&gt;
 
-&lt;h4 id=&#34;span-id-address-book-address-book-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;address-book&#34;&gt;Address book&lt;/span&gt;&lt;/h4&gt;
+&lt;h4 id=&#34;span-id-address-book-address-book-span&#34;&gt;&lt;span id=&#34;address-book&#34;&gt;Address book&lt;/span&gt;&lt;/h4&gt;
 
 &lt;p&gt;If your company is using LDAP for the address book, you can configure Thunderbird to use if with the following steps:&lt;/p&gt;
 
@@ -329,7 +403,7 @@ Once downloaded, go back to &lt;code&gt;Tools -&amp;gt; Addons&lt;/code&gt;, cli
 
 &lt;p&gt;Once done, you can enable the address auto-completion when writing message in Thunderbird&amp;rsquo;s preferences window (&lt;code&gt;Edit -&amp;gt; Preferences&lt;/code&gt;): in the &amp;ldquo;Composition&amp;rdquo; tab, check &amp;ldquo;Directory Server&amp;rdquo; then select the address book you just added.&lt;/p&gt;
 
-&lt;h3 id=&#34;span-id-pidgin-replacing-lync-with-pidgin-span:c88f04d64c1c3ec8e40e6d5f6cac6ea3&#34;&gt;&lt;span id=&#34;pidgin&#34;&gt;Replacing Lync with pidgin&lt;/span&gt;&lt;/h3&gt;
+&lt;h3 id=&#34;span-id-pidgin-replacing-lync-with-pidgin-span&#34;&gt;&lt;span id=&#34;pidgin&#34;&gt;Replacing Lync with pidgin&lt;/span&gt;&lt;/h3&gt;
 
 &lt;p&gt;In order to have instant messenging available on our linux box, we&amp;rsquo;re going to use pidgin, with the pidgin-sipe plugin (to enable Exchange capabilities), and optionnaly pidgin-libnotify (to have a better integration into our Ubuntu 14.04).&lt;/p&gt;
 
@@ -403,7 +477,7 @@ export NSS_SSL_CBC_RANDOM_IV=0`
 &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Some applications don&amp;rsquo;t respect the settings defined by those methods. In that case, you&amp;rsquo;ll have to refer to their documentation to configure the proxy.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;1-the-apt-get-click-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
+&lt;h3 id=&#34;1-the-apt-get-click-ish-way&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
 
 &lt;p&gt;Install the package &lt;code&gt;dconf-editor&lt;/code&gt; (using the Ubuntu Software Center or simply typing &lt;code&gt;sudo apt-get install dconf-editor&lt;/code&gt; in your terminal), and open it (hit &lt;code&gt;alt-F2&lt;/code&gt; then type &lt;code&gt;dconf-editor&lt;/code&gt;).&lt;/p&gt;
 
@@ -419,7 +493,7 @@ export NSS_SSL_CBC_RANDOM_IV=0`
 
 &lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
+&lt;h3 id=&#34;2-the-console-ish-way&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
 
 &lt;p&gt;If you don&amp;rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.&lt;/p&gt;
 

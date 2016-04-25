@@ -45,7 +45,7 @@
 
 <p>If you need to access a git repository somewhere on the internet (let&rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&rsquo;ll need to go through an HTTP proxy. Let&rsquo;s see how we can configure that.</p>
 
-<h4 id="option-1-environment-variables:26f68760661a68a37e1944470cf4b238">Option 1 : Environment variables</h4>
+<h4 id="option-1-environment-variables">Option 1 : Environment variables</h4>
 
 <p>Git honor the environment variables <code>http_proxy</code> and <code>https_proxy</code>, so one way of solving our problem is setting those variables as follow:</p>
 
@@ -60,7 +60,7 @@ https_proxy=$http_proxy
 
 <p>If you need more info about setting proxy info in your environment, check <a href="http://nknu.net/ubuntu-14-04-proxy-authentication-config/">that article I wrote about that a few month back</a>.</p>
 
-<h4 id="option-2-git-s-variable-http-proxy:26f68760661a68a37e1944470cf4b238">Option 2 : Git&rsquo;s variable http.proxy</h4>
+<h4 id="option-2-git-s-variable-http-proxy">Option 2 : Git&rsquo;s variable http.proxy</h4>
 
 <p>Git also check what&rsquo;s in its own <code>http.proxy</code> variable, so you can set it on a per-project basis with the following command:</p>
 
@@ -74,7 +74,7 @@ https_proxy=$http_proxy
 
 <p>Et voilà ! You should now be able to clone your external repo (ie. on GitHub).</p>
 
-<h4 id="okay-this-got-http-and-https-repo-working-but-what-about-git:26f68760661a68a37e1944470cf4b238">Okay, this got http:// and https:// repo working, but what about git:// ?</h4>
+<h4 id="okay-this-got-http-and-https-repo-working-but-what-about-git">Okay, this got http:// and https:// repo working, but what about git:// ?</h4>
 
 <p>If the settings above did not solve your problem when cloning repositories using the <code>git://</code> protocol. That&rsquo;s a solid hint that your network config does not allow you to connect to remote port 9418, which is used by git&rsquo;s own protocol.</p>
 

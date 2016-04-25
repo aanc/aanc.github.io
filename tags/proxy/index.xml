@@ -73,7 +73,7 @@ ENV HTTPS_PROXY &#39;http://user:password@proxy-host:proxy-port&#39;
 
 &lt;p&gt;If you need to access a git repository somewhere on the internet (let&amp;rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&amp;rsquo;ll need to go through an HTTP proxy. Let&amp;rsquo;s see how we can configure that.&lt;/p&gt;
 
-&lt;h4 id=&#34;option-1-environment-variables:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 1 : Environment variables&lt;/h4&gt;
+&lt;h4 id=&#34;option-1-environment-variables&#34;&gt;Option 1 : Environment variables&lt;/h4&gt;
 
 &lt;p&gt;Git honor the environment variables &lt;code&gt;http_proxy&lt;/code&gt; and &lt;code&gt;https_proxy&lt;/code&gt;, so one way of solving our problem is setting those variables as follow:&lt;/p&gt;
 
@@ -88,7 +88,7 @@ https_proxy=$http_proxy
 
 &lt;p&gt;If you need more info about setting proxy info in your environment, check &lt;a href=&#34;http://nknu.net/ubuntu-14-04-proxy-authentication-config/&#34;&gt;that article I wrote about that a few month back&lt;/a&gt;.&lt;/p&gt;
 
-&lt;h4 id=&#34;option-2-git-s-variable-http-proxy:26f68760661a68a37e1944470cf4b238&#34;&gt;Option 2 : Git&amp;rsquo;s variable http.proxy&lt;/h4&gt;
+&lt;h4 id=&#34;option-2-git-s-variable-http-proxy&#34;&gt;Option 2 : Git&amp;rsquo;s variable http.proxy&lt;/h4&gt;
 
 &lt;p&gt;Git also check what&amp;rsquo;s in its own &lt;code&gt;http.proxy&lt;/code&gt; variable, so you can set it on a per-project basis with the following command:&lt;/p&gt;
 
@@ -102,7 +102,7 @@ https_proxy=$http_proxy
 
 &lt;p&gt;Et voilà ! You should now be able to clone your external repo (ie. on GitHub).&lt;/p&gt;
 
-&lt;h4 id=&#34;okay-this-got-http-and-https-repo-working-but-what-about-git:26f68760661a68a37e1944470cf4b238&#34;&gt;Okay, this got http:// and https:// repo working, but what about git:// ?&lt;/h4&gt;
+&lt;h4 id=&#34;okay-this-got-http-and-https-repo-working-but-what-about-git&#34;&gt;Okay, this got http:// and https:// repo working, but what about git:// ?&lt;/h4&gt;
 
 &lt;p&gt;If the settings above did not solve your problem when cloning repositories using the &lt;code&gt;git://&lt;/code&gt; protocol. That&amp;rsquo;s a solid hint that your network config does not allow you to connect to remote port 9418, which is used by git&amp;rsquo;s own protocol.&lt;/p&gt;
 
@@ -139,7 +139,7 @@ https_proxy=$http_proxy
 &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Some applications don&amp;rsquo;t respect the settings defined by those methods. In that case, you&amp;rsquo;ll have to refer to their documentation to configure the proxy.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;h3 id=&#34;1-the-apt-get-click-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
+&lt;h3 id=&#34;1-the-apt-get-click-ish-way&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
 
 &lt;p&gt;Install the package &lt;code&gt;dconf-editor&lt;/code&gt; (using the Ubuntu Software Center or simply typing &lt;code&gt;sudo apt-get install dconf-editor&lt;/code&gt; in your terminal), and open it (hit &lt;code&gt;alt-F2&lt;/code&gt; then type &lt;code&gt;dconf-editor&lt;/code&gt;).&lt;/p&gt;
 
@@ -155,7 +155,7 @@ https_proxy=$http_proxy
 
 &lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
-&lt;h3 id=&#34;2-the-console-ish-way:c99365ddcfd67ec3678d89b8c03832d5&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
+&lt;h3 id=&#34;2-the-console-ish-way&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
 
 &lt;p&gt;If you don&amp;rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.&lt;/p&gt;
 

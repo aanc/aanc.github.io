@@ -16,7 +16,7 @@
       <guid>https://aanc.github.io/how-to-deploy-your-ghost-blog-using-docker-machine-and-docker-compose/</guid>
       <description>
 
-&lt;h2 id=&#34;prepare-your-docker-host-with-docker-machine:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Prepare your docker host (with docker-machine)&lt;/h2&gt;
+&lt;h2 id=&#34;prepare-your-docker-host-with-docker-machine&#34;&gt;Prepare your docker host (with docker-machine)&lt;/h2&gt;
 
 &lt;p&gt;First step is to have a docker-ready server. We have several ways of doing that: we can install docker on our server by hand (from packages, from source, using docker.io neat curl|sh, &amp;hellip;), we can use boot2docker, or we can user docker machine to directly provision a server for us. We&amp;rsquo;ll do the later as it&amp;rsquo;s reeeaallly easy, with Virtualbox as provider. You&amp;rsquo;ll need to have Virtualbox installed on your machine. Feel free to use any other provider, if you don&amp;rsquo;t want to use Virtualbox : it should not have any impact on the rest of the guide (you can deploy on DigitalOcean, &lt;a href=&#34;https://community.runabove.com/kb/en/instances/docker-in-5-minutes-on-runabove-with-docker-machine.html&#34;&gt;Runabove&lt;/a&gt;, &amp;hellip;).&lt;/p&gt;
 
@@ -43,7 +43,7 @@ INFO[0104] To point your Docker client at it, run this in your shell: eval &amp;
 
 &lt;p&gt;As suggested by the output of docker-machine, we can now run &lt;code&gt;eval &amp;quot;$(docker-machine env ghost)&amp;quot;&lt;/code&gt; in order to point our docker client to this newly created docker daemon, so every &lt;code&gt;docker&lt;/code&gt; command we&amp;rsquo;ll run from now will be sent to the docker daemon in the machine we just created.&lt;/p&gt;
 
-&lt;h2 id=&#34;starting-ghost-in-a-container:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Starting Ghost in a container&lt;/h2&gt;
+&lt;h2 id=&#34;starting-ghost-in-a-container&#34;&gt;Starting Ghost in a container&lt;/h2&gt;
 
 &lt;p&gt;At this point we have a docker machine ready to run our containers. Let&amp;rsquo;s run standard Ghost container on it, in order to check that everything is OK.
 Docker Hub provides &lt;a href=&#34;https://registry.hub.docker.com/u/library/ghost/&#34;&gt;an official Ghost image&lt;/a&gt; which we will use (you can see how it&amp;rsquo;s built &lt;a href=&#34;https://github.com/docker-library/ghost&#34;&gt;here&lt;/a&gt;. Let&amp;rsquo;s run it and see how it goes :&lt;/p&gt;
@@ -99,7 +99,7 @@ So, let&amp;rsquo;s hit &lt;code&gt;Ctrl+C&lt;/code&gt; in order to stop our Gho
 
 &lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2015/04/Ghost.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
-&lt;h2 id=&#34;persisting-our-content:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Persisting our content&lt;/h2&gt;
+&lt;h2 id=&#34;persisting-our-content&#34;&gt;Persisting our content&lt;/h2&gt;
 
 &lt;p&gt;Ok, now we are able to launch Ghost in a docker container. However, &lt;em&gt;everything&lt;/em&gt; is in the container, including you data, and that&amp;rsquo;s not really what we want. Let&amp;rsquo;s see how we could use docker&amp;rsquo;s volumes to our advantage.
 The only things we need to persist in Ghost are our config file, &lt;code&gt;config.js&lt;/code&gt;, and the &lt;code&gt;content/&lt;/code&gt; folder, where our themes are stored, and more importantly our blog posts. The Ghost docker image we&amp;rsquo;re using is making our life easier, as it is built to accept a volume that will be mapped to the Ghost&amp;rsquo;s &lt;code&gt;content/&lt;/code&gt; folder, and will look into this folder for a &lt;code&gt;config.js&lt;/code&gt; file that will be used in place of the image&amp;rsquo;s default one. So we can map only one folder, containing everything we need, and this folder will be everything we need to care about (ie. for backups).&lt;/p&gt;
@@ -118,7 +118,7 @@ $ rm -f ghost-latest.zip
 
 &lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; In case it&amp;rsquo;s not clear, &lt;code&gt;$(pwd)/content&lt;/code&gt; means &amp;ldquo;my current working directory, concatenated to &lt;code&gt;/content&lt;/code&gt;&amp;rdquo;. You could replace it with something like &lt;code&gt;-v /home/adrien/sandbox/ghost-docker/content&lt;/code&gt;, but for the sake of copy&amp;amp;paste I tried to put something more general.&lt;/p&gt;
 
-&lt;h2 id=&#34;adding-some-simplicity-with-docker-compose:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;Adding some simplicity with docker-compose&lt;/h2&gt;
+&lt;h2 id=&#34;adding-some-simplicity-with-docker-compose&#34;&gt;Adding some simplicity with docker-compose&lt;/h2&gt;
 
 &lt;p&gt;Ok so now our blog is running inside a container, Ghost&amp;rsquo;s port is exposed, content folder is mapped, and we&amp;rsquo;re quite happy. We could leave it that way and go do some other stuff, but we used a quite complex command line to launch the blog, and who knows if by the time we need to relaunch it we&amp;rsquo;ll remember it ?
 Well, we could avoid the need to remember it by using &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;docker-compose&lt;/a&gt;.&lt;/p&gt;
@@ -153,7 +153,7 @@ CONTAINER ID        IMAGE               COMMAND                CREATED          
 9a626c13449d        ghost:0             &amp;quot;/entrypoint.sh npm    7 seconds ago       Up 6 seconds        0.0.0.0:9999-&amp;gt;2368/tcp   blogcompose_blog_1
 &lt;/code&gt;&lt;/pre&gt;
 
-&lt;h2 id=&#34;what-s-next:ebb81cf0c44fec033debfb572bb03a6e&#34;&gt;What&amp;rsquo;s next ?&lt;/h2&gt;
+&lt;h2 id=&#34;what-s-next&#34;&gt;What&amp;rsquo;s next ?&lt;/h2&gt;
 
 &lt;p&gt;We&amp;rsquo;ve seen how to setup the blog using docker, machine and compose and now we need to think about exploiting it ! A good next step would be to setup a backup, a script copying our &lt;code&gt;content&lt;/code&gt; folder and our &lt;code&gt;docker-compose.yml&lt;/code&gt; file somewhere safe. We could also add a custom theme to our newly created blog, by putting it in our &lt;code&gt;content/themes/&lt;/code&gt; folder and restarting the container.&lt;/p&gt;
 

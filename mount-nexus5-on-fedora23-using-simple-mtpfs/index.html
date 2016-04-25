@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.16-DEV" />
+    
+    <title>How to mount your android phone on fedora 23 using simple-mtpfs</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="https://aanc.github.io/css/main.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu:100,300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="https://aanc.github.io/">nknu.net</a>
+			</h1>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="https://aanc.github.io/mount-nexus5-on-fedora23-using-simple-mtpfs/" title="How to mount your android phone on fedora 23 using simple-mtpfs">How to mount your android phone on fedora 23 using simple-mtpfs</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/fedora"><span class="label label-success">fedora</span></a>
+        
+          <a href="tags/nexus"><span class="label label-success">nexus</span></a>
+        
+          <a href="tags/mtp"><span class="label label-success">mtp</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2016-04-120">Apr 04, 2016</time></p>
+      <div class="article-content">
+        <p><p>On recent Fedora versions, it should works out of the box: you plug the phone, the system detects it and opens a file explorer allowing you to browse your device&rsquo;s content.</p>
+
+<p>However, if for some reason you want to mount the phone using <code>simple-mtpfs</code>, you can proceed as follow.</p>
+
+<ul>
+<li>Install <code>simple-mtpfs</code></li>
+</ul>
+
+<pre><code>dnf install simple-mtpfs
+</code></pre>
+
+<p><strong>Note</strong> : you also need the packages <code>fuse fuse-libs libmtp</code>, but chances are that they are already installed on your system.</p>
+
+<ul>
+<li>Connect your device (in my case, a LG Nexus 5), and do a <code>dmesg | tail</code> :
+<code>
+[ 4158.530224] usb 4-1.7.2: new high-speed USB device number 4 using ehci-pci
+[ 4158.616409] usb 4-1.7.2: New USB device found, idVendor=18d1, idProduct=4ee1
+[ 4158.616415] usb 4-1.7.2: New USB device strings: Mfr=1, Product=2, SerialNumber=3
+[ 4158.616418] usb 4-1.7.2: Product: Nexus 5
+[ 4158.616421] usb 4-1.7.2: Manufacturer: LGE
+[ 4158.616423] usb 4-1.7.2: SerialNumber: xxxxxxxxxxxxxxxxxxxxxx
+</code></li>
+</ul>
+
+<p>Write down the <code>idVendor</code> and <code>idProduct</code> values.</p>
+
+<ul>
+<li>create file <code>/etc/udev/rules.d/10-phone.rules</code>
+<code>
+SUBSYSTEM==&quot;usb&quot;, ATTR{idVendor}==&quot;18d1&quot;, ATTR{idProduct}=&quot;4ee1&quot;, SYMLINK=&quot;nexus5&quot;
+</code></li>
+</ul>
+
+<p><strong>Note:</strong> Make sure to replace the <code>ATTR{idVendor}</code> and <code>ATTR{idProduct}</code> values with the one you got from the <code>dmesg | tail</code> command, and the <code>SYMLINK</code> value with whatever you want - it will be the name of the symbolic link udev will create in your <code>/dev</code> folder, pointing to your device.</p>
+
+<ul>
+<li><p>reload udev rules :</p>
+
+<pre><code>$ sudo udevadm control --reload-rules
+</code></pre></li>
+
+<li><p>unplug/replug your device. You should now have a file in <code>/dev</code> named as requested in the udev rules file created earlier.</p>
+
+<pre><code>$ ls -l /dev/nexus5
+lrwxrwxrwx. 1 root root 15 Jan 12 10:44 /dev/nexus5 -&gt; bus/usb/004/005
+</code></pre></li>
+
+<li><p>Make sure the phone is in MTP mode. You can check that directly on the phone, on your notification area, you should have a notification saying &ldquo;USB for file transfers&rdquo; (or something similar). If you have &ldquo;USB for charging&rdquo;, tap on the notification, and on the poping menu select &ldquo;USB for file transfers (MTP)&rdquo;.</p></li>
+</ul>
+
+<p><img src="https://aanc.github.io/content/images/2016/mount-android-phone-on-fedora-using-simplemtp/phone-mtp-config.png" alt="" /></p>
+
+<ul>
+<li>Mount the phone
+```
+$ simple-mtpfs /dev/nexus5 /tmp/test
+$ ls /tmp/test</li>
+</ul>
+
+<p>Alarms    cinegroup          Documents      Movies         panoramas      Ringtones   vervewireless
+  &hellip;
+```</p>
+
+<p>Et voilà!</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <author>
+  <img class="author-photo" src="http://www.gravatar.com/avatar/0cadf2f30a2d888cc46b5497292f8ff5?s=100"/>
+  <div class="author-name">Adrien Anceau</div>
+  <div class="author-bio">Geek, gamer, photography enthusiast, passionate about technology, automation and food.</div>
+
+  <div class="social">
+    
+    <a target="_blank" href="https://github.com/aanc"><img src='https://aanc.github.io/img/github.png' /></a>
+    
+    
+    <a target="_blank" href="http://www.facebook.com/adrien.anceau"><img src='https://aanc.github.io/img/facebook.png' /></a>
+    
+    
+    <a target="_blank" href="http://twitter.com/aaadrieeen"><img src='https://aanc.github.io/img/twitter.png' /></a>
+    
+  </div>
+</author>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <comments>
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+	    var disqus_shortname = 'nknu'; 
+	    var disqus_identifier = 'mount-nexus5-on-fedora23-using-simple-mtpfs'; 
+
+	     
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</comments>
+
+  </div>
+  </div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44976115-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="https://aanc.github.io/js/main.js"></script>
+</body>
+</html>
+
