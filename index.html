@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="Hugo 0.16-DEV" />
+    <meta name="generator" content="Hugo 0.18-DEV" />
     
     <title>nknu.net</title>
 
@@ -48,7 +48,9 @@
       </div>
       <p class="small gray"><time datetime="2016-04-120">Apr 04, 2016</time></p>
       <div class="article-content">
-        <p>On recent Fedora versions, it should works out of the box: you plug the phone, the system detects it and opens a file explorer allowing you to browse your device&rsquo;s content. However, if for some reason you want to mount the phone using simple-mtpfs, you can proceed as follow. Install simple-mtpfs $ dnf install simple-mtpfs Note : you also need the packages fuse fuse-libs libmtp, but chances are that they are already installed on your system.</p>
+        <p>On recent Fedora versions, it should works out of the box: you plug the phone, the system detects it and opens a file explorer allowing you to browse your device&rsquo;s content.
+However, if for some reason you want to mount the phone using simple-mtpfs, you can proceed as follow.
+ Install simple-mtpfs  $ dnf install simple-mtpfs  Note : you also need the packages fuse fuse-libs libmtp, but chances are that they are already installed on your system.</p>
         <p class="small"><a href="https://aanc.github.io/mount-nexus5-on-fedora23-using-simple-mtpfs/">Read More »</a></p>
       </div>
       <hr/>
@@ -69,7 +71,8 @@
       </div>
       <p class="small gray"><time datetime="2015-05-40">May 05, 2015</time></p>
       <div class="article-content">
-        <p>Article updated the 17th of August 2015, with the remarks of Giacomo Orlandi in the comments, who provided a cleaner way to update the systemd config, based on a discussion in this Docker&rsquo;s Github issue. If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in /etc/default/docker anymore. That is due to the fact that Ubuntu is now using systemd instead of Upstart/SysV.</p>
+        <p>Article updated the 17th of August 2015, with the remarks of Giacomo Orlandi in the comments, who provided a cleaner way to update the systemd config, based on a discussion in this Docker&rsquo;s Github issue.
+If you upgraded (or fresh-installed) your box to Ubuntu 15.04, you may have noticed that the Docker daemon is not using the configuration defined in /etc/default/docker anymore. That is due to the fact that Ubuntu is now using systemd instead of Upstart/SysV.</p>
         <p class="small"><a href="https://aanc.github.io/how-to-configure-docker-on-ubuntu-15-04/">Read More »</a></p>
       </div>
       <hr/>
@@ -107,7 +110,10 @@
       </div>
       <p class="small gray"><time datetime="2014-09-100">Sep 09, 2014</time></p>
       <div class="article-content">
-        <p>We saw earlier how to configure the proxy for docker on Ubuntu 14.04, let&rsquo;s now see how to do that on CentOS 7. Edit /etc/sysconfig/docker and add the following lines: HTTP_PROXY='http://user:password@proxy-host:proxy-port' HTTPS_PROXY='http://user:password@proxy-host:proxy-port' For those settings to be taken into account, you&rsquo;ll need to restart your docker daemon: # systemctl restart docker You may still need to declare the proxy in the Dockerfile too, as seen in the Ubuntu article.</p>
+        <p>We saw earlier how to configure the proxy for docker on Ubuntu 14.04, let&rsquo;s now see how to do that on CentOS 7.
+Edit /etc/sysconfig/docker and add the following lines:
+HTTP_PROXY='http://user:password@proxy-host:proxy-port' HTTPS_PROXY='http://user:password@proxy-host:proxy-port'  For those settings to be taken into account, you&rsquo;ll need to restart your docker daemon:
+# systemctl restart docker  You may still need to declare the proxy in the Dockerfile too, as seen in the Ubuntu article.</p>
         <p class="small"><a href="https://aanc.github.io/proxy-configuration-for-docker-on-centos-7/">Read More »</a></p>
       </div>
       <hr/>
@@ -126,7 +132,10 @@
       </div>
       <p class="small gray"><time datetime="2014-09-100">Sep 09, 2014</time></p>
       <div class="article-content">
-        <p>If you&rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&rsquo;s see how to fix that. Edit /etc/defaults/docker.io and add the following lines: export http_proxy='http://user:password@proxy-host:proxy-port' For those settings to be taken into account, you&rsquo;ll have to restart your docker daemon: $ sudo service docker.io restart This should allow docker daemon to pull images from the central registry.</p>
+        <p>If you&rsquo;re behind a proxy, chances are that docker is failing to build your containers, as it is not able to pull base images, and commands in the Dockerfile that need to access the internet are failing. Let&rsquo;s see how to fix that.
+Edit /etc/defaults/docker.io and add the following lines:
+export http_proxy='http://user:password@proxy-host:proxy-port'  For those settings to be taken into account, you&rsquo;ll have to restart your docker daemon:
+$ sudo service docker.</p>
         <p class="small"><a href="https://aanc.github.io/running-docker-behind-a-proxy-on-ubuntu-14-04/">Read More »</a></p>
       </div>
       <hr/>
@@ -145,7 +154,8 @@
       </div>
       <p class="small gray"><time datetime="2014-08-120">Aug 08, 2014</time></p>
       <div class="article-content">
-        <p>If you&rsquo;re using a web based tool to manage your servers, chances are that this tool is providing ssh:// links to connect directly to those server with one click from your web browser. Let&rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link. First we need a script which is able to process a string like &ldquo;ssh://user@host:port&rdquo;. Create a file named ssh-handler.sh somewhere in your home directory (ie.</p>
+        <p>If you&rsquo;re using a web based tool to manage your servers, chances are that this tool is providing ssh:// links to connect directly to those server with one click from your web browser. Let&rsquo;s see how to setup Ubuntu 14.04 so it can handle this type of link.
+First we need a script which is able to process a string like &ldquo;ssh://user@host:port&rdquo;. Create a file named ssh-handler.sh somewhere in your home directory (ie.</p>
         <p class="small"><a href="https://aanc.github.io/ubuntu-14-04-how-to-open-ssh-links-in-a-terminal/">Read More »</a></p>
       </div>
       <hr/>
@@ -162,7 +172,10 @@
       </div>
       <p class="small gray"><time datetime="2014-08-30">Aug 08, 2014</time></p>
       <div class="article-content">
-        <p>When SSH&rsquo;ing to old boxes within tmux, I sometimes get the following error: 'screen-256color': unknown terminal type, and a very ugly prompt. An easy way to fix this is to set a different value for the default-terminal setting in your tmux.conf. You only have to open your ~/.tmux.conf and add the following line: set -g default-terminal &quot;xterm&quot; However, note that this will affect all your sessions. If you don&rsquo;t want to redefine your default-terminal value, you can fix this only when needed by setting a different value for the TERM variable when you ssh to those boxes.</p>
+        <p>When SSH&rsquo;ing to old boxes within tmux, I sometimes get the following error: 'screen-256color': unknown terminal type, and a very ugly prompt.
+An easy way to fix this is to set a different value for the default-terminal setting in your tmux.conf. You only have to open your ~/.tmux.conf and add the following line:
+set -g default-terminal &quot;xterm&quot;  However, note that this will affect all your sessions.
+If you don&rsquo;t want to redefine your default-terminal value, you can fix this only when needed by setting a different value for the TERM variable when you ssh to those boxes.</p>
         <p class="small"><a href="https://aanc.github.io/fixing-screen256-color-unknown-terminal-type-when-sshing-within-tmux/">Read More »</a></p>
       </div>
       <hr/>
@@ -192,7 +205,8 @@
       </div>
       <p class="small gray"><time datetime="2014-05-120">May 05, 2014</time></p>
       <div class="article-content">
-        <p>If you need to access a git repository somewhere on the internet (let&rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&rsquo;ll need to go through an HTTP proxy. Let&rsquo;s see how we can configure that. Option 1 : Environment variables Git honor the environment variables http_proxy and https_proxy, so one way of solving our problem is setting those variables as follow: http_proxy='http://proxy_host:proxy_port' https_proxy=$http_proxy If your proxy requires authentication, you need to specify your user/password in the URL: http_proxy='http://username:password@proxy_host:proxy_port' If you need more info about setting proxy info in your environment, check that article I wrote about that a few month back.</p>
+        <p>If you need to access a git repository somewhere on the internet (let&rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&rsquo;ll need to go through an HTTP proxy. Let&rsquo;s see how we can configure that.
+Option 1 : Environment variables Git honor the environment variables http_proxy and https_proxy, so one way of solving our problem is setting those variables as follow:</p>
         <p class="small"><a href="https://aanc.github.io/git-through-proxy/">Read More »</a></p>
       </div>
       <hr/>

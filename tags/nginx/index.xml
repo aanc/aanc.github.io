@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Nginx on nknu.net</title>
-    <link>https://aanc.github.io/tags/nginx/</link>
-    <description>Recent content in Nginx on nknu.net</description>
+    <title>nknu.net</title>
+    <link>https://aanc.github.io/tags/nginx/index.xml</link>
+    <description>Recent content on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 17 Oct 2013 18:01:57 +0000</lastBuildDate>
     <atom:link href="https://aanc.github.io/tags/nginx/index.xml" rel="self" type="application/rss+xml" />
     
     <item>
