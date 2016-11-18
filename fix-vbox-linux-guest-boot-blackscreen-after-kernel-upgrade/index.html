@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.18-DEV" />
+    
+    <title>Fix virtualbox Linux guest boot blackscreen after kernel upgrade</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="https://aanc.github.io/css/main.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu:100,300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="https://aanc.github.io/">nknu.net</a>
+			</h1>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/" title="Fix virtualbox Linux guest boot blackscreen after kernel upgrade">Fix virtualbox Linux guest boot blackscreen after kernel upgrade</a></h1>
+      <div class="article-tags">
+        
+      </div>
+      <p class="small gray"><time datetime="2016-10-20">Oct 10, 2016</time></p>
+      <div class="article-content">
+        <p><p>I run a fedora 24 as a Virtualbox VM on a windows host. The other day, after a kernel upgrade of this VM and rebooting, I got a black screen. Here is what I did to fix it :</p>
+
+<ul>
+<li>Reboot your VM and select a previous kernel with grub&rsquo;s menu. If you don&rsquo;t have one available, I guess you&rsquo;ll have to boot in recovery mode and install one.</li>
+<li>Login as root</li>
+<li>Execute <code>rcvboxadd cleanup</code> - it will delete your currently installed guest additions</li>
+<li>Reboot on new kernel (should boot now, but guest additions KO), and login as root</li>
+<li>Install kernel-headers and kernel-devel of your current kernel version</li>
+<li>Mount VBox Guest Additions ISO, and execute <code>VBoxLinuxAdditions.run</code></li>
+<li>Reboot (still on new kernel), and everything should be fine now.</li>
+</ul>
+
+<p>Hope it helped.</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <author>
+  <img class="author-photo" src="http://www.gravatar.com/avatar/0cadf2f30a2d888cc46b5497292f8ff5?s=100"/>
+  <div class="author-name">Adrien Anceau</div>
+  <div class="author-bio">Geek, gamer, photography enthusiast, passionate about technology, automation and food.</div>
+
+  <div class="social">
+    
+    <a target="_blank" href="https://github.com/aanc"><img src='https://aanc.github.io/img/github.png' /></a>
+    
+    
+    <a target="_blank" href="http://www.facebook.com/adrien.anceau"><img src='https://aanc.github.io/img/facebook.png' /></a>
+    
+    
+    <a target="_blank" href="http://twitter.com/aaadrieeen"><img src='https://aanc.github.io/img/twitter.png' /></a>
+    
+  </div>
+</author>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <comments>
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+	    var disqus_shortname = 'nknu'; 
+	    var disqus_identifier = 'fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade'; 
+
+	     
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</comments>
+
+  </div>
+  </div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', '', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="https://aanc.github.io/js/main.js"></script>
+</body>
+</html>
+

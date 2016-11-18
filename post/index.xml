@@ -1,12 +1,34 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Post-rsses on nknu.net</title>
+    <title>Posts on nknu.net</title>
     <link>https://aanc.github.io/post/index.xml</link>
-    <description>Recent content in Post-rsses on nknu.net</description>
+    <description>Recent content in Posts on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Tue, 12 Apr 2016 12:30:23 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 27 Oct 2016 14:45:39 +0000</lastBuildDate>
     <atom:link href="https://aanc.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Fix virtualbox Linux guest boot blackscreen after kernel upgrade</title>
+      <link>https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/</link>
+      <pubDate>Thu, 27 Oct 2016 14:45:39 +0000</pubDate>
+      
+      <guid>https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/</guid>
+      <description>&lt;p&gt;I run a fedora 24 as a Virtualbox VM on a windows host. The other day, after a kernel upgrade of this VM and rebooting, I got a black screen. Here is what I did to fix it :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Reboot your VM and select a previous kernel with grub&amp;rsquo;s menu. If you don&amp;rsquo;t have one available, I guess you&amp;rsquo;ll have to boot in recovery mode and install one.&lt;/li&gt;
+&lt;li&gt;Login as root&lt;/li&gt;
+&lt;li&gt;Execute &lt;code&gt;rcvboxadd cleanup&lt;/code&gt; - it will delete your currently installed guest additions&lt;/li&gt;
+&lt;li&gt;Reboot on new kernel (should boot now, but guest additions KO), and login as root&lt;/li&gt;
+&lt;li&gt;Install kernel-headers and kernel-devel of your current kernel version&lt;/li&gt;
+&lt;li&gt;Mount VBox Guest Additions ISO, and execute &lt;code&gt;VBoxLinuxAdditions.run&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Reboot (still on new kernel), and everything should be fine now.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hope it helped.&lt;/p&gt;
+</description>
+    </item>
     
     <item>
       <title>How to mount your android phone on fedora 23 using simple-mtpfs</title>
@@ -928,90 +950,6 @@ export NSS_SSL_CBC_RANDOM_IV=0`
 &lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/heartbleed_explanation.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Source: &lt;a href=&#34;http://xkcd.com/1354/&#34;&gt;http://xkcd.com/1354/&lt;/a&gt;&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Ubuntu 14.04 proxy config with authentication</title>
-      <link>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</link>
-      <pubDate>Wed, 16 Apr 2014 21:05:11 +0000</pubDate>
-      
-      <guid>https://aanc.github.io/ubuntu-14-04-proxy-authentication-config/</guid>
-      <description>
-
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Updated the 07 Aug 2014:&lt;/strong&gt; added autoconfig URL settings&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;If you&amp;rsquo;re behind a company proxy, chances are that you need to use proxy authentication to have access to the outside world. The thing is that in Ubuntu, the default proxy configuration interface does not let you enter any credential, only the proxy address.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/network_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;You have several options to work arround that.&lt;/p&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Some applications don&amp;rsquo;t respect the settings defined by those methods. In that case, you&amp;rsquo;ll have to refer to their documentation to configure the proxy.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&#34;1-the-apt-get-click-ish-way&#34;&gt;1. The apt-get/click&amp;rsquo;ish way&lt;/h3&gt;
-
-&lt;p&gt;Install the package &lt;code&gt;dconf-editor&lt;/code&gt; (using the Ubuntu Software Center or simply typing &lt;code&gt;sudo apt-get install dconf-editor&lt;/code&gt; in your terminal), and open it (hit &lt;code&gt;alt-F2&lt;/code&gt; then type &lt;code&gt;dconf-editor&lt;/code&gt;).&lt;/p&gt;
-
-&lt;p&gt;In the dconf Editor window, go to &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy -&amp;gt; http&lt;/code&gt; and configure your username and password.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/proxy_config.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;If you have local domains/ip/masks you don&amp;rsquo;t want to use the proxy with, you can configure them in the &lt;code&gt;dconf-editor -&amp;gt; system -&amp;gt; proxy&lt;/code&gt; window, in the &lt;code&gt;ignore-hosts&lt;/code&gt; field. For example if your company use an internal network name &lt;code&gt;mycompany.lan&lt;/code&gt;, you can add &lt;code&gt;*.mycompany.lan&lt;/code&gt; to avoid using the proxy when accessing this domain.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/no_proxy.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Note that if your network provides an autoconfig script, you can use it here. Set the &lt;code&gt;mode&lt;/code&gt; to &lt;code&gt;auto&lt;/code&gt;, and enter the URL of the autoconfig script ing the &lt;code&gt;autoconfig-url&lt;/code&gt; field. When you use the &lt;code&gt;auto&lt;/code&gt; mode, every other setting exept &lt;code&gt;autoconfig-url&lt;/code&gt; is ignored. If you have a windows box autoconfigured on the same network, an easy way to get the autoconfig URL is to open chrome and type &lt;code&gt;chrome://net-internals/#proxy&lt;/code&gt; in the URL bar. The &lt;code&gt;PAC script&lt;/code&gt; line is what you&amp;rsquo;re looking for:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Aug/proxy-autoconfig-url.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&#34;2-the-console-ish-way&#34;&gt;2. The console&amp;rsquo;ish way&lt;/h3&gt;
-
-&lt;p&gt;If you don&amp;rsquo;t want to use dconf-editor, or if you use another flavor of Linux, your can use this second method.&lt;/p&gt;
-
-&lt;p&gt;Create a &lt;code&gt;.proxy&lt;/code&gt; file in your home directory. Have it only read/write-able by yourself, as we will store your credentials in there (including your password).&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;touch ~/.proxy
-chmod 600 ~/.proxy
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Open it with your favorite text editor and add the following content, replacing &lt;code&gt;username&lt;/code&gt;, &lt;code&gt;password&lt;/code&gt;, &lt;code&gt;proxy_hostname&lt;/code&gt; and &lt;code&gt;proxy_port&lt;/code&gt; by their actual values:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# Proxy config
-export http_proxy=&#39;username:password@http://proxy_hostname:proxy_port&#39;
-export no_proxy=’localhost,127.0.0.1,.mycompany.lan’
-
-export https_proxy=$http_proxy
-export HTTP_PROXY=$http_proxy
-export HTTPS_PROXY=$http_proxy
-export NO_PROXY=$no_proxy
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;With that option, the &lt;code&gt;no_proxy&lt;/code&gt; variable let you set a list of IP/mask/domains to ignore. Note that the domain syntax is slightly different than the dconf-editor one: only &lt;code&gt;.mycompany.net&lt;/code&gt; withouth any wildcard.&lt;/p&gt;
-
-&lt;p&gt;Edit your &lt;code&gt;~/.profile&lt;/code&gt; file and add the following lines, which will load the content of the file we just created when you start your session.&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;# include proxy config if it exists
-if [ -f $HOME/.proxy ]; then
-    . $HOME/.proxy
-fi
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;Log out and log back in, and your proxy settings should be taken into account.&lt;/p&gt;
-
-&lt;p&gt;Note that APT does not respect this setup. In order to have it use your proxy, you will have to edit the &lt;code&gt;/etc/apt/apt.conf&lt;/code&gt; file (create it if it does not exist) and add the following line:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Acquire::http::Proxy &amp;quot;http://username:password@my.proxy.host:port&amp;quot;;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;&lt;strong&gt;Optionnal step&lt;/strong&gt;: if you want your proxy setting to be propagated when you&amp;rsquo;re using sudo, open the sudo config file with &lt;code&gt;sudo visudo&lt;/code&gt; and add the following line after the other &lt;code&gt;Defaults&lt;/code&gt; lines:&lt;/p&gt;
-
-&lt;pre&gt;&lt;code&gt;Defaults    env_keep += &amp;quot;http_proxy https_proxy no_proxy&amp;quot;
-&lt;/code&gt;&lt;/pre&gt;
-
-&lt;p&gt;I hope it helped !&lt;/p&gt;
 </description>
     </item>
     

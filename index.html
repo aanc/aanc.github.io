@@ -32,6 +32,18 @@
   <div class="row">
     <div class="col-sm-offset-2 col-sm-7">
       
+      <h1 class="article-title"><a href="https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/">Fix virtualbox Linux guest boot blackscreen after kernel upgrade</a></h1>
+      <div class="article-tags">
+        
+      </div>
+      <p class="small gray"><time datetime="2016-10-20">Oct 10, 2016</time></p>
+      <div class="article-content">
+        <p>I run a fedora 24 as a Virtualbox VM on a windows host. The other day, after a kernel upgrade of this VM and rebooting, I got a black screen. Here is what I did to fix it :
+ Reboot your VM and select a previous kernel with grub&rsquo;s menu. If you don&rsquo;t have one available, I guess you&rsquo;ll have to boot in recovery mode and install one. Login as root Execute rcvboxadd cleanup - it will delete your currently installed guest additions Reboot on new kernel (should boot now, but guest additions KO), and login as root Install kernel-headers and kernel-devel of your current kernel version Mount VBox Guest Additions ISO, and execute VBoxLinuxAdditions.</p>
+        <p class="small"><a href="https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/">Read More »</a></p>
+      </div>
+      <hr/>
+      
       <h1 class="article-title"><a href="https://aanc.github.io/mount-nexus5-on-fedora23-using-simple-mtpfs/">How to mount your android phone on fedora 23 using simple-mtpfs</a></h1>
       <div class="article-tags">
         
@@ -208,25 +220,6 @@ If you don&rsquo;t want to redefine your default-terminal value, you can fix thi
         <p>If you need to access a git repository somewhere on the internet (let&rsquo;s say on GihHub) from your workstation which is inside your corporate network, chances are that you&rsquo;ll need to go through an HTTP proxy. Let&rsquo;s see how we can configure that.
 Option 1 : Environment variables Git honor the environment variables http_proxy and https_proxy, so one way of solving our problem is setting those variables as follow:</p>
         <p class="small"><a href="https://aanc.github.io/git-through-proxy/">Read More »</a></p>
-      </div>
-      <hr/>
-      
-      <h1 class="article-title"><a href="https://aanc.github.io/sync-your-subtitles-with-mpc-hc/">How to sync your subtitles with media player classic</a></h1>
-      <div class="article-tags">
-        
-          <a href="tags/howto"><span class="label label-success">howto</span></a>
-        
-          <a href="tags/media"><span class="label label-success">media</span></a>
-        
-          <a href="tags/mpc"><span class="label label-success">mpc</span></a>
-        
-          <a href="tags/subtitles"><span class="label label-success">subtitles</span></a>
-        
-      </div>
-      <p class="small gray"><time datetime="2014-05-70">May 05, 2014</time></p>
-      <div class="article-content">
-        <p>Sometimes when you download a video on the internet, you get subtitles on a separate file (ie. from Open Subtitles, Subscene, addic7ed, etc&hellip;), and they are not always perfectly sync&rsquo;ed. If you&rsquo;re using Media Player Classic, you can fix that pretty easily with its &ldquo;Sub resync&rdquo; feature. Open your video with Media Player Classic and load your subtitles, then hit ctrl + 6 (or View -&gt; Subresync) to open the sub-resync console.</p>
-        <p class="small"><a href="https://aanc.github.io/sync-your-subtitles-with-mpc-hc/">Read More »</a></p>
       </div>
       <hr/>
       
