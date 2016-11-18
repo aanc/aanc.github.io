@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Virtualbox on nknu.net</title>
+    <link>https://aanc.github.io/tags/virtualbox/index.xml</link>
+    <description>Recent content in Virtualbox on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <atom:link href="https://aanc.github.io/tags/virtualbox/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Fix virtualbox Linux guest boot blackscreen after kernel upgrade</title>
+      <link>https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/</link>
+      <pubDate>Thu, 27 Oct 2016 14:45:39 +0000</pubDate>
+      
+      <guid>https://aanc.github.io/fix-vbox-linux-guest-boot-blackscreen-after-kernel-upgrade/</guid>
+      <description>&lt;p&gt;I run a fedora 24 as a Virtualbox VM on a windows host. The other day, after a kernel upgrade of this VM and rebooting, I got a black screen. Here is what I did to fix it :&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;Reboot your VM and select a previous kernel with grub&amp;rsquo;s menu. If you don&amp;rsquo;t have one available, I guess you&amp;rsquo;ll have to boot in recovery mode and install one.&lt;/li&gt;
+&lt;li&gt;Login as root&lt;/li&gt;
+&lt;li&gt;Execute &lt;code&gt;rcvboxadd cleanup&lt;/code&gt; - it will delete your currently installed guest additions&lt;/li&gt;
+&lt;li&gt;Reboot on new kernel (should boot now, but guest additions KO), and login as root&lt;/li&gt;
+&lt;li&gt;Install kernel-headers and kernel-devel of your current kernel version&lt;/li&gt;
+&lt;li&gt;Mount VBox Guest Additions ISO, and execute &lt;code&gt;VBoxLinuxAdditions.run&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Reboot (still on new kernel), and everything should be fine now.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Hope it helped.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>
