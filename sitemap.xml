@@ -2,8 +2,8 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://aanc.github.io/</loc>
-    <lastmod>2016-10-27T14:45:39+00:00</lastmod>
+    <loc>https://aanc.github.io/bash-shortcuts-cheatsheet/</loc>
+    <lastmod>2016-11-23T12:21:03+00:00</lastmod>
   </url>
   
   <url>
@@ -104,6 +104,269 @@
   <url>
     <loc>https://aanc.github.io/how-to-use-nginx-as-a-reverse-proxy/</loc>
     <lastmod>2013-10-16T11:19:55+00:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/14/index.04/</loc>
+    <lastmod>2014-09-10T10:32:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/15/index.04/</loc>
+    <lastmod>2015-05-26T16:13:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/automation/</loc>
+    <lastmod>2014-04-07T14:42:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/bash/</loc>
+    <lastmod>2016-11-23T12:21:03+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/centos7/</loc>
+    <lastmod>2014-09-10T10:57:23+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/cheatsheet/</loc>
+    <lastmod>2016-11-23T12:21:03+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/compose/</loc>
+    <lastmod>2015-05-01T22:56:06+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/davmail/</loc>
+    <lastmod>2014-04-23T22:49:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/debian/</loc>
+    <lastmod>2014-05-14T11:22:01+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/docker/</loc>
+    <lastmod>2015-05-26T16:13:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/exchange/</loc>
+    <lastmod>2014-04-23T22:49:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/fedora/</loc>
+    <lastmod>2016-10-27T14:45:39+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/fix/</loc>
+    <lastmod>2016-10-27T14:45:39+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/ghost/</loc>
+    <lastmod>2015-05-01T22:56:06+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/git/</loc>
+    <lastmod>2014-07-16T17:19:44+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/grub/</loc>
+    <lastmod>2014-05-14T11:22:01+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/heartbleed/</loc>
+    <lastmod>2014-04-17T14:22:39+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/howto/</loc>
+    <lastmod>2016-04-12T12:30:23+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/kernel/</loc>
+    <lastmod>2016-10-27T14:45:39+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/kickstart/</loc>
+    <lastmod>2014-05-08T21:31:12+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/linux/</loc>
+    <lastmod>2016-11-23T12:21:03+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/machine/</loc>
+    <lastmod>2015-05-01T22:56:06+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/media/</loc>
+    <lastmod>2014-05-17T19:05:36+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/mpc/</loc>
+    <lastmod>2014-05-17T19:05:36+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/mtp/</loc>
+    <lastmod>2016-04-12T12:30:23+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/nexus/</loc>
+    <lastmod>2016-04-12T12:30:23+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/nginx/</loc>
+    <lastmod>2013-10-17T18:01:57+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/pidgin/</loc>
+    <lastmod>2014-04-23T22:49:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/post/</loc>
+    <lastmod>2016-11-23T12:21:03+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/proxy/</loc>
+    <lastmod>2014-09-10T10:57:23+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/rhel/</loc>
+    <lastmod>2014-05-08T21:31:12+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/ssh/</loc>
+    <lastmod>2014-08-07T12:05:32+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/subtitles/</loc>
+    <lastmod>2014-05-17T19:05:36+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/thunderbird/</loc>
+    <lastmod>2014-04-23T22:49:27+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/tmux/</loc>
+    <lastmod>2014-08-05T15:12:00+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/ubuntu/</loc>
+    <lastmod>2015-05-26T16:13:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/vi/</loc>
+    <lastmod>2014-04-08T13:19:07+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/virtualbox/</loc>
+    <lastmod>2016-10-27T14:45:39+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/vivid/</loc>
+    <lastmod>2015-05-26T16:13:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/vmware/</loc>
+    <lastmod>2014-04-07T14:42:17+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/workaround/</loc>
+    <lastmod>2015-05-26T16:13:55+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/tags/xkcc/</loc>
+    <lastmod>2014-04-17T14:22:39+00:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://aanc.github.io/</loc>
+    <lastmod>2016-11-23T12:21:03+00:00</lastmod>
+    <priority>0</priority>
   </url>
   
 </urlset>

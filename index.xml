@@ -5,8 +5,235 @@
     <link>https://aanc.github.io/index.xml</link>
     <description>Recent content on nknu.net</description>
     <generator>Hugo -- gohugo.io</generator>
-    <lastBuildDate>Thu, 27 Oct 2016 14:45:39 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 23 Nov 2016 12:21:03 +0000</lastBuildDate>
     <atom:link href="https://aanc.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>Bash shortcuts cheatsheet</title>
+      <link>https://aanc.github.io/bash-shortcuts-cheatsheet/</link>
+      <pubDate>Wed, 23 Nov 2016 12:21:03 +0000</pubDate>
+      
+      <guid>https://aanc.github.io/bash-shortcuts-cheatsheet/</guid>
+      <description>
+
+&lt;h2 id=&#34;moving-around&#34;&gt;Moving around&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Shortcut&lt;/th&gt;
+&lt;th&gt;Action&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move cursor to previous word&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + f&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move cursor to next word&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + b&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move back a char&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + f&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move forward a char&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + a&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Jump to the start of the line&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + e&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Jump to the end of the line&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;deleting-copying-completing-transforming&#34;&gt;Deleting, copying, completing, transforming, &amp;hellip;&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Shortcut&lt;/th&gt;
+&lt;th&gt;Action&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + .&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Yank last argument to previous command&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + *&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Insert all possible completions&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + /&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Attempt to complete filename&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + backspace&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Delete word backward from cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + c&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Capitalize the word&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + l&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Make word lowercase&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + t&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move words around&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + u&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Make word uppercase&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + d&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Delete from current character to the end of the word&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + d&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Delete character under the cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + h&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Same as backspace&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + k&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Delete everything after the cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + u&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Delete everything before the cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + w&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Delete the word before the cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + t&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Swap the last two characters before the cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Esc + t&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Swap the last two words before the cursor&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Tab&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Auto- complete files and folder names&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;history&#34;&gt;History&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Shortcut&lt;/th&gt;
+&lt;th&gt;Action&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + &amp;lt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move to the first line in the history&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + &amp;gt;&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Move to the last line in the history&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + n&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Search the history forwards non-incremental&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + p&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Search the history backwards non-incremental&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Alt + r&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Recall command&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + r&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Search the history backwards. Hit &lt;code&gt;Ctrl + r&lt;/code&gt; again for switching to other occurrence&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&#34;other&#34;&gt;Other&lt;/h2&gt;
+
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th align=&#34;center&#34;&gt;Shortcut&lt;/th&gt;
+&lt;th&gt;Action&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + c&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Terminate the command&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + d&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Exit the current shell&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + l&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Clear the screen&lt;/td&gt;
+&lt;/tr&gt;
+
+&lt;tr&gt;
+&lt;td align=&#34;center&#34;&gt;&lt;code&gt;Ctrl + z&lt;/code&gt;&lt;/td&gt;
+&lt;td&gt;Puts whatever you are running into a suspended background process. &lt;code&gt;fg&lt;/code&gt; restores it.&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+</description>
+    </item>
     
     <item>
       <title>Fix virtualbox Linux guest boot blackscreen after kernel upgrade</title>
@@ -936,20 +1163,6 @@ export NSS_SSL_CBC_RANDOM_IV=0`
 &lt;p&gt;You will have to logout/login for this parameter to take effect.&lt;/p&gt;
 
 &lt;p&gt;And that&amp;rsquo;s it ! Let me know in the comments if something does not work, of if you have a better method. Thanks for reading!&lt;/p&gt;
-</description>
-    </item>
-    
-    <item>
-      <title>Best Heartbleed explanation ever</title>
-      <link>https://aanc.github.io/best-heartbleed-explanation-ever/</link>
-      <pubDate>Thu, 17 Apr 2014 14:22:39 +0000</pubDate>
-      
-      <guid>https://aanc.github.io/best-heartbleed-explanation-ever/</guid>
-      <description>&lt;p&gt;xkcd posted a drawing explaining perfectly how the &lt;a href=&#34;http://heartbleed.com/&#34;&gt;Heartbleed bug&lt;/a&gt; works:&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&#34;https://aanc.github.io/content/images/2014/Apr/heartbleed_explanation.png&#34; alt=&#34;&#34; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Source: &lt;a href=&#34;http://xkcd.com/1354/&#34;&gt;http://xkcd.com/1354/&lt;/a&gt;&lt;/p&gt;
 </description>
     </item>
     

@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.18-DEV" />
+    
+    <title>Bash shortcuts cheatsheet</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="https://aanc.github.io/css/main.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu:100,300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="https://aanc.github.io/">nknu.net</a>
+			</h1>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="https://aanc.github.io/bash-shortcuts-cheatsheet/" title="Bash shortcuts cheatsheet">Bash shortcuts cheatsheet</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/bash"><span class="label label-success">bash</span></a>
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/cheatsheet"><span class="label label-success">cheatsheet</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2016-11-120">Nov 11, 2016</time></p>
+      <div class="article-content">
+        <p>
+
+<h2 id="moving-around">Moving around</h2>
+
+<table>
+<thead>
+<tr>
+<th align="center">Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center"><code>Alt + b</code></td>
+<td>Move cursor to previous word</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + f</code></td>
+<td>Move cursor to next word</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + b</code></td>
+<td>Move back a char</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + f</code></td>
+<td>Move forward a char</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + a</code></td>
+<td>Jump to the start of the line</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + e</code></td>
+<td>Jump to the end of the line</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="deleting-copying-completing-transforming">Deleting, copying, completing, transforming, &hellip;</h2>
+
+<table>
+<thead>
+<tr>
+<th align="center">Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center"><code>Alt + .</code></td>
+<td>Yank last argument to previous command</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + *</code></td>
+<td>Insert all possible completions</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + /</code></td>
+<td>Attempt to complete filename</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + backspace</code></td>
+<td>Delete word backward from cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + c</code></td>
+<td>Capitalize the word</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + l</code></td>
+<td>Make word lowercase</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + t</code></td>
+<td>Move words around</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + u</code></td>
+<td>Make word uppercase</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + d</code></td>
+<td>Delete from current character to the end of the word</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + d</code></td>
+<td>Delete character under the cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + h</code></td>
+<td>Same as backspace</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + k</code></td>
+<td>Delete everything after the cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + u</code></td>
+<td>Delete everything before the cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + w</code></td>
+<td>Delete the word before the cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + t</code></td>
+<td>Swap the last two characters before the cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Esc + t</code></td>
+<td>Swap the last two words before the cursor</td>
+</tr>
+
+<tr>
+<td align="center"><code>Tab</code></td>
+<td>Auto- complete files and folder names</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="history">History</h2>
+
+<table>
+<thead>
+<tr>
+<th align="center">Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center"><code>Alt + &lt;</code></td>
+<td>Move to the first line in the history</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + &gt;</code></td>
+<td>Move to the last line in the history</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + n</code></td>
+<td>Search the history forwards non-incremental</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + p</code></td>
+<td>Search the history backwards non-incremental</td>
+</tr>
+
+<tr>
+<td align="center"><code>Alt + r</code></td>
+<td>Recall command</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + r</code></td>
+<td>Search the history backwards. Hit <code>Ctrl + r</code> again for switching to other occurrence</td>
+</tr>
+</tbody>
+</table>
+
+<h2 id="other">Other</h2>
+
+<table>
+<thead>
+<tr>
+<th align="center">Shortcut</th>
+<th>Action</th>
+</tr>
+</thead>
+
+<tbody>
+<tr>
+<td align="center"><code>Ctrl + c</code></td>
+<td>Terminate the command</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + d</code></td>
+<td>Exit the current shell</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + l</code></td>
+<td>Clear the screen</td>
+</tr>
+
+<tr>
+<td align="center"><code>Ctrl + z</code></td>
+<td>Puts whatever you are running into a suspended background process. <code>fg</code> restores it.</td>
+</tr>
+</tbody>
+</table>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <author>
+  <img class="author-photo" src="http://www.gravatar.com/avatar/0cadf2f30a2d888cc46b5497292f8ff5?s=100"/>
+  <div class="author-name">Adrien Anceau</div>
+  <div class="author-bio">Geek, gamer, photography enthusiast, passionate about technology, automation and food.</div>
+
+  <div class="social">
+    
+    <a target="_blank" href="https://github.com/aanc"><img src='https://aanc.github.io/img/github.png' /></a>
+    
+    
+    <a target="_blank" href="http://www.facebook.com/adrien.anceau"><img src='https://aanc.github.io/img/facebook.png' /></a>
+    
+    
+    <a target="_blank" href="http://twitter.com/aaadrieeen"><img src='https://aanc.github.io/img/twitter.png' /></a>
+    
+  </div>
+</author>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <comments>
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+	    var disqus_shortname = 'nknu'; 
+	    var disqus_identifier = 'bash-shortcuts-cheatsheet'; 
+
+	     
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</comments>
+
+  </div>
+  </div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44976115-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="https://aanc.github.io/js/main.js"></script>
+</body>
+</html>
+
