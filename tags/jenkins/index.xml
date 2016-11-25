@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Jenkins on nknu.net</title>
+    <link>https://aanc.github.io/tags/jenkins/index.xml</link>
+    <description>Recent content in Jenkins on nknu.net</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <atom:link href="https://aanc.github.io/tags/jenkins/index.xml" rel="self" type="application/rss+xml" />
+    
+    <item>
+      <title>How to easily scale your Jenkins cluster with Docker Compose</title>
+      <link>https://aanc.github.io/easily-scale-jenkins-cluser-with-docker-compose/</link>
+      <pubDate>Mon, 10 Oct 2016 12:30:23 +0000</pubDate>
+      
+      <guid>https://aanc.github.io/easily-scale-jenkins-cluser-with-docker-compose/</guid>
+      <description>
+
+&lt;p&gt;Jenkins is a wonderful tool.
+Its original purpose was to do continuous integration of code, but now it has grown into something that can automate and orchestrate almost everything.
+With more and more tasks handled by Jenkins, the need to allocate more resources for it arise.
+Luckily, Jenkins can work with remote agents (formerly called slaves), to move the load of builds on other hosts.
+Its pretty easy to add an agent to Jenkins, and there are &lt;a href=&#34;http://stackoverflow.com/questions/24962504/adding-a-slave-to-jenkins#25450561&#34;&gt;plenty&lt;/a&gt; of &lt;a href=&#34;https://wiki.jenkins-ci.org/display/JENKINS/Step+by+step+guide+to+set+up+master+and+slave+machines&#34;&gt;guides&lt;/a&gt; out there explaining how to do it.
+But they involve quite a few manual steps.
+What if we want to easily add and remove slave to our cluster, with one single command ?
+It require a bit of preparation, but with the help of &lt;a href=&#34;https://www.docker.com/&#34;&gt;Docker&lt;/a&gt;, &lt;a href=&#34;https://docs.docker.com/compose/&#34;&gt;Compose&lt;/a&gt; and &lt;a href=&#34;https://wiki.jenkins-ci.org/display/JENKINS/Swarm+Plugin&#34;&gt;Jenkins Swarm Client from Jenkins Swarm Plugin&lt;/a&gt;, its easily doable AND it can evolve to a fully automated solution (we will cover that in a future article).&lt;/p&gt;
+
+&lt;h3 id=&#34;setup-a-jenkins-master&#34;&gt;Setup a Jenkins master&lt;/h3&gt;
+
+&lt;p&gt;Note: if you already have a Jenkins master running, you can skip this step.&lt;/p&gt;
+
+&lt;p&gt;Create a &lt;code&gt;docker-compose.yml&lt;/code&gt; file containing the following:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;version: &#39;2&#39;
+services:
+  jenkins_master:
+    image: jenkins:2.7.4
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - &amp;quot;8080:8080&amp;quot;
+      - &amp;quot;50000:50000&amp;quot;
+
+volumes:
+  jenkins_home:{}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Start your Jenkins master with the command &lt;code&gt;docker-compose up -d&lt;/code&gt;, and browse to &lt;code&gt;http://your-docker-host:8080&lt;/code&gt; to do the initial Jenkins setup.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; there is a security step during the setup that ask you to copy/paste the content of a file on the master.
+You can use &lt;code&gt;docker-compose exec jenkins_master cat /var/jenkins_home/secrets/initialAdminPassword&lt;/code&gt; to get it.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;create-a-dedicated-user-in-jenkins-administration-with-enough-rights-to-add-agents&#34;&gt;Create a dedicated user in Jenkins Administration, with enough rights to add agents&lt;/h3&gt;
+
+&lt;p&gt;Go to Jenkins&amp;rsquo; Administration page and create a new user called &amp;ldquo;agent&amp;rdquo;, with the following permissions:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Agent:&lt;/strong&gt; build, configure, connect, create, delete, disconnect&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Global:&lt;/strong&gt; read&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;This is the user our future agents will use to register themselves to the Jenkins master.&lt;/p&gt;
+
+&lt;h3 id=&#34;create-the-jenkins-agent-image-s-that-fit-your-needs&#34;&gt;Create the Jenkins Agent image(s) that fit your needs&lt;/h3&gt;
+
+&lt;p&gt;For this exemple we will create an agent based on the &lt;code&gt;centos:7&lt;/code&gt; docker image, but we can use any image as base, as long as we put java8 and the jenkins swarm client in it.
+Create a &lt;code&gt;Dockerfile&lt;/code&gt; with the following content:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;FROM centos:7
+
+RUN yum install -y epel-release
+RUN yum install -y \
+        aria2 \
+        curl \
+        git \
+        java-1.8.0-openjdk.x86_64 \
+        jq \
+        unzip \
+        wget \
+        which \
+        &amp;amp;&amp;amp; wget https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/2.2/swarm-client-2.2-jar-with-dependencies.jar -O /root/swarm-client.jar
+
+ENTRYPOINT [&amp;quot;/usr/bin/java&amp;quot;, &amp;quot;-jar&amp;quot;, &amp;quot;/root/swarm-client.jar&amp;quot;]
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Now build it with &lt;code&gt;docker build -t local/jenkins-centos7-slave .&lt;/code&gt;.&lt;/p&gt;
+
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; we could also ask Docker Compose to manage the image for us, by declaring the Dockerfile in the compose file, its a matter of personnal preference.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&#34;declare-the-agent-in-the-docker-compose-yml-file&#34;&gt;Declare the agent in the &lt;code&gt;docker-compose.yml&lt;/code&gt; file&lt;/h3&gt;
+
+&lt;p&gt;Add the service to your &lt;code&gt;docker-compose.yml&lt;/code&gt; file:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;  jenkins_centos7_slave:
+    image: local/jenkins-centos7-slave
+    command: -master http://&amp;lt;your-jenkins-host-ip&amp;gt;:8080 -username agent -password &amp;lt;your-jenkins-agent-user-password&amp;gt; -name centos7
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;You can start the agent with &lt;code&gt;docker-compose up -d&lt;/code&gt;.
+After a few seconds, it should appear in your Jenkins master interface.
+If not, check the container&amp;rsquo;s logs with &lt;code&gt;docker-compose logs jenkins_centos7_slave&lt;/code&gt; and use that info to troubleshout the issue.&lt;/p&gt;
+
+&lt;p&gt;We can now easily add and remove agents with the &lt;code&gt;docker-compose scale&lt;/code&gt; command, ie: &lt;code&gt;docker-compose scale jenkins_centos7_slave=3&lt;/code&gt; would pop 2 slave that would automatically join your Jenkins cluster.&lt;/p&gt;
+
+&lt;p&gt;Now we could imagine adding other kind of agents to jenkins, using the same method with differents agent images (ie. a debian based image, or one specialized in npm builds, or a windows based image, &amp;hellip;)
+We could also automate it further using the Jenkins Docker plugin to start the specific types of agents only when a build needs them, with on-demand agent creation.
+That will be the subject of a future article.&lt;/p&gt;
+</description>
+    </item>
+    
+  </channel>
+</rss>

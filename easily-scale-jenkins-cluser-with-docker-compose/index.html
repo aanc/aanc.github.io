@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Hugo 0.18-DEV" />
+    
+    <title>How to easily scale your Jenkins cluster with Docker Compose</title>
+
+    
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link href="https://aanc.github.io/css/main.css" rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Roboto:100,300,400,700,100italic,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Ubuntu:100,300,400,700,400italic' rel='stylesheet' type='text/css'>
+
+    
+    
+    
+  </head>
+  <body>
+	<header>
+		<div class="container clearfix">
+			<h1 id="logo">
+				<a href="https://aanc.github.io/">nknu.net</a>
+			</h1>
+		</div>
+	</header>
+
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <h1 class="article-title"><a href="https://aanc.github.io/easily-scale-jenkins-cluser-with-docker-compose/" title="How to easily scale your Jenkins cluster with Docker Compose">How to easily scale your Jenkins cluster with Docker Compose</a></h1>
+      <div class="article-tags">
+        
+          <a href="tags/linux"><span class="label label-success">linux</span></a>
+        
+          <a href="tags/docker"><span class="label label-success">docker</span></a>
+        
+          <a href="tags/compose"><span class="label label-success">compose</span></a>
+        
+          <a href="tags/jenkins"><span class="label label-success">jenkins</span></a>
+        
+          <a href="tags/howto"><span class="label label-success">howto</span></a>
+        
+      </div>
+      <p class="small gray"><time datetime="2016-10-120">Oct 10, 2016</time></p>
+      <div class="article-content">
+        <p>
+
+<p>Jenkins is a wonderful tool.
+Its original purpose was to do continuous integration of code, but now it has grown into something that can automate and orchestrate almost everything.
+With more and more tasks handled by Jenkins, the need to allocate more resources for it arise.
+Luckily, Jenkins can work with remote agents (formerly called slaves), to move the load of builds on other hosts.
+Its pretty easy to add an agent to Jenkins, and there are <a href="http://stackoverflow.com/questions/24962504/adding-a-slave-to-jenkins#25450561">plenty</a> of <a href="https://wiki.jenkins-ci.org/display/JENKINS/Step+by+step+guide+to+set+up+master+and+slave+machines">guides</a> out there explaining how to do it.
+But they involve quite a few manual steps.
+What if we want to easily add and remove slave to our cluster, with one single command ?
+It require a bit of preparation, but with the help of <a href="https://www.docker.com/">Docker</a>, <a href="https://docs.docker.com/compose/">Compose</a> and <a href="https://wiki.jenkins-ci.org/display/JENKINS/Swarm+Plugin">Jenkins Swarm Client from Jenkins Swarm Plugin</a>, its easily doable AND it can evolve to a fully automated solution (we will cover that in a future article).</p>
+
+<h3 id="setup-a-jenkins-master">Setup a Jenkins master</h3>
+
+<p>Note: if you already have a Jenkins master running, you can skip this step.</p>
+
+<p>Create a <code>docker-compose.yml</code> file containing the following:</p>
+
+<pre><code>version: '2'
+services:
+  jenkins_master:
+    image: jenkins:2.7.4
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - &quot;8080:8080&quot;
+      - &quot;50000:50000&quot;
+
+volumes:
+  jenkins_home:{}
+</code></pre>
+
+<p>Start your Jenkins master with the command <code>docker-compose up -d</code>, and browse to <code>http://your-docker-host:8080</code> to do the initial Jenkins setup.</p>
+
+<blockquote>
+<p><strong>Note:</strong> there is a security step during the setup that ask you to copy/paste the content of a file on the master.
+You can use <code>docker-compose exec jenkins_master cat /var/jenkins_home/secrets/initialAdminPassword</code> to get it.</p>
+</blockquote>
+
+<h3 id="create-a-dedicated-user-in-jenkins-administration-with-enough-rights-to-add-agents">Create a dedicated user in Jenkins Administration, with enough rights to add agents</h3>
+
+<p>Go to Jenkins&rsquo; Administration page and create a new user called &ldquo;agent&rdquo;, with the following permissions:</p>
+
+<ul>
+<li><strong>Agent:</strong> build, configure, connect, create, delete, disconnect</li>
+<li><strong>Global:</strong> read</li>
+</ul>
+
+<p>This is the user our future agents will use to register themselves to the Jenkins master.</p>
+
+<h3 id="create-the-jenkins-agent-image-s-that-fit-your-needs">Create the Jenkins Agent image(s) that fit your needs</h3>
+
+<p>For this exemple we will create an agent based on the <code>centos:7</code> docker image, but we can use any image as base, as long as we put java8 and the jenkins swarm client in it.
+Create a <code>Dockerfile</code> with the following content:</p>
+
+<pre><code>FROM centos:7
+
+RUN yum install -y epel-release
+RUN yum install -y \
+        aria2 \
+        curl \
+        git \
+        java-1.8.0-openjdk.x86_64 \
+        jq \
+        unzip \
+        wget \
+        which \
+        &amp;&amp; wget https://repo.jenkins-ci.org/releases/org/jenkins-ci/plugins/swarm-client/2.2/swarm-client-2.2-jar-with-dependencies.jar -O /root/swarm-client.jar
+
+ENTRYPOINT [&quot;/usr/bin/java&quot;, &quot;-jar&quot;, &quot;/root/swarm-client.jar&quot;]
+</code></pre>
+
+<p>Now build it with <code>docker build -t local/jenkins-centos7-slave .</code>.</p>
+
+<blockquote>
+<p><strong>Note:</strong> we could also ask Docker Compose to manage the image for us, by declaring the Dockerfile in the compose file, its a matter of personnal preference.</p>
+</blockquote>
+
+<h3 id="declare-the-agent-in-the-docker-compose-yml-file">Declare the agent in the <code>docker-compose.yml</code> file</h3>
+
+<p>Add the service to your <code>docker-compose.yml</code> file:</p>
+
+<pre><code>  jenkins_centos7_slave:
+    image: local/jenkins-centos7-slave
+    command: -master http://&lt;your-jenkins-host-ip&gt;:8080 -username agent -password &lt;your-jenkins-agent-user-password&gt; -name centos7
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+</code></pre>
+
+<p>You can start the agent with <code>docker-compose up -d</code>.
+After a few seconds, it should appear in your Jenkins master interface.
+If not, check the container&rsquo;s logs with <code>docker-compose logs jenkins_centos7_slave</code> and use that info to troubleshout the issue.</p>
+
+<p>We can now easily add and remove agents with the <code>docker-compose scale</code> command, ie: <code>docker-compose scale jenkins_centos7_slave=3</code> would pop 2 slave that would automatically join your Jenkins cluster.</p>
+
+<p>Now we could imagine adding other kind of agents to jenkins, using the same method with differents agent images (ie. a debian based image, or one specialized in npm builds, or a windows based image, &hellip;)
+We could also automate it further using the Jenkins Docker plugin to start the specific types of agents only when a build needs them, with on-demand agent creation.
+That will be the subject of a future article.</p>
+</p>
+      </div>
+    </div>
+    <div class="col-sm-1">
+      <author>
+  <img class="author-photo" src="http://www.gravatar.com/avatar/0cadf2f30a2d888cc46b5497292f8ff5?s=100"/>
+  <div class="author-name">Adrien Anceau</div>
+  <div class="author-bio">Geek, gamer, photography enthusiast, passionate about technology, automation and food.</div>
+
+  <div class="social">
+    
+    <a target="_blank" href="https://github.com/aanc"><img src='https://aanc.github.io/img/github.png' /></a>
+    
+    
+    <a target="_blank" href="http://www.facebook.com/adrien.anceau"><img src='https://aanc.github.io/img/facebook.png' /></a>
+    
+    
+    <a target="_blank" href="http://twitter.com/aaadrieeen"><img src='https://aanc.github.io/img/twitter.png' /></a>
+    
+  </div>
+</author>
+
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-offset-2 col-sm-7">
+      <comments>
+	<div id="disqus_thread"></div>
+	<script type="text/javascript">
+	    var disqus_shortname = 'nknu'; 
+	    var disqus_identifier = 'easily-scale-jenkins-cluser-with-docker-compose'; 
+
+	     
+	    (function() {
+	        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+	        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+	        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+	    })();
+	</script>
+	<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+	<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</comments>
+
+  </div>
+  </div>
+</div>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-44976115-1', 'auto');
+  ga('send', 'pageview');
+
+</script>
+
+<a href="#top"><scroll-button class="scroll-to-top">Back to Top</scroll-button></a>
+
+<div class="col-sm-offset-2 col-sm-7">
+  <div class="footer">Powered by <a href="http://gohugo.io">Hugo</a></div>
+</div>
+
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+<script src="https://aanc.github.io/js/main.js"></script>
+</body>
+</html>
+
